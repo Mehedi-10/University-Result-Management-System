@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}{{ 'Login' }}{% endblock %}
+{% block content %}
+    {% load static %}
+    <div class="row .g-0" style="margin: 0 !important;">
+        <div class="col p-0 .g-0">
+            <div class="leftside ">
+                <h1 style="text-align: center; font-family: 'Inria Sans'; font-size: 36px; padding: 23px; color: aliceblue">
+                    login as</h1>
+                <div style="font-family:'Inria Sans'; margin-top: 17%; text-align: center; display: flex;
+align-items: center;
+justify-content: center;">
+                    <div class="icon-x">
+                        <div class="tooltrip">Teacher</div>
+                        <div class="icon">
+                            <a href="teacherlogin.html">
+                                <img src="{% static 'teacher.png' %}"
+                                     alt="Teacher">
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="icon-x">
+                        <div class="tooltrip"><span>Controller Of Exam</span></div>
+                        <div class="icon">
+                            <a href="coe.html">
+                                <img src="{% static 'maintenance.png' %}" alt="Controller of Exm">
+                            </a>
+                        </div>
+                    </div>
+
+
+                    <div class="icon-x">
+                        <div class="tooltrip">Exam Committee</div>
+                        <div class="icon">
+                            <a href="ec.html">
+                                <img src="{% static 'group.png' %}"
+                                     alt="Exam Committee">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="font-family:'Inria Sans'; text-align: center; display: flex;
+align-items: center;
+justify-content: center;">
+                    <div class="icon-x">
+                        <div class="tooltrip">Student</div>
+                        <div class="icon">
+                            <a href="student.html">
+                                <img src="{% static 'rocket.png' %}"
+                                     alt="student">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="col p-0 .g-0">
+            <div class="rightside">
+                <img class="d-block m-auto"
+                     style="
+                     width: 100%;"
+                     src="{% static '10516.jpg' %}" alt="teacher and student in classroom">
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

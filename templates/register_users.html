@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="fonts/material-icon/css/material-design-iconic-font.min.css">
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</head>
+<body>
+<div class="main">
+    <h1>Sign up</h1>
+    <div class="container">
+        <div >
+            <form method="POST" style=" border: 2px solid red" autocomplete="off">
+                {% csrf_token %}
+                <h2 class="form-title">What type of user are you ?</h2>
+                <div class="form-radio">
+                    <input type="radio" name="member_level" value="Teacher" id="Teacher" checked/>
+                    <label for="Teacher">Teacher</label>
+                    <input type="radio" name="member_level" value="Student" id="Student"/>
+                    <label for="Student">Student</label>
+                </div>
+                <div class="form-textbox">
+                    <label for="name">Full name</label>
+                    <input type="text" name="name" id="name" value=""/>
+                </div>
+                <div id="Student_id" style="display: none">
+                    <label for="name">ID</label>
+                    <input type="text" name="id" id="Student_id" value=""/>
+                </div>
+                <div class="form-textbox">
+                    <label for="email">Email</label>
+                    <input type="email" name="email" id="email" value=""/>
+                </div>
+                <div class="form-textbox">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="password"/>
+                </div>
+                <div class="form-textbox">
+                    <label for="password">Re-Password</label>
+                    <input type="password" name="repassword" id="password1"/>
+                </div>
+
+                <div class="form-textbox">
+                    <input type="submit" name="submit" id="submit" class="submit" value="Create account"/>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const Student_id = document.getElementById('Student_id');
+    document.getElementById("email").value = "";
+    document.getElementById("name").value = "";
+    document.getElementById("password").value = "";
+    document.getElementById("password1").value = "";
+
+    function handleRadioClick() {
+        if (document.getElementById('Student').checked) {
+            Student_id.style.display = 'block';
+        } else {
+            Student_id.style.display = 'none';
+        }
+    }
+    const radioButtons = document.querySelectorAll('input[name="member_level"]');
+    radioButtons.forEach(radio => {
+        radio.addEventListener('click', handleRadioClick);
+    });
+</script>
+</body>
+</html>

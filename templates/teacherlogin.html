@@ -1,0 +1,55 @@
+{% extends 'headtail.html' %}
+{% block title %}{{ 'Login as Teacher' }}{% endblock %}
+{% block content %}
+    {% load static %}
+    <h1 class="bigfont" style="margin-top: 13px; padding: 23px">
+        login
+    </h1>
+    <div style="font-family: 'Inria Sans'; ">
+        <div style="position: relative; height: 420px;width: 420px;  display: block; margin:auto; ">
+            <h6 style="position: absolute;color:white;margin-top: 10%;margin-left: 17%">hello !</h6>
+            <form method="POST" style="position: absolute; ">
+                {% csrf_token %}
+                <div style="position:relative; margin-left: 2%; margin-top: 31%; height: max-content;width: 400px;text-align: center">
+                    <div style="position:relative;display:flex;margin:auto; background: white; height: 32px;width: 270px; border:1px solid black">
+                        <label for="form1Example1"><img style="height: 32px;width: 32px;margin-right: 3px;"
+                                                        src="{% static 'icons8-user-96.png' %}"></label>
+                        <input type="email" name="email" id="email" placeholder="Enter Email Address">
+
+                    </div>
+                </div>
+                <!-- Password input -->
+                <div style="position:relative;margin-left: 2%; margin-top: 7%; height: max-content;width: 400px;text-align: center">
+                    <div style="position:relative;display:flex;margin:auto; background: white; height: 32px;width: 270px; border:1px solid black">
+                        <label for="form1Example2"> <img style="height: 31px;width: 32px;margin-right: 3px;"
+                                                         src="{% static 'icons8-password-96.png' %}"></label></label>
+                        <input type="password" name="password" id="password" placeholder="Enter Password" a>
+                    </div>
+                </div>
+                <input class="xxx" type="submit"
+                       style="
+                        margin-left: 52.1px;
+                        margin-top: 99.3px;
+                        border-radius: 25%;
+                        background: #A4A4A4 !important;
+                        border-bottom-right-radius: 70%;
+                        border-top-right-radius: 70%;
+                        color: #190933;
+                        padding:2px;
+                        width: 70px;
+                        height: 39px;
+                        font-weight: bold;" value="next ⊳">
+            </form>
+
+            <svg style="display: block; margin: auto;" width="370" height="370" viewBox="0 0 463 532" fill="none"
+                 xmlns="http://www.w3.org/2000/svg">
+                <path d="M457.43 115.025L8.43018 4.82365C4.64959 3.89575 1 6.75791 1 10.6507V422.095C1 424.914 2.96184 427.353 5.71499 427.956L454.715 526.403C458.458 527.223 462 524.373 462 520.542V120.852C462 118.089 460.113 115.684 457.43 115.025Z"
+                      fill="#A4A4A4" stroke="#221FCC"/>
+                <path d="M306.341 66.1277C301.053 64.8586 300.618 57.504 305.719 55.6201L391.462 23.9558L454.266 3.09556C457.827 1.91301 461.5 4.56359 461.5 8.31518V96.3896C461.5 99.9464 458.175 102.568 454.716 101.738L306.341 66.1277Z"
+                      fill="#A4A4A4" stroke="#1402E2"/>
+                <path d="M152.478 471.744C157.95 472.908 158.392 480.548 153.091 482.335L83.3456 505.853L83.3402 505.854L8.63417 529.101C5.09387 530.202 1.49999 527.557 1.49999 523.849V446.411C1.49999 442.913 4.72299 440.303 8.14471 441.032L152.478 471.744Z"
+                      fill="#A4A4A4" stroke="#1402E2"/>
+            </svg>
+        </div>
+    </div>
+{% endblock %}

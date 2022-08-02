@@ -1,0 +1,98 @@
+@font-face {
+            font-family: 'Inria Sans';
+            font-style: normal;
+            font-weight: 400;
+            src: url(https://fonts.gstatic.com/s/inriasans/v14/ptRMTiqXYfZMCOiVj9kQ1Of4KDNu.woff2) format('woff2');
+            unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+        }
+
+        /* latin */
+        @font-face {
+            font-family: 'Inria Sans';
+            font-style: normal;
+            font-weight: 400;
+            src: url(https://fonts.gstatic.com/s/inriasans/v14/ptRMTiqXYfZMCOiVj9kQ1On4KA.woff2) format('woff2');
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
+.leftside, .rightside {
+    height: 100vh;
+    width: 100%;
+}
+
+.rightside {
+    background: white;
+    padding-top: 5px;
+    border-top-left-radius: 7px;
+    border-bottom-left-radius: 7px;
+
+}
+
+@media only screen and (max-width: 700px) {
+    .rightside {
+        display: none;
+    }
+
+    .leftside {
+        width: 100vw;
+    }
+}
+
+.icon-x {
+    position: relative;
+    height: 150px;
+    width: 160px;
+    /*border: 3px solid black;*/
+    padding: 27px;
+    text-align: center;
+}
+
+.icon-x .tooltrip {
+    position: absolute;
+    background: whitesmoke;
+    border-radius: .3rem;
+    font-size: 17px;
+    height: 29px;
+    width: 145px;
+    transition: 0.5s;
+    transform: translateX(-15%);
+    box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
+    opacity: 0;
+}
+
+.icon-x:hover .tooltrip {
+    opacity: 1;
+    transform: translateY(-100%) translateX(-15%);
+}
+/*.icon-x .icon .tooltrip >span ::after*/
+/*{*/
+/*    content: " ";*/
+/*    top: 100%;*/
+/*    position: absolute;*/
+/*    left: 50%;*/
+/*    margin-left: -5px;*/
+/*  border-width: 5px;*/
+/*  border-style: solid;*/
+/*}*/
+
+.icon-x .icon {
+    box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
+    position: relative;
+    height: 85px;
+    width: 85px;
+    background: whitesmoke;
+    margin-top: 11%;
+    border-radius: 50%;
+    border: 1px solid blue;
+}
+
+.icon-x .icon:hover {
+    background: #8F91A2;
+    transition: 0.4s;
+}
+
+.icon-x .icon img {
+    position: absolute;
+    height: 65px;
+    width: 65px;
+    transform: translateX(-50%) translateY(20%);
+}
