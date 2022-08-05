@@ -5,3 +5,4 @@ class login_teacher(models.Model):
     print(all)
 
 
+

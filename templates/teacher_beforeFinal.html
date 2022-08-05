@@ -1,0 +1,111 @@
+{% extends 'base3.html' %}
+{% block title %}{{ 'Manage result' }}{% endblock %}
+{% block style_content %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/teacherresult.css' %}">
+    <link rel="stylesheet" href="{% static 'css/spreadsheet.css' %}">
+{% endblock %}
+{% block content %}
+    <div style="align-content: center">
+    </div>
+    <div id="hehe" style="height: 67vh; width: max-content;display: block;margin: auto;">
+        <form id="po" method="POST" action="">
+            {% csrf_token %}
+            <table>
+                <tr style="width:100%;">
+                    <td></td>
+                    <td><input id="hello" type="text" disabled value="A"></td>
+                    <td><input id="hello" type="text" disabled value="B"></td>
+                    <td><input id="hello" type="text" disabled value="C"></td>
+                    <td><input id="hello" type="text" disabled value="D"></td>
+                    <td><input id="hello" type="text" disabled value="E"></td>
+                    <td><input id="hello" type="text" disabled value="F"></td>
+                    <td><input id="hello" type="text" disabled value="G"></td>
+                    <td><input id="hello" type="text" disabled value="H"></td>
+                    <td><input id="hello" type="text" disabled value="I"></td>
+                    <td><input id="hello" type="text" disabled value="J"></td>
+                </tr>
+                {% for i in rowu %}
+                    <tr>
+                        {% with colu='ABCDEFGHIJ' %}
+                            <td id="hello">
+                                {{ i }}
+                            </td>
+                            {% for j in colu %}
+                                <td><input id="{{ i }}{{ j }}" name="{{ i }}{{ j }}" class="spreadsheets" type="text"
+                                           value="{{ i }}"></td>
+                            {% endfor %}
+                        {% endwith %}
+                    </tr>
+                {% endfor %}
+            </table>
+        </form>
+    </div>
+    <div class="row" style="margin: 0px; padding-bottom: 11px;padding-top: 11px;">
+        <div class="col" style="padding-left: 100px ;text-align: left">
+            <input type="button" id="btn" value="export">
+        </div>
+        <div class="col" style="padding-right: 100px ;text-align: right">
+            <input type="button" id="onceclickable" value="submit">
+        </div>
+    </div>
+    </div>
+    <p id="demo"></p>
+{% endblock %}
+{% block script %}
+    <script>
+
+
+        $('.spreadsheets').keydown(function (e) {
+            if (e.which === 13) {
+                var x = 1, y = $('.spreadsheets').index(this);
+                if (y % 10 == 9)
+                    x++;
+                var index = $('.spreadsheets').index(this) + x;
+                $('.spreadsheets').eq(index).focus();
+            }
+        });
+
+
+        const button = document.querySelector('#onceclickable');
+
+
+        for (let i = 0; i < 24; i++) {
+
+            for (let j = 65; j < 75; j++) {
+                var x = i.toString();
+                x += String.fromCharCode(j);
+                console.log(x);
+                const bu = document.getElementById('hehe');
+                const inp = document.getElementById(x);
+                inp.addEventListener("input", myFunction);
+                var url = "nothing"; // the script where you handle the form input.
+
+
+
+                function myFunction() {
+                    $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: $("#po").serialize(),
+                });
+                    console.log(inp.value);
+                    document.getElementById('demo').innerHTML = inp.value;
+                }
+            }
+        }
+
+
+        const disableButton = () => {
+            document.getElementById('po').submit();
+            button.disabled = true;
+            button.value = "submitted";
+            for (let i = 0; i < 900; i++) {
+                bu.getElementsByClassName('spreadsheets')[i].disabled = true;
+            }
+        };
+
+        button.addEventListener('click', disableButton);
+
+    </script>
+{% endblock %}

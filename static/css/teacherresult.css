@@ -16,42 +16,52 @@
     unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-.bigfont {
-
-    position: relative;
+body {
     font-family: 'Inria Sans';
-    top: 10px;
-    font-style: normal;
-    font-weight: 700;
-    font-size: 32px;
+    background: #D6D6D6;
+    margin: 0;
+}
+
+
+.fornn {
+    position: relative;
+    display: block;
+    background: #B9B9B9;
+    width: 440px;
+    height: max-content;
+    border-radius: .1rem;
+    padding: 40px;
+    margin: auto;
+
+}
+
+.selection {
+    width: 100%;
+    padding: 7px;
+    margin-bottom: 13px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: .2rem;
+    box-sizing: border-box;
     text-align: center;
-    color: #000000;
 }
 
-input {
-    border: none !important;
-    padding: 0 !important;
-    height: 30px;
-    width: 90%;
-    outline: none !important;
-    background: white !important;
-    border-radius: 2%;
-}
-input:focus, textarea:focus, select:focus{
-        outline: none !important;
-}
-
-.select select, .textarea
-{
-        border: 1px solid transparent;
-
-}
-input:-webkit-autofill {
-    -webkit-box-shadow: 0 0 0 1000px white inset !important;
-}
-.no-outline:focus {
-  outline: none;
+.s1 {
+    text-align: center;
 }
 
 
+.submitbtn {
+    margin-top: 5px;
+    width: 180px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    background-color: #A4A4A4;
+    display: inline-block;
+    border: 1px solid blueviolet;
+    border-radius: .2rem;
+    box-sizing: border-box;
+    text-align: center;
+    font-weight: bold;
+}
 

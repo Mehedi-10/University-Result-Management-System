@@ -1,0 +1,92 @@
+
+input {
+    border: none;
+    max-width: 100px;
+    text-align: center;
+}
+
+table, td, th {
+    border: 1px solid;
+    text-align: center;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+input:disabled {
+    background-color: #E8E9F3 !important;
+    color: black;
+}
+
+#hello {
+    background-color: #DADFF7 !important;
+    color: black;
+}
+
+input:focus, textarea:focus, select:focus {
+    outline: 2px solid blue !important;
+
+}
+
+@media screen and (max-width: 1030px) {
+    #hehe {
+        max-width: 100vw;
+        overflow-x: scroll;
+        overflow-y: scroll;
+    }
+}
+
+#btn {
+    margin-top: 5px;
+    width: 100px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    background-color: #A4A4A4;
+    display: inline-block;
+    border: 1px solid blueviolet;
+    border-radius: .2rem;
+    box-sizing: border-box;
+    text-align: center;
+    font-weight: bold;
+}
+
+@media screen and (min-width: 1030px) {
+    #hehe {
+        max-width: 100vw;
+        overflow-y: scroll;
+    }
+
+    .col {
+
+    }
+}
+
+@media screen and (max-width: 1030px) {
+    .col {
+        padding-left: 7px !important;
+ padding-right: 7px !important;
+
+    }
+}
+
+
+#onceclickable {
+    margin-top: 5px;
+    width: 100px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    background-color: #A4A4A4;
+    display: inline-block;
+    border: 1px solid blueviolet;
+    border-radius: .2rem;
+    box-sizing: border-box;
+    text-align: center;
+    font-weight: bold;
+}
+
+#onceclickable:disabled {
+    background-color: #B8B8FF !important;
+    font-size: 19px;
+
+}

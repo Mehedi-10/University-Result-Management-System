@@ -1,5 +1,9 @@
 {% extends 'headtail.html' %}
 {% block title %}{{ 'Login as Teacher' }}{% endblock %}
+{% block style_content %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/common.css' %}">
+{% endblock %}
 {% block content %}
     {% load static %}
     <h1 class="bigfont" style="margin-top: 13px; padding: 23px">
