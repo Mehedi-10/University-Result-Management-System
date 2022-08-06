@@ -7,5 +7,5 @@ urlpatterns = [
     path('teacherresult.html',selectresult),
     path('teacher_beforeFinal.html',fun),
     path('nothing', saving),
-
+    # path('',render_pdf_view,name='Test-view' ),
 ]

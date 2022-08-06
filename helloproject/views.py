@@ -1,3 +1,5 @@
+import datetime
+
 from django.shortcuts import render, HttpResponseRedirect
 from django.contrib import messages
 from .models.product import prod
@@ -5,6 +7,15 @@ from .models.signup_teacher import signup_teacher
 from django.contrib.auth.hashers import make_password, check_password
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
+import os
+from django.conf import settings
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
+from django.views.generic import ListView
+from django.contrib.staticfiles import finders
+
+
 
 def index(request):
     produ = prod.get_all_products()
@@ -57,10 +68,50 @@ def fun(request):
     if request.method=='POST':
         print(list(request.POST.items()))
     row=[]
-    for i in range(0,25):
+    for i in range(0,80):
         row.append(i)
     return render(request,'teacher_beforeFinal.html',{'rowu':row})
 @login_required(login_url="index.html")
 def saving(request):
     print(request.POST)
     return JsonResponse({'message':'hendeled'})
+
+
+# class GeneratePdf(APIView):
+#     def get(self,request):
+#         # st_ob=prod.get_all_products()
+#         parems={
+#             'today':datetime.date.today(),
+#             # 'ob':st_ob
+#         }
+#         file_name,status=save_pdf(parems)
+#         if not status:
+#             return Response({'stata':440})
+#         return Response({'status':200,'path':f'static{file_name}.pdf'})
+
+
+# from .models import table
+# class resultsheet(ListView):
+    # model = tablename
+    # tml_name=html_name
+
+def make_pdf(request,*args,**kwargs):
+    pass
+def render_pdf_view(request):
+    template_path = 'user_printer.html'
+    context = {'myvar': 'this is your template context'}
+    # Create a Django response object, and specify content_type as pdf
+    response = HttpResponse(content_type='application/pdf')
+    #if downlaod:
+    response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+    # find the template and render it.
+    template = get_template(template_path)
+    html = template.render(context)
+
+    # create a pdf
+    pisa_status = pisa.CreatePDF(
+       html, dest=response)
+    # if error then show some funny view
+    if pisa_status.err:
+       return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    return response

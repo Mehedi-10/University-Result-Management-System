@@ -49,15 +49,15 @@
             </table>
         </form>
     </div>
-    <div class="row" id="vanish" style="margin: 0px; padding-bottom: 11px;padding-top: 11px;">
+    <div class="row" style="margin: 0px; padding-bottom: 11px;padding-top: 11px;">
         <div class="col" style="padding-left: 100px ;text-align: left">
-            <input type="button" id="btn" value="export" onclick="window.print()">
+            <input type="button" id="btn" value="export">
         </div>
         <div class="col" style="padding-right: 100px ;text-align: right">
             <input type="button" id="onceclickable" value="submit">
         </div>
     </div>
-
+    </div>
     <p id="demo"></p>
 {% endblock %}
 {% block script %}
@@ -107,7 +107,6 @@
             document.getElementById('po').submit();
             button.disabled = true;
             button.value = "submitted";
-            const bu = document.getElementById('hehe')
             for (let i = 0; i < 900; i++) {
                 bu.getElementsByClassName('spreadsheets')[i].disabled = true;
             }
