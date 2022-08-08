@@ -45,7 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'helloproject',
-    'rest_framework',
+    # 'rest_framework',
 
 ]
 
@@ -57,6 +57,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'helloproject.middlewares.auth.is_allowed',
 ]
 
 ROOT_URLCONF = 'djangoProject.urls'

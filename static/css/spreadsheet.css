@@ -1,8 +1,9 @@
 
 input {
     border: none;
-    max-width: 100px;
+    max-width: 110px;
     text-align: center;
+    font-size: 15px;
 }
 
 table, td, th {
@@ -65,7 +66,7 @@ input:focus, textarea:focus, select:focus {
 @media screen and (max-width: 1030px) {
     .col {
         padding-left: 7px !important;
- padding-right: 7px !important;
+        padding-right: 7px !important;
 
     }
 }
@@ -86,7 +87,7 @@ input:focus, textarea:focus, select:focus {
 }
 
 #onceclickable:disabled {
-    background-color: #B8B8FF !important;
+    background-color: #C6CFFF !important;
     font-size: 19px;
 
 }
