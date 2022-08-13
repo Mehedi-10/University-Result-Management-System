@@ -1,0 +1,42 @@
+{% extends 'admin_base.html' %}
+{% block title %}{{ 'Add New Course' }}{% endblock %}
+{% block style_content %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+
+{% endblock %}
+{% block content %}
+    <body style=" height: 130vh;">
+    <div style="font-family: 'Inria Sans';height: max-content; width: 500px; margin: auto">
+
+        <form method="POST" action="" id="signup" style="width: 500px;" autocomplete="off">{% csrf_token %}
+            <h4 class="form-title" style="padding-top:3px;">Add New Course</h4>
+
+            <div class="form-floating mb-3">
+                <input class="form-control" placeholder="Enter New Course Name" name="fcoursename" required value="">
+                <label for="floatingTextarea">New Course Name</label>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" placeholder="enter course code" name="fcourseid" required
+                       value="">
+                <label for="floatingTextarea">Course Code</label>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" placeholder="enter course credit" name="fcoursecredit" value="">
+                <label for="floatingTextarea">Credit</label>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input type="text" class="form-control" placeholder="enter syllabus for " name="fsyllabus_year" value="">
+                <label for="floatingTextarea">Syllabus Year</label>
+            </div>
+            <button type="submit" class="btn btn-secondary btn-lg">Add New Course</button>
+        </form>
+    </div>
+
+
+    </body>
+
+{% endblock %}

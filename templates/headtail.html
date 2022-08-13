@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,16 +11,23 @@
     {% block style_content %} {% endblock %}
     {% if messages %}
         {% for message in messages %}
-            <p {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+            <p  id="hidein2sec" style="top: 0; z-index: 4;" {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
         {% endfor %}
     {% endif %}
 </head>
-<body style="background: #D6D6D6;">
+<body style="background: #D6D6D6;  font-family: 'Inria Sans';">
+
 {% block content %} {% endblock %}
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
         crossorigin="anonymous"></script>
 <script>
+    {% if messages %}
+        setTimeout(message, 3000);
+        function message() {
+            document.getElementById("hidein2sec").style.display = 'none';
+        }
+    {% endif %}
     function submit_form() {
         document.form_name_here.submit();
     }

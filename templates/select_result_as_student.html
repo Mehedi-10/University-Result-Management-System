@@ -1,0 +1,50 @@
+{% extends 'base3.html' %}
+{% block title %}{{ 'Manage result' }}{% endblock %}
+{% block style_content %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/teacherresult.css' %}">
+
+{% endblock %}
+{% block content %}
+    <div class="bg2">
+        <div style="text-align: center; margin: auto; padding: 21px; font-weight: bold;">Result Selection</div>
+        <div class="fornn">
+            <form style="text-align:center" method="POST">
+                {% csrf_token %}
+                <select class="selection" name="firstname">
+                    <option class="s1">Select Session</option>
+                    <option class="s1">2022-2023</option>
+                    <option class="s1">2021-2022</option>
+                    <option class="s1">2020-2021</option>
+                    <option class="s1">2019-2020</option>
+                </select>
+                <select class="selection" name="firstname">
+                    <option class="s1">Select Semester</option>
+                    <option class="s1">First</option>
+                    <option class="s1">Second</option>
+                    <option class="s1">Third</option>
+                    <option class="s1">Four</option>
+                    <option class="s1">Five</option>
+                    <option class="s1">Six</option>
+                    <option class="s1">Seven</option>
+                    <option class="s1">Eight</option>
+                </select>
+                <select class="selection" name="firstname">
+                    <option class="s1">Select Course</option>
+                    <option class="s1">Discreate Math</option>
+                    <option class="s1">Computer Fundamental</option>
+                    <option class="s1">Object Oriented Programming</option>
+                    <option class="s1">Java Technology</option>
+                    <option class="s1">Data Cummunication</option>
+                </select>
+                <select class="selection" name="firstname">
+                    <option class="s1">Select Result Type</option>
+                    <option class="s1">Before Final</option>
+                    <option class="s1">Final</option>
+                </select>
+
+                <button class="submitbtn">submit</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

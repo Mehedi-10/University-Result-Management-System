@@ -1,7 +1,8 @@
 from django.db import models
 
 
-class marks_1s(models.Model):
+class before_final_table(models.Model):
+    CourseidandTeacherid=models.CharField(max_length=1000,default="")
     Student_id=models.CharField(max_length=100,null=True,blank=True)
     A = models.CharField(max_length=100,null=True,blank=True)
     B = models.CharField(max_length=100,null=True,blank=True)

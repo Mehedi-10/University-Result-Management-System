@@ -4,6 +4,7 @@ class student(models.Model):
     full_name = models.CharField(max_length=100)
     sid = models.CharField(max_length=20)
     password = models.CharField(max_length=500)
-    def reg(self):
-        self.save()
+    s_session = models.CharField(max_length=50)
+
+
 

@@ -17,11 +17,9 @@
 }
 
 body {
-    font-family: 'Inria Sans';
     background: #D6D6D6;
     margin: 0;
 }
-
 
 .fornn {
     position: relative;
@@ -32,7 +30,6 @@ body {
     border-radius: .1rem;
     padding: 40px;
     margin: auto;
-
 }
 
 .selection {
@@ -44,11 +41,9 @@ body {
     border-radius: .2rem;
     box-sizing: border-box;
     text-align: center;
+    font-family: 'Inria Sans'
 }
 
-.s1 {
-    text-align: center;
-}
 
 
 .submitbtn {

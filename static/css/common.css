@@ -18,14 +18,14 @@
 
 .bigfont {
 
-    position: relative;
     font-family: 'Inria Sans';
     top: 10px;
-    font-style: normal;
     font-weight: 700;
     font-size: 32px;
     text-align: center;
     color: #000000;
+    z-index: 1;
+
 }
 
 input {
