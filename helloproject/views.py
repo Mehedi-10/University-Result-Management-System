@@ -130,20 +130,31 @@ def select_result_as_student(request):
 
 @is_allowed
 def before_final(request):
-    if request.method == 'POST':
-        print(list(request.POST.items()))
+    if request.method=='POST':
+        Ecoursid = request.session.get('courseid') + '**' + request.session.get('email')
+        if not before_final_table.objects.filter(CourseidandTeacherid=Ecoursid).filter(Student_id='~~THE_END~~').exists():
+            print('hi')
+            sv=before_final_table(
+                CourseidandTeacherid=Ecoursid,
+                Student_id='~~THE_END~~'
+            )
+            sv.save();
     table_data = before_final_table.objects.all().order_by('Student_id')
     contents = {}
-    contents[0] = table_data[len(table_data) - 1]
-    for i in range(0, len(table_data) - 1):
+    lst=1;
+    if table_data[len(table_data) - 1].Student_id=='~~THE_END~~':
+        lst=2
+    contents[0] = table_data[len(table_data) - lst]
+    for i in range(0, len(table_data) - lst):
         contents[i + 1] = table_data[i]
+    if lst==2:
+        contents[len(table_data)-1]=table_data[len(table_data)-1]
+    print(contents,lst)
     return render(request, 'teacher_beforeFinal.html', {'cons': contents})
-
 
 @is_allowed
 def saving(request):
     Ecoursid=request.session.get('courseid')+'**'+request.session.get('email')
-    print(Ecoursid)
     tabtmp1=request.POST
     tabtmp2=before_final_table.objects.filter(CourseidandTeacherid=Ecoursid)
     for i in range(0,len(tabtmp2)):

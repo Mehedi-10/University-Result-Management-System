@@ -1,4 +1,5 @@
 {% extends 'base3.html' %}
+{% load extra %}
 {% block title %}{{ 'Before Final result' }}{% endblock %}
 {% block style_content %}
     {% load static %}
@@ -27,12 +28,7 @@
             max-width: 100px;
             height: 30px;
             text-align: center;
-            font-size: 14px;
-        }
-        #po{
-            text-align: center !important;
-            align-items: center;
-            align-content: center;
+            font-size: 10pt;
         }
     </style>
 {% endblock %}
@@ -47,24 +43,27 @@
         Before Final
     </div>
     <hr>
+
+
     <div id="hehe" style="height: 67vh; width: max-content;display: block;margin: auto;">
         <form id="po" method="POST" action="">
             {% csrf_token %}
             <table id="tab">
-                <tr style="width:100%;">
-                    <td></td>
-                    <td id="hello">A</td>
-                    <td id="hello">B</td>
-                    <td id="hello">C</td>
-                    <td id="hello">D</td>
-                    <td id="hello">E</td>
-                    <td id="hello">F</td>
-                    <td id="hello">G</td>
-                    <td id="hello">H</td>
-                    <td id="hello">I</td>
-                    <td id="hello">J</td>
-                </tr>
-                {% for i,val in cons.items %}
+                {#                <tr style="width:100%;">#}
+                {#                    <td>&nbsp;&nbsp;</td>#}
+                {#                    <td id="hello">A</td>#}
+                {#                    <td id="hello">B</td>#}
+                {#                    <td id="hello">C</td>#}
+                {#                    <td id="hello">D</td>#}
+                {#                    <td id="hello">E</td>#}
+                {#                    <td id="hello">F</td>#}
+                {#                    <td id="hello">G</td>#}
+                {#                    <td id="hello">H</td>#}
+                {#                    <td id="hello">I</td>#}
+                {#                    <td id="hello">J</td>#}
+                {#                </tr>#}
+
+                {% for i,val in cons|dicfast %}
                     <tr>
                         <td id="hello">
                             {{ i }}
@@ -76,7 +75,9 @@
                                    value="{{ val.A }}"></td>
                         <td><input id="{{ i }}{{ 'C' }}" name="{{ i }}{{ 'C' }}" class="spreadsheets" type="text"
                                    value="{{ val.B }}"></td>
+
                         <td><input id="{{ i }}{{ 'D' }}" name="{{ i }}{{ 'D' }}" class="spreadsheets" type="text"
+
                                    value="{{ val.C }}"></td>
                         <td><input id="{{ i }}{{ 'E' }}" name="{{ i }}{{ 'E' }}" class="spreadsheets" type="text"
                                    value="{{ val.D }}"></td>
@@ -94,37 +95,48 @@
                     </tr>
                 {% endfor %}
             </table>
+
         </form>
     </div>
+
+
     <div class="row" id="vanish" style="margin: 0px; padding-bottom: 11px;padding-top: 11px;">
         <div class="col" style="padding-left: 100px ;text-align: left">
             <input type="button" id="btn" value="export" onclick="window.print()">
         </div>
+
         <div class="col" style="padding-right: 100px ;text-align: right">
             <input type="button" id="onceclickable" value="submit">
         </div>
     </div>
-
     <p id="demo"></p>
 {% endblock %}
 {% block script %}
     <script>
-
-
-        $('.spreadsheets').keydown(function (e) {
-            if (e.which === 13) {
-                var x = 1, y = $('.spreadsheets').index(this);
-                if (y % 10 === 9)
-                    x++;
-                var index = $('.spreadsheets').index(this) + x;
-                $('.spreadsheets').eq(index).focus();
-            }
-        });
+        var vx = -1;
+        if (document.getElementById('0A').v)
+            $('.spreadsheets').keydown(function (e) {
+                if (e.which === 13) {
+                    var x = 1, y = $('.spreadsheets').index(this);
+                    if (y % 10 === 9)
+                        x++;
+                    var index = $('.spreadsheets').index(this) + x;
+                    $('.spreadsheets').eq(index).focus();
+                }
+            });
 
 
         const button = document.querySelector('#onceclickable');
 
+        {% if cons|is_blocked %}
+            button.disabled = true;
+            button.value = "submitted";
+            const bu = document.getElementById('hehe')
+            for (let i = 0; i < 900; i++) {
+                bu.getElementsByClassName('spreadsheets')[i].readOnly = true;
 
+            }
+        {% endif %}
         for (let i = 0; i < 900; i++) {
 
             for (let j = 65; j < 75; j++) {
@@ -145,8 +157,6 @@
                             data: $("#po").serialize(),
                         });
                         var ss = inp.id, sx = inp.value;
-                        {#console.log(ss);#}
-                        {#console.log(sx.slice(-1))#}
                         var ll = sx.length;
                         if (ss[0] !== '0' && (sx[ll - 1] < '0' || sx[ll - 1] > '9')) {
                             alert('Oops sorry!!! Please Insert Only Numbers at cell ' + ss);
@@ -161,17 +171,16 @@
             }
         }
 
-
         const disableButton = () => {
             document.getElementById('po').submit();
             button.disabled = true;
             button.value = "submitted";
             const bu = document.getElementById('hehe')
             for (let i = 0; i < 900; i++) {
-                bu.getElementsByClassName('spreadsheets')[i].disabled = true;
+                bu.getElementsByClassName('spreadsheets')[i].readOnly = true;
+
             }
         };
-        {#document.getElementById('0A').disabled = true;#}
         button.addEventListener('click', disableButton);
 
     </script>
