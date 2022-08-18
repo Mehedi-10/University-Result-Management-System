@@ -1,9 +1,5 @@
 
-#hello {
-    background-color: #DADFF7 !important;
-    color: black;
-    padding: 0 !important;
-}
+
 
 #tab input:focus {
     outline: 2px solid blue !important;
@@ -16,11 +12,6 @@
         overflow-y: scroll;
     }
 
-    /*.col {*/
-    /*    padding-left: 7px !important;*/
-    /*    padding-right: 7px !important;*/
-
-    /*}*/
 }
 
 #btn {

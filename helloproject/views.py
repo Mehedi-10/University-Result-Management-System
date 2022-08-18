@@ -13,12 +13,14 @@ from .models.enroll import enroll
 from .models.teaches import teaches
 from .models.teacher import teacher
 from .models.student import student
-def restall():
+
+def resetall():
     courses.objects.all().delete()
     enroll.objects.all().delete()
     teaches.objects.all().delete()
     student.objects.all().delete()
     teacher.objects.all().delete()
+
 def index(request):
     return render(request, 'index.html')
 
@@ -46,7 +48,7 @@ def signin_S(request):
         messages.error(request, "The ID that you've entered doesn't match any account.")
         return HttpResponseRedirect('student_login.html')
     if check_password(request.POST.get('password'), stud.get().password) == True:
-        request.session['sid'] = stud.get().sid
+        request.session['email'] = stud.get().sid
         return HttpResponseRedirect('select_result_as_student.html')
     else:
         messages.error(request, "The password you entered is incorrect. Did you forget your password?")
@@ -59,11 +61,11 @@ def signup(request):
         return render(request, 'register_users.html')
     if request.POST.get('password1') != request.POST.get('password2'):
         messages.error(request, 'Password doesn\'t matches.')
-        return HttpResponseRedirect('register_user.html')
+        return HttpResponseRedirect('register_users.html')
     if request.POST.get('inlineRadioOptions') == 'Teacher':
         if teacher.objects.filter(email=request.POST.get('email')).exists():
             messages.error(request, "This email address is already being used.")
-            return HttpResponseRedirect('register_user.html')
+            return HttpResponseRedirect('register_users.html')
         newteacher = teacher(
             full_name=request.POST.get('name'),
             email=request.POST.get('email'),
@@ -73,7 +75,7 @@ def signup(request):
     elif request.POST.get('inlineRadioOptions') == 'Student':
         if student.objects.filter(sid=request.POST.get('id')).exists():
             messages.error(request, "This ID is already being used.")
-            return HttpResponseRedirect('register_user.html')
+            return HttpResponseRedirect('register_users.html')
         ss = request.POST.get('id')
         num = int(ss[1:3])
         s1 = 2000 + num
@@ -86,7 +88,7 @@ def signup(request):
         )
         newstudent.save()
     messages.success(request, 'Registration Successful')
-    return HttpResponseRedirect('register_user.html')
+    return HttpResponseRedirect('register_users.html')
 
 @is_allowed
 def select_result_as_teacher(request):
@@ -112,36 +114,93 @@ def select_result_as_teacher(request):
         return render(request, 'select_result_as_teacher.html', {'all': all})
     else:
         courseid = request.POST.get('SCourse') + request.POST.get('Ssession') + request.POST.get('sSemester')
-        if teaches.objects.filter(course_id=courseid).exists() == 0:
+        if teaches.objects.filter(course_id=courseid).exists() == 0 or request.POST.get('SResult_type')=='Exam Type':
             messages.warning(request, 'No Such Course Exits !!!')
             return HttpResponseRedirect('select_result_as_teacher.html')
         elif request.POST.get('SResult_type') == 'Before Final':
-            request.session['courseid']=courseid
+            mark=40
+            cc=request.POST.get('SCourse')
+            start=cc.find('(')
+            cc=cc[start+1:cc.find(')')]
+            if courses.objects.filter(course_id=cc).values_list()[0][4]==2:
+                mark=20
+            dic={
+                'courseid':courseid,
+                'course':request.POST.get('SCourse')[0:start],
+                'session':request.POST.get('Ssession'),
+                'semester':request.POST.get('sSemester'),
+                'course_code':cc,
+                'marks':mark
+            }
+            request.session['all_info']=dic
             return HttpResponseRedirect('teacher_beforeFinal.html')
+
 
 
 @is_allowed_student
 def select_result_as_student(request):
     if request.method == 'GET':
-        return render(request, 'select_result_as_student.html')
+        eml = request.session.get('email')
+        course = []
+        session = []
+        semester = []
+        for i in enroll.objects.filter(sid=eml).values():
+            courseid = i['course_id']
+            breakpoint = courseid.find(')') + 1
+            course.append(courseid[0:breakpoint])
+            session.append(courseid[breakpoint:breakpoint + 9])
+            semester.append(courseid[breakpoint + 9:])
+        course = list(set(course))
+        session = list(set(session))
+        semester = list(set(semester))
+        all = {
+            'course': course,
+            'session': session,
+            'semester': semester
+        }
+        return render(request, 'select_result_as_student.html', {'all': all})
     else:
-        return HttpResponseRedirect('/teacher_beforeFinal.html')
+        courseid = request.POST.get('SCourse') + request.POST.get('Ssession') + request.POST.get('sSemester')
+        if not teaches.objects.filter(course_id=courseid).exists():
+            messages.warning(request,'Invalid Selection');
+            return HttpResponseRedirect('select_result_as_student.html')
+        tch=teaches.objects.filter(course_id=courseid).values('T_email')
+        t_email=tch.last()['T_email']
+        Ecourse_id=courseid+'**'+t_email
+        obs=before_final_table.objects.filter(CourseidandTeacherid=Ecourse_id).filter(Student_id=request.session.get('email'))
+        obs1=before_final_table.objects.filter(CourseidandTeacherid=Ecourse_id).filter(Student_id='Exam Roll')
+        dic={}
+
+        for i in range(3,12):
+            print(obs1.values_list()[0][i])
+            dic[obs1.values_list()[0][i]]=obs.values_list()[0][i]
+        dic.__delitem__('None')
+        per={
+            'id':request.session.get('email'),
+            'name':student.objects.filter(sid=request.session.get('email')).values_list()[0][1],
+            'semester':request.POST.get('sSemester'),
+            'course':request.POST.get('SCourse'),
+            'session':request.POST.get('Ssession')
+        }
+        request.session['all']={'per':per,'dic':dic}
+        return HttpResponseRedirect('show_before_final.html')
 
 
 @is_allowed
 def before_final(request):
+    Ecoursid = request.session['all_info']['courseid'] + '**' + request.session.get('email')
     if request.method=='POST':
-        Ecoursid = request.session.get('courseid') + '**' + request.session.get('email')
         if not before_final_table.objects.filter(CourseidandTeacherid=Ecoursid).filter(Student_id='~~THE_END~~').exists():
-            print('hi')
             sv=before_final_table(
                 CourseidandTeacherid=Ecoursid,
                 Student_id='~~THE_END~~'
             )
-            sv.save();
-    table_data = before_final_table.objects.all().order_by('Student_id')
+            sv.save()
+    table_data = before_final_table.objects.filter(CourseidandTeacherid=Ecoursid).order_by('Student_id')
+    if not table_data.exists():
+        return HttpResponseRedirect('select_result_as_teacher.html')
     contents = {}
-    lst=1;
+    lst=1
     if table_data[len(table_data) - 1].Student_id=='~~THE_END~~':
         lst=2
     contents[0] = table_data[len(table_data) - lst]
@@ -149,26 +208,32 @@ def before_final(request):
         contents[i + 1] = table_data[i]
     if lst==2:
         contents[len(table_data)-1]=table_data[len(table_data)-1]
-    print(contents,lst)
-    return render(request, 'teacher_beforeFinal.html', {'cons': contents})
-
+    all={
+        'constt':contents,
+        'head':request.session['all_info']
+    }
+    return render(request, 'teacher_beforeFinal.html', {'cons': all})
+from django.views.decorators.csrf import csrf_protect
 @is_allowed
+@csrf_protect
 def saving(request):
-    Ecoursid=request.session.get('courseid')+'**'+request.session.get('email')
+    Ecoursid=request.session['all_info']['courseid']+'**'+request.session.get('email')
     tabtmp1=request.POST
-    tabtmp2=before_final_table.objects.filter(CourseidandTeacherid=Ecoursid)
-    for i in range(0,len(tabtmp2)):
-        tabtmp2[i].Student_id=tabtmp1[str(i)+'A']
-        tabtmp2[i].A=tabtmp1[str(i)+'B']
-        tabtmp2[i].B=tabtmp1[str(i)+'C']
-        tabtmp2[i].C=tabtmp1[str(i)+'D']
-        tabtmp2[i].D=tabtmp1[str(i)+'E']
-        tabtmp2[i].E=tabtmp1[str(i)+'F']
-        tabtmp2[i].F=tabtmp1[str(i)+'G']
-        tabtmp2[i].G=tabtmp1[str(i)+'H']
-        tabtmp2[i].H=tabtmp1[str(i)+'I']
-        tabtmp2[i].I=tabtmp1[str(i)+'J']
-        tabtmp2[i].save()
+    tabtmp1=tabtmp1.dict()
+    tabtmp1.popitem()
+    tabtmp1=list(tabtmp1.values())
+    tabtmp2=before_final_table.objects.filter(CourseidandTeacherid=Ecoursid).filter(Student_id=tabtmp1[0]);
+    tabtmp2[0].Student_id = tabtmp1[0]
+    tabtmp2[0].A = tabtmp1[1]
+    tabtmp2[0].B = tabtmp1[2]
+    tabtmp2[0].C = tabtmp1[3]
+    tabtmp2[0].D = tabtmp1[4]
+    tabtmp2[0].E = tabtmp1[5]
+    tabtmp2[0].F = tabtmp1[6]
+    tabtmp2[0].G = tabtmp1[7]
+    tabtmp2[0].H = tabtmp1[8]
+    tabtmp2[0].I = tabtmp1[9]
+    tabtmp2[0].save()
     return JsonResponse({'message': 'hendeled'})
 
 def course_enroll(request):
@@ -302,3 +367,20 @@ def excelup(request):
             )
             st.save()
     return render(request, 'excel.html')
+
+def admin_home(request):
+    all={
+        'teacher':teacher.objects.all().values()
+    }
+    # print(all)
+    return render(request,'admin_home.html',{'all':all});
+def who_are_u(request):
+    return render(request,'who_are_you.html')
+@is_allowed_student
+def show_before_final(request):
+    if  request.session.get('all'):
+        dic=request.session['all']
+        return render(request, 'show_before_final.html', {'all': dic})
+    else:
+        return HttpResponseRedirect('select_result_as_student.html')
+

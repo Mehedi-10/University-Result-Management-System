@@ -30,42 +30,183 @@
             text-align: center;
             font-size: 10pt;
         }
+
+        #tab .hello {
+            background-color: #DADFF7 !important;
+            color: black;
+            padding: 0 !important;
+            height: 20px !important;
+        }
+
+        {##}
+        {##tab .D{#}
+        {#    display: none;#}
+        {# } #}
+
     </style>
 {% endblock %}
 {% block icone %}{% endblock %}
 {% block content %}
     <div style="text-align: center ;padding-top: 17px; font-size: 19px">
-        Comilla University </br>
-        Department of Computer Science & Engineering</br>
-        Class: 3rd year 1st Semester final 2018 &nbsp; Session: 2018-19</br>
-        Course Title: Theory of Computition</br>
-        Course Code: CSE-3103 &nbsp; Full Marks: 40</br>
+        Comilla University <br>
+        Department of Computer Science & Engineering<br>
+        Semester: {{ cons.head.semester }} &nbsp;&nbsp; Session: 2018-19<br>
+        Course Name: {{ cons.head.course }} <br>
+        Course Code: {{ cons.head.course_code }} &nbsp;&nbsp;Full Marks: {{ cons.head.marks }}
+        <br>
         Before Final
     </div>
     <hr>
 
 
+
     <div id="hehe" style="height: 67vh; width: max-content;display: block;margin: auto;">
+
         <form id="po" method="POST" action="">
             {% csrf_token %}
             <table id="tab">
-                {#                <tr style="width:100%;">#}
-                {#                    <td>&nbsp;&nbsp;</td>#}
-                {#                    <td id="hello">A</td>#}
-                {#                    <td id="hello">B</td>#}
-                {#                    <td id="hello">C</td>#}
-                {#                    <td id="hello">D</td>#}
-                {#                    <td id="hello">E</td>#}
-                {#                    <td id="hello">F</td>#}
-                {#                    <td id="hello">G</td>#}
-                {#                    <td id="hello">H</td>#}
-                {#                    <td id="hello">I</td>#}
-                {#                    <td id="hello">J</td>#}
-                {#                </tr>#}
+                <tr style="width:100%;">
+                    <td style="min-width: 27px"></td>
+                    <td class="hello A">A
+                    </td>
+                    <td id="B" oncontextmenu="myadd1(event)" class="hello B">B
 
-                {% for i,val in cons|dicfast %}
+                        <div id="floatB" class="list-group"
+                             style="display: none; border: 1px solid #2E1760; border-radius: 0;
+">
+                            <button type="button" onclick="addcol()"
+                                    class="btn btn-sm list-group-item list-group-item-action list-group-item-dark"
+                                    style="border-radius: 0; border-bottom:1px solid black">
+                                Insert
+                            </button>
+                            <button type="button" onclick="delcol()"
+                                    class="btn btn-sm list-group-item list-group-item-action list-group-item-dark"
+                                    style="border-radius: 0; border-bottom:0">
+                                Delete
+                            </button>
+                        </div>
+                    </td>
+                    <td id="C" oncontextmenu="myadd1(event)" class="hello C">
+                        C
+                        <div id="floatC" class="list-group"
+                             style="display: none; border: 1px solid #2E1760; border-radius: 0;
+">
+                            <button type="button" onclick="addcol()"
+                                    class="btn btn-sm list-group-item list-group-item-action list-group-item-dark"
+                                    style="border-radius: 0; border-bottom:1px solid black">
+                                Insert
+                            </button>
+                            <button type="button" onclick="delcol()"
+                                    class="btn btn-sm list-group-item list-group-item-action list-group-item-dark"
+                                    style="border-radius: 0; border-bottom:0">
+                                Delete
+                            </button>
+                        </div>
+                    </td>
+                    <td id="D" oncontextmenu="myadd1(event)" class="hello D">D
+                        <div id="floatD" class="list-group"
+                             style="display: none; border: 1px solid #2E1760; border-radius: 0;
+">
+                            <button type="button" onclick="addcol()"
+                                    class="btn btn-sm list-group-item list-group-item-action list-group-item-dark"
+                                    style="border-radius: 0; border-bottom:1px solid black">
+                                Insert
+                            </button>
+                            <button type="button" onclick="delcol()"
+                                    class="btn btn-sm list-group-item list-group-item-action list-group-item-dark"
+                                    style="border-radius: 0; border-bottom:0">
+                                Delete
+                            </button>
+                        </div>
+                    </td>
+                    <td id="E" oncontextmenu="myadd1(event)" class="hello E">E
+                        <div id="floatE" class="list-group"
+                             style="display: none; border: 1px solid #2E1760; border-radius: 0;
+">
+                            <button type="button" onclick="addcol()"
+                                    class="btn btn-sm list-group-item list-group-item-action list-group-item-dark"
+                                    style="border-radius: 0; border-bottom:1px solid black">
+                                Insert
+                            </button>
+                            <button type="button" onclick="delcol()"
+                                    class="btn btn-sm list-group-item list-group-item-action list-group-item-dark"
+                                    style="border-radius: 0; border-bottom:0">
+                                Delete
+                            </button>
+                        </div>
+                    </td>
+                    <td id="F" oncontextmenu="myadd1(event)" class="hello F">F
+                        <div id="floatF" class="list-group"
+                             style="display: none; border: 1px solid #2E1760; border-radius: 0;
+">
+                            <button type="button" onclick="addcol()"
+                                    class="btn btn-sm list-group-item list-group-item-action list-group-item-dark"
+                                    style="border-radius: 0; border-bottom:1px solid black">
+                                Insert
+                            </button>
+                            <button type="button" onclick="delcol()"
+                                    class="btn btn-sm list-group-item list-group-item-action list-group-item-dark"
+                                    style="border-radius: 0; border-bottom:0">
+                                Delete
+                            </button>
+                        </div>
+                    </td>
+                    <td id="G" oncontextmenu="myadd1(event)" class="hello G">G
+                        <div id="floatG" class="list-group"
+                             style="display: none; border: 1px solid #2E1760; border-radius: 0;
+">
+                            <button type="button" onclick="addcol()"
+                                    class="btn btn-sm list-group-item list-group-item-action list-group-item-dark"
+                                    style="border-radius: 0; border-bottom:1px solid black">
+                                Insert
+                            </button>
+                            <button type="button" onclick="delcol()"
+                                    class="btn btn-sm list-group-item list-group-item-action list-group-item-dark"
+                                    style="border-radius: 0; border-bottom:0">
+                                Delete
+                            </button>
+                        </div>
+                    </td>
+                    <td id="H" oncontextmenu="myadd1(event)" class="hello H">H
+                        <div id="floatH" class="list-group"
+                             style="display: none; border: 1px solid #2E1760; border-radius: 0;
+">
+                            <button type="button" onclick="addcol()"
+                                    class="btn btn-sm list-group-item list-group-item-action list-group-item-dark"
+                                    style="border-radius: 0; border-bottom:1px solid black">
+                                Insert
+                            </button>
+                            <button type="button" onclick="delcol()"
+                                    class="btn btn-sm list-group-item list-group-item-action list-group-item-dark"
+                                    style="border-radius: 0; border-bottom:0">
+                                Delete
+                            </button>
+                        </div>
+                    </td>
+                    <td id="I" oncontextmenu="myadd1(event)" class="hello I">I
+                        <div id="floatI" class="list-group"
+                             style="display: none; border: 1px solid #2E1760; border-radius: 0;
+">
+                            <button type="button" onclick="addcol()"
+                                    class="btn btn-sm list-group-item list-group-item-action list-group-item-dark"
+                                    style="border-radius: 0; border-bottom:1px solid black">
+                                Insert
+                            </button>
+                            <button type="button" onclick="delcol()"
+                                    class="btn btn-sm list-group-item list-group-item-action list-group-item-dark"
+                                    style="border-radius: 0; border-bottom:0">
+                                Delete
+                            </button>
+                        </div>
+                    </td>
+                    <td class="hello J">J
+
+                    </td>
+                </tr>
+
+                {% for i,val in cons.constt|dicfast %}
                     <tr>
-                        <td id="hello">
+                        <td class="hello">
                             {{ i }}
                         </td>
                         <td>
@@ -75,60 +216,61 @@
                                    value="{{ val.A }}"></td>
                         <td><input id="{{ i }}{{ 'C' }}" name="{{ i }}{{ 'C' }}" class="spreadsheets" type="text"
                                    value="{{ val.B }}"></td>
-
-                        <td><input id="{{ i }}{{ 'D' }}" name="{{ i }}{{ 'D' }}" class="spreadsheets" type="text"
-
-                                   value="{{ val.C }}"></td>
-                        <td><input id="{{ i }}{{ 'E' }}" name="{{ i }}{{ 'E' }}" class="spreadsheets" type="text"
-                                   value="{{ val.D }}"></td>
-                        <td><input id="{{ i }}{{ 'F' }}" name="{{ i }}{{ 'F' }}" class="spreadsheets" type="text"
-                                   value="{{ val.E }}"></td>
-                        <td><input id="{{ i }}{{ 'G' }}" name="{{ i }}{{ 'G' }}" class="spreadsheets" type="text"
-                                   value="{{ val.F }}"></td>
-                        <td><input id="{{ i }}{{ 'H' }}" name="{{ i }}{{ 'H' }}" class="spreadsheets" type="text"
-                                   value="{{ val.G }}"></td>
-                        <td><input id="{{ i }}{{ 'I' }}" name="{{ i }}{{ 'I' }}" class="spreadsheets" type="text"
-                                   value="{{ val.H }}"></td>
-                        <td><input id="{{ i }}{{ 'J' }}" name="{{ i }}{{ 'J' }}" class="spreadsheets" type="text"
-                                   value="{{ val.I }}"></td>
-
+                        <td class="D"><input id="{{ i }}{{ 'D' }}" name="{{ i }}{{ 'D' }}" class="spreadsheets"
+                                             type="text"
+                                             value="{{ val.C }}"></td>
+                        <td class="E"><input id="{{ i }}{{ 'E' }}" name="{{ i }}{{ 'E' }}" class="spreadsheets"
+                                             type="text"
+                                             value="{{ val.D }}"></td>
+                        <td class="F"><input id="{{ i }}{{ 'F' }}" name="{{ i }}{{ 'F' }}" class="spreadsheets"
+                                             type="text"
+                                             value="{{ val.E }}"></td>
+                        <td class="G"><input id="{{ i }}{{ 'G' }}" name="{{ i }}{{ 'G' }}" class="spreadsheets"
+                                             type="text"
+                                             value="{{ val.F }}"></td>
+                        <td class="H"><input id="{{ i }}{{ 'H' }}" name="{{ i }}{{ 'H' }}" class="spreadsheets"
+                                             type="text"
+                                             value="{{ val.G }}"></td>
+                        <td class="I"><input id="{{ i }}{{ 'I' }}" name="{{ i }}{{ 'I' }}" class="spreadsheets"
+                                             type="text"
+                                             value="{{ val.H }}"></td>
+                        <td class="J"><input id="{{ i }}{{ 'J' }}" name="{{ i }}{{ 'J' }}" class="spreadsheets"
+                                             type="text"
+                                             value="{{ val.I }}"></td>
                     </tr>
+
                 {% endfor %}
             </table>
-
         </form>
     </div>
-
 
     <div class="row" id="vanish" style="margin: 0px; padding-bottom: 11px;padding-top: 11px;">
         <div class="col" style="padding-left: 100px ;text-align: left">
             <input type="button" id="btn" value="export" onclick="window.print()">
         </div>
-
         <div class="col" style="padding-right: 100px ;text-align: right">
             <input type="button" id="onceclickable" value="submit">
         </div>
     </div>
-    <p id="demo"></p>
+
 {% endblock %}
 {% block script %}
     <script>
-        var vx = -1;
-        if (document.getElementById('0A').v)
-            $('.spreadsheets').keydown(function (e) {
-                if (e.which === 13) {
-                    var x = 1, y = $('.spreadsheets').index(this);
-                    if (y % 10 === 9)
-                        x++;
-                    var index = $('.spreadsheets').index(this) + x;
-                    $('.spreadsheets').eq(index).focus();
-                }
-            });
+        var colmx = 74;
+        $('.spreadsheets').keydown(function (e) {
+            if (e.which === 13) {
+                var x = 1, y = $('.spreadsheets').index(this);
+                if (y % 10 === 9)
+                    x++;
+                var index = $('.spreadsheets').index(this) + x;
+                $('.spreadsheets').eq(index).focus();
+            }
+        });
 
 
         const button = document.querySelector('#onceclickable');
 
-        {% if cons|is_blocked %}
+        {% if cons.constt|is_blocked %}
             button.disabled = true;
             button.value = "submitted";
             const bu = document.getElementById('hehe')
@@ -149,12 +291,27 @@
                         inp.value = '';
                     }
                     var url = "nothing"; // the script where you handle the form input.
-
                     function myFunction() {
+
+                        var aaacellvalue = {};
+                        for (let k = 65; k < 75; k++) {
+                            try {
+                                cell = inp.id;
+                                cellid = cell.slice(0, -1) + String.fromCharCode(k);
+                                aaacellvalue[cellid] = document.getElementById(cellid).value;
+                            } catch (e) {
+                                break;
+                            }
+                        }
+
                         $.ajax({
                             type: "POST",
                             url: url,
-                            data: $("#po").serialize(),
+                            data:
+                                {
+                                    aaacellvalue,
+                                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                                }
                         });
                         var ss = inp.id, sx = inp.value;
                         var ll = sx.length;
@@ -183,5 +340,125 @@
         };
         button.addEventListener('click', disableButton);
 
+
+        window.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+        }, false);
+
+        window.addEventListener('click', function (e) {
+            console.log('hello');
+            e.preventDefault();
+        }, false);
+
+        var operationid, curcolnum;
+
+        function notempty() {
+            curcolnum = colmx;
+            while (curcolnum > 65) {
+                var tmp = '0' + String.fromCharCode(curcolnum);
+                var hi = document.getElementById(tmp);
+                if (hi.value !== 'None' && hi.value !== '')
+                    break;
+                curcolnum--;
+            }
+        }
+
+        window.onload = function () {
+            notempty();
+            for (let i = curcolnum + 1; i < colmx + 1; i++) {
+                var hid = '.';
+                hid += String.fromCharCode(i);
+                var willhide = document.querySelectorAll(hid);
+                for (let j = 0; j < 90; j++) {
+                    try {
+                        willhide[j].style.display = "none";
+                    } catch (e) {
+
+                    }
+                }
+            }
+        }
+
+
+        function addcol() {
+            notempty();
+            var hiden = '.' + String.fromCharCode(curcolnum + 1);
+            var show = document.querySelectorAll(hiden);
+            for (let i = 0; i < 90; i++) {
+                try {
+                    show[i].style.display = 'table-cell';
+                } catch (e) {
+                }
+            }
+            console.log(curcolnum + 1);
+            console.log(operationid);
+            var lim = operationid.charCodeAt(0);
+            for (let i = curcolnum + 1; i > lim; i--) {
+                var dest = String.fromCharCode(i);
+                var sourc = String.fromCharCode(i - 1);
+                for (let j = 0; j < 90; j++) {
+                    try {
+                        console.log(j.toString() + dest);
+                        document.getElementById(j.toString() + dest).value = document.getElementById(j.toString() + sourc).value;
+                        if (sourc === operationid) {
+                            document.getElementById(j.toString() + sourc).value = '';
+                        }
+                    } catch (e) {
+
+                    }
+                }
+            }
+        }
+
+        function delcol() {
+            notempty();
+            var lim = operationid.charCodeAt(0);
+
+            for (let i = lim; i < curcolnum; i++) {
+                var dest = String.fromCharCode(i);
+                var sourc = String.fromCharCode(i + 1);
+                for (let j = 0; j < 90; j++) {
+                    try {
+                        console.log(j.toString() + dest);
+                        document.getElementById(j.toString() + dest).value = document.getElementById(j.toString() + sourc).value;
+                        if (sourc.charCodeAt(0) === curcolnum) {
+                            document.getElementById(j.toString() + sourc).value = '';
+                        }
+                    } catch (e) {
+
+                    }
+                }
+                var hiden = '.' + String.fromCharCode(curcolnum);
+                var hidenow = document.querySelectorAll(hiden);
+                for (let i = 0; i < 90; i++) {
+                    try {
+                        hidenow[i].style.display = 'none';
+                    } catch (e) {
+                    }
+                }
+            }
+        }
+
+
+        function myadd1(event) {
+            var ch = event.target.id;
+            operationid = ch;
+            var idis = "float" + ch;
+            addid = ch.charCodeAt(0);
+            const adddel = document.getElementById(idis);
+            adddel.style.display = 'block';
+            adddel.style.position = 'absolute';
+            for (let i = 66; i < 75; i++) {
+                if (String.fromCharCode(i) !== ch) {
+                    var hideid = "float" + String.fromCharCode(i);
+                    try {
+                        document.getElementById(hideid).style.display = 'none';
+                    } catch (e) {
+
+                    }
+                }
+            }
+
+        }
     </script>
 {% endblock %}

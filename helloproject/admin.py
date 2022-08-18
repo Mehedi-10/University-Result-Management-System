@@ -5,6 +5,7 @@ from .models.beforefinalbatch13 import before_final_table
 from .models.courses import courses
 from .models.enroll import enroll
 from .models.teaches import teaches
+from .models.tablelength import table
 
 # Register your models here.
 admin.site.register(teacher)
@@ -13,4 +14,5 @@ admin.site.register(student)
 admin.site.register(courses)
 admin.site.register(enroll)
 admin.site.register(teaches)
+admin.site.register(table)
 
