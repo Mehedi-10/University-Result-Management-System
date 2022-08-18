@@ -2,12 +2,14 @@ import datetime
 import os
 from django.shortcuts import render, HttpResponseRedirect
 from django.contrib import messages
+from django.utils.safestring import mark_safe
 
 from .models.beforefinalbatch13 import before_final_table
 import pandas as pd
 from django.contrib.auth.hashers import make_password, check_password
 from django.http import JsonResponse
 from helloproject.middlewares.auth import is_allowed, is_allowed_student
+
 from .models.courses import courses
 from .models.enroll import enroll
 from .models.teaches import teaches
@@ -162,17 +164,20 @@ def select_result_as_student(request):
     else:
         courseid = request.POST.get('SCourse') + request.POST.get('Ssession') + request.POST.get('sSemester')
         if not teaches.objects.filter(course_id=courseid).exists():
-            messages.warning(request,'Invalid Selection');
+            messages.warning(request,'Invalid Selection')
             return HttpResponseRedirect('select_result_as_student.html')
         tch=teaches.objects.filter(course_id=courseid).values('T_email')
         t_email=tch.last()['T_email']
         Ecourse_id=courseid+'**'+t_email
         obs=before_final_table.objects.filter(CourseidandTeacherid=Ecourse_id).filter(Student_id=request.session.get('email'))
         obs1=before_final_table.objects.filter(CourseidandTeacherid=Ecourse_id).filter(Student_id='Exam Roll')
+        if not before_final_table.objects.filter(CourseidandTeacherid=Ecourse_id).filter(Student_id="~~THE_END~~").exists():
+            messages.info(request, mark_safe('Keep Clam <br/> and hope that <br/> exam result will be good'))
+            return HttpResponseRedirect('select_result_as_student.html')
+
         dic={}
 
         for i in range(3,12):
-            print(obs1.values_list()[0][i])
             dic[obs1.values_list()[0][i]]=obs.values_list()[0][i]
         dic.__delitem__('None')
         per={
@@ -220,20 +225,22 @@ def saving(request):
     Ecoursid=request.session['all_info']['courseid']+'**'+request.session.get('email')
     tabtmp1=request.POST
     tabtmp1=tabtmp1.dict()
+    print(tabtmp1)
     tabtmp1.popitem()
     tabtmp1=list(tabtmp1.values())
-    tabtmp2=before_final_table.objects.filter(CourseidandTeacherid=Ecoursid).filter(Student_id=tabtmp1[0]);
-    tabtmp2[0].Student_id = tabtmp1[0]
-    tabtmp2[0].A = tabtmp1[1]
-    tabtmp2[0].B = tabtmp1[2]
-    tabtmp2[0].C = tabtmp1[3]
-    tabtmp2[0].D = tabtmp1[4]
-    tabtmp2[0].E = tabtmp1[5]
-    tabtmp2[0].F = tabtmp1[6]
-    tabtmp2[0].G = tabtmp1[7]
-    tabtmp2[0].H = tabtmp1[8]
-    tabtmp2[0].I = tabtmp1[9]
-    tabtmp2[0].save()
+    tabtmp2=before_final_table.objects.filter(CourseidandTeacherid=Ecoursid).filter(Student_id=tabtmp1[0])
+    updt=before_final_table.objects.get(id=tabtmp2[0].id)
+    updt.Student_id = tabtmp1[0]
+    updt.A = tabtmp1[1]
+    updt.B = tabtmp1[2]
+    updt.C = tabtmp1[3]
+    updt.D = tabtmp1[4]
+    updt.E = tabtmp1[5]
+    updt.F = tabtmp1[6]
+    updt.G = tabtmp1[7]
+    updt.H = tabtmp1[8]
+    updt.I = tabtmp1[9]
+    updt.save()
     return JsonResponse({'message': 'hendeled'})
 
 def course_enroll(request):

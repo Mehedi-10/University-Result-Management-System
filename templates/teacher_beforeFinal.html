@@ -38,11 +38,6 @@
             height: 20px !important;
         }
 
-        {##}
-        {##tab .D{#}
-        {#    display: none;#}
-        {# } #}
-
     </style>
 {% endblock %}
 {% block icone %}{% endblock %}
@@ -214,8 +209,9 @@
                                    readonly value="{{ val.Student_id }}"></td>
                         <td><input id="{{ i }}{{ 'B' }}" name="{{ i }}{{ 'B' }}" class="spreadsheets" type="text"
                                    value="{{ val.A }}"></td>
-                        <td><input id="{{ i }}{{ 'C' }}" name="{{ i }}{{ 'C' }}" class="spreadsheets" type="text"
-                                   value="{{ val.B }}"></td>
+                        <td class="C"><input id="{{ i }}{{ 'C' }}" name="{{ i }}{{ 'C' }}" class="spreadsheets"
+                                             type="text"
+                                             value="{{ val.B }}"></td>
                         <td class="D"><input id="{{ i }}{{ 'D' }}" name="{{ i }}{{ 'D' }}" class="spreadsheets"
                                              type="text"
                                              value="{{ val.C }}"></td>
@@ -256,6 +252,7 @@
 {% endblock %}
 {% block script %}
     <script>
+        const url = "nothing";
         var colmx = 74;
         $('.spreadsheets').keydown(function (e) {
             if (e.which === 13) {
@@ -279,8 +276,19 @@
 
             }
         {% endif %}
-        for (let i = 0; i < 900; i++) {
 
+        function countString(str, letter) {
+            let count = 0;
+
+            for (let i = 0; i < str.length; i++) {
+                if (str.charAt(i) === letter) {
+                    count += 1;
+                }
+            }
+            return count;
+        }
+
+        for (let i = 0; i < 900; i++) {
             for (let j = 65; j < 75; j++) {
                 var x = i.toString();
                 x += String.fromCharCode(j);
@@ -290,17 +298,24 @@
                     if (inp.value === 'None' && x[0] > '0') {
                         inp.value = '';
                     }
-                    var url = "nothing"; // the script where you handle the form input.
-                    function myFunction() {
 
-                        var aaacellvalue = {};
+                    function myFunction() {
+                        var ss = inp.id, sx = inp.value;
+                        var ll = sx.length;
+                        if (ss[0] !== '0' && (sx[ll - 1] < '0' || sx[ll - 1] > '9')) {
+                            if (countString(sx,".")>1) {
+                                alert('Oops sorry!!! Please Insert Only Numbers and only a Radix point at cell' + ss);
+                                sx = sx.slice(0, -1);
+                            }
+                        }
+                        inp.value = sx;
+                         var aaacellvalue = {};
                         for (let k = 65; k < 75; k++) {
                             try {
                                 cell = inp.id;
                                 cellid = cell.slice(0, -1) + String.fromCharCode(k);
                                 aaacellvalue[cellid] = document.getElementById(cellid).value;
                             } catch (e) {
-                                break;
                             }
                         }
 
@@ -313,13 +328,6 @@
                                     csrfmiddlewaretoken: '{{ csrf_token }}'
                                 }
                         });
-                        var ss = inp.id, sx = inp.value;
-                        var ll = sx.length;
-                        if (ss[0] !== '0' && (sx[ll - 1] < '0' || sx[ll - 1] > '9')) {
-                            alert('Oops sorry!!! Please Insert Only Numbers at cell ' + ss);
-                            sx = sx.slice(0, -1);
-                        }
-                        inp.value = sx;
                     }
 
                 } catch (e) {
@@ -346,7 +354,15 @@
         }, false);
 
         window.addEventListener('click', function (e) {
-            console.log('hello');
+            for (let i = 66; i < 75; i++) {
+                var hideid = "float" + String.fromCharCode(i);
+                try {
+                    document.getElementById(hideid).style.display = 'none';
+                } catch (e) {
+
+                }
+
+            }
             e.preventDefault();
         }, false);
 
@@ -382,60 +398,73 @@
 
         function addcol() {
             notempty();
-            var hiden = '.' + String.fromCharCode(curcolnum + 1);
-            var show = document.querySelectorAll(hiden);
-            for (let i = 0; i < 90; i++) {
-                try {
-                    show[i].style.display = 'table-cell';
-                } catch (e) {
-                }
-            }
-            console.log(curcolnum + 1);
-            console.log(operationid);
-            var lim = operationid.charCodeAt(0);
-            for (let i = curcolnum + 1; i > lim; i--) {
-                var dest = String.fromCharCode(i);
-                var sourc = String.fromCharCode(i - 1);
-                for (let j = 0; j < 90; j++) {
+            if (curcolnum !== colmx) {
+                var hiden = '.' + String.fromCharCode(curcolnum + 1);
+                var show = document.querySelectorAll(hiden);
+                for (let i = 0; i < 90; i++) {
                     try {
-                        console.log(j.toString() + dest);
-                        document.getElementById(j.toString() + dest).value = document.getElementById(j.toString() + sourc).value;
-                        if (sourc === operationid) {
-                            document.getElementById(j.toString() + sourc).value = '';
-                        }
+                        show[i].style.display = 'table-cell';
                     } catch (e) {
-
                     }
                 }
+                console.log(curcolnum + 1);
+                console.log(operationid);
+                var lim = operationid.charCodeAt(0);
+                for (let i = curcolnum + 1; i > lim; i--) {
+                    var dest = String.fromCharCode(i);
+                    var sourc = String.fromCharCode(i - 1);
+                    for (let j = 0; j < 90; j++) {
+                        try {
+                            console.log(j.toString() + dest);
+                            document.getElementById(j.toString() + dest).value = document.getElementById(j.toString() + sourc).value;
+                            if (sourc === operationid) {
+                                document.getElementById(j.toString() + sourc).value = '';
+                            }
+                        } catch (e) {
+
+                        }
+                    }
+                }
+                sendall();
+
+            } else {
+                alert('can\'t add more');
             }
         }
 
         function delcol() {
             notempty();
-            var lim = operationid.charCodeAt(0);
+            if (curcolnum !== 66) {
+                var lim = operationid.charCodeAt(0);
 
-            for (let i = lim; i < curcolnum; i++) {
-                var dest = String.fromCharCode(i);
-                var sourc = String.fromCharCode(i + 1);
-                for (let j = 0; j < 90; j++) {
-                    try {
-                        console.log(j.toString() + dest);
-                        document.getElementById(j.toString() + dest).value = document.getElementById(j.toString() + sourc).value;
-                        if (sourc.charCodeAt(0) === curcolnum) {
-                            document.getElementById(j.toString() + sourc).value = '';
+                for (let i = lim; i < curcolnum; i++) {
+                    var dest = String.fromCharCode(i);
+                    var sourc = String.fromCharCode(i + 1);
+                    for (let j = 0; j < 90; j++) {
+                        try {
+                            console.log(j.toString() + dest);
+                            document.getElementById(j.toString() + dest).value = document.getElementById(j.toString() + sourc).value;
+                            if (sourc.charCodeAt(0) === curcolnum) {
+                                document.getElementById(j.toString() + sourc).value = '';
+                            }
+                        } catch (e) {
+
                         }
-                    } catch (e) {
+                    }
+                    var hiden = '.' + String.fromCharCode(curcolnum);
+                    console.log(hiden);
+                    var hidenow = document.querySelectorAll(hiden);
+                    for (let i = 0; i < 90; i++) {
+                        try {
+                            hidenow[i].style.display = 'none';
+                        } catch (e) {
+                        }
+                    }
+                }
+                sendall();
 
-                    }
-                }
-                var hiden = '.' + String.fromCharCode(curcolnum);
-                var hidenow = document.querySelectorAll(hiden);
-                for (let i = 0; i < 90; i++) {
-                    try {
-                        hidenow[i].style.display = 'none';
-                    } catch (e) {
-                    }
-                }
+            } else {
+                alert('can\'t detete');
             }
         }
 
@@ -459,6 +488,39 @@
                 }
             }
 
+        }
+
+        function sendall() {
+            for (let i = 0; i < 90; i++) {
+                var aaacellvalue = {};
+                var possible = 0;
+                for (let k = 65; k < 75; k++) {
+                    try {
+                        cellid = i.toString() + String.fromCharCode(k);
+                        console.log(cellid);
+                        console.log(document.getElementById(cellid).value);
+                        aaacellvalue[cellid] = document.getElementById(cellid).value;
+                        if (aaacellvalue[cellid] === '')
+                            aaacellvalue[cellid] = 'None';
+
+                    } catch (e) {
+                        possible = 1;
+                    }
+                }
+                if (possible === 0) {
+                    $.ajax({
+                        type: "POST",
+                        url: url,
+                        data:
+                            {
+                                aaacellvalue,
+                                csrfmiddlewaretoken: '{{ csrf_token }}'
+                            }
+                    });
+                }
+
+
+            }
         }
     </script>
 {% endblock %}

@@ -28,7 +28,7 @@
 
 }
 
-@media only screen and (max-width: 700px) {
+@media only screen and (max-width: 1000px) {
     .rightside {
         display: none;
     }
@@ -37,6 +37,7 @@
         width: 100vw;
     }
 }
+
 
 .icon-x {
     position: relative;
