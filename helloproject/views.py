@@ -283,7 +283,7 @@ def course_enroll(request):
             newbeforefinal = before_final_table(
                 CourseidandTeacherid=Ecoursid,
                 Student_id='Exam Roll',
-                A=None,
+                A='Total',
                 B=None,
                 C=None,
                 D=None,
@@ -296,6 +296,8 @@ def course_enroll(request):
             newbeforefinal.save()
         for i in student.objects.values():
             if int(i['sid']) >= start and int(i['sid']) <= end:
+                if before_final_table.objects.filter(CourseidandTeacherid=Ecoursid).filter(Student_id=i['sid']).exists():
+                    continue
                 cnt = True
                 newbeforefinal = before_final_table(
                     CourseidandTeacherid=Ecoursid,
@@ -322,7 +324,7 @@ def course_enroll(request):
                 T_email=eml
             )
             newteach.save()
-            messages.success(request, 'Query successful !!!')
+        messages.success(request, 'Query successful !!!')
     return HttpResponseRedirect('enroll_course.html')
 
 

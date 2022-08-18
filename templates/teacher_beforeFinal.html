@@ -31,6 +31,10 @@
             font-size: 10pt;
         }
 
+        #tab .trans {
+
+        }
+
         #tab .hello {
             background-color: #DADFF7 !important;
             color: black;
@@ -55,7 +59,7 @@
 
 
 
-    <div id="hehe" style="height: 67vh; width: max-content;display: block;margin: auto;">
+    <div id="hehe" style="height: 67vh; width: max-content;display: block;margin: auto; opacity: 0">
 
         <form id="po" method="POST" action="">
             {% csrf_token %}
@@ -265,17 +269,40 @@
         });
 
 
-        const button = document.querySelector('#onceclickable');
+        const button1 = document.querySelector('#onceclickable');
+
 
         {% if cons.constt|is_blocked %}
-            button.disabled = true;
-            button.value = "submitted";
+            button1.disabled = true;
+            button1.value = "submitted";
+            const bu = document.getElementById('hehe')
+            for (let i = 0; i < 900; i++) {
+                try {
+                    const readmode=bu.getElementsByClassName('spreadsheets')[i];
+                    readmode.readOnly = true;
+                } catch (e) {
+
+                }
+
+            }
+        {% endif %}
+
+        const disableButton = () => {
+            notempty();
+            for (let i = 65; i < curcolnum - 1; i++) {
+                console.log(document.getElementById('0' + String.fromCharCode(i)).value);
+            }
+
+            {#document.getElementById('po').submit();#}
+            button1.disabled = true;
+            button1.value = "submitted";
             const bu = document.getElementById('hehe')
             for (let i = 0; i < 900; i++) {
                 bu.getElementsByClassName('spreadsheets')[i].readOnly = true;
 
             }
-        {% endif %}
+        };
+        button1.addEventListener('click', disableButton);
 
         function countString(str, letter) {
             let count = 0;
@@ -300,16 +327,21 @@
                     }
 
                     function myFunction() {
-                        var ss = inp.id, sx = inp.value;
-                        var ll = sx.length;
-                        if (ss[0] !== '0' && (sx[ll - 1] < '0' || sx[ll - 1] > '9')) {
-                            if (countString(sx,".")>1) {
+                        var ss = inp.id, laststr = inp.value;
+                        var lowerstr = laststr.toLowerCase();
+                        if (lowerstr.includes('total')) {
+                            laststr = 'None';
+                            alert('Multiple TOTAL not allowed');
+                        }
+                        var ll = laststr.length;
+                        if (ss[0] !== '0' && (laststr[ll - 1] < '0' || laststr[ll - 1] > '9')) {
+                            if (countString(laststr, ".") > 1) {
                                 alert('Oops sorry!!! Please Insert Only Numbers and only a Radix point at cell' + ss);
-                                sx = sx.slice(0, -1);
+                                laststr = laststr.slice(0, -1);
                             }
                         }
-                        inp.value = sx;
-                         var aaacellvalue = {};
+                        inp.value = laststr;
+                        var aaacellvalue = {};
                         for (let k = 65; k < 75; k++) {
                             try {
                                 cell = inp.id;
@@ -335,18 +367,6 @@
                 }
             }
         }
-
-        const disableButton = () => {
-            document.getElementById('po').submit();
-            button.disabled = true;
-            button.value = "submitted";
-            const bu = document.getElementById('hehe')
-            for (let i = 0; i < 900; i++) {
-                bu.getElementsByClassName('spreadsheets')[i].readOnly = true;
-
-            }
-        };
-        button.addEventListener('click', disableButton);
 
 
         window.addEventListener('contextmenu', function (e) {
@@ -432,6 +452,7 @@
             }
         }
 
+
         function delcol() {
             notempty();
             if (curcolnum !== 66) {
@@ -477,6 +498,7 @@
             const adddel = document.getElementById(idis);
             adddel.style.display = 'block';
             adddel.style.position = 'absolute';
+
             for (let i = 66; i < 75; i++) {
                 if (String.fromCharCode(i) !== ch) {
                     var hideid = "float" + String.fromCharCode(i);
@@ -522,5 +544,9 @@
 
             }
         }
+
+        $(document).ready(function () {
+            setTimeout('$("#hehe").css("opacity", 1)', 100);
+        });
     </script>
 {% endblock %}
