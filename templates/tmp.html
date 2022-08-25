@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+
+    </style>
+</head>
+<body>
+<div id="hi" style="height: 100px;width: 20px;background-color: red;margin-left: 400px"></div>
+<button id="myP" onmousedown="mousedown()" onmouseup="mouseup()">
+    rotate
+</button>
+<script>
+
+    var st
+    var interval_;
+    var ang = 0;
+    function mousedown(event) {
+        st = new Date();
+        console.log(st);
+        interval_ = setInterval(function () {
+            x = "rotate(" + (ang + 1).toString() + "deg)";
+            document.getElementById("hi").style.transform = x;
+            ang++;
+        }, 11);
+    }
+    function mouseup(event) {
+        clearInterval(interval_);
+        var lt = new Date();
+        document.getElementById("hi").style.transform = "rotate(0deg)";
+    }
+
+
+</script>
+</body>
+</html>

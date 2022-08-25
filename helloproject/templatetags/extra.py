@@ -1,4 +1,4 @@
-import requests
+from requests.sessions import session
 from django import template
 
 register = template.Library()
@@ -10,10 +10,7 @@ def is_blocked(dic):
 
 @register.filter
 def dicfast(dic):
-    tmpdic=dic.copy()
-    if is_blocked(tmpdic):
-        tmpdic.popitem()
-    return tmpdic.items()
+    return dic.items()
 @register.filter
 def name(dic):
     x=dic.find('(')
@@ -31,10 +28,12 @@ def marks(dic):
         x+=1
     return dic[x:y]
 @register.filter
-def colnum(c):
-    print(requests.session)
-    c=100
-    return c
+def havemark(c,val):
+    if int(c)!=int(val):
+        return True
+    return False
+
+
 
 
 

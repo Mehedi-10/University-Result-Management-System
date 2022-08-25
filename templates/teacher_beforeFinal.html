@@ -1,4 +1,5 @@
 {% extends 'base3.html' %}
+{% block resultpage %}select_result_as_teacher.html{% endblock %}
 {% load extra %}
 {% block title %}{{ 'Before Final result' }}{% endblock %}
 {% block style_content %}
@@ -18,7 +19,7 @@
         }
 
         #tab input:read-only {
-            background-color: #E8E9F3 !important;
+            background-color: #EEF2FF !important;
             color: black;
         }
 
@@ -31,9 +32,6 @@
             font-size: 10pt;
         }
 
-        #tab .trans {
-
-        }
 
         #tab .hello {
             background-color: #DADFF7 !important;
@@ -53,10 +51,9 @@
         Course Name: {{ cons.head.course }} <br>
         Course Code: {{ cons.head.course_code }} &nbsp;&nbsp;Full Marks: {{ cons.head.marks }}
         <br>
-        Before Final
+        <p style="font-weight: bold">Before Final</p>
     </div>
     <hr>
-
 
 
     <div id="hehe" style="height: 67vh; width: max-content;display: block;margin: auto; opacity: 0">
@@ -209,34 +206,36 @@
                             {{ i }}
                         </td>
                         <td>
-                            <input id="{{ i }}{{ 'A' }}" name="{{ i }}{{ 'A' }}" class="spreadsheets" type="text"
-                                   readonly value="{{ val.Student_id }}"></td>
-                        <td><input id="{{ i }}{{ 'B' }}" name="{{ i }}{{ 'B' }}" class="spreadsheets" type="text"
-                                   value="{{ val.A }}"></td>
+                            <input id="{{ i }}{{ 'A' }}" name="{{ i }}{{ 'A' }}" class="spreadsheets"
+                                   type="text"
+                                   readonly value="{{ val.s_id }}"></td>
+                        <td><input id="{{ i }}{{ 'B' }}" name="{{ i }}{{ 'B' }}" class="spreadsheets"
+                                   type="text"
+                                   value="{{ val.mid1 }}"></td>
                         <td class="C"><input id="{{ i }}{{ 'C' }}" name="{{ i }}{{ 'C' }}" class="spreadsheets"
                                              type="text"
-                                             value="{{ val.B }}"></td>
+                                             value="{{ val.mid2 }}"></td>
                         <td class="D"><input id="{{ i }}{{ 'D' }}" name="{{ i }}{{ 'D' }}" class="spreadsheets"
                                              type="text"
-                                             value="{{ val.C }}"></td>
+                                             value="{{ val.mid3 }}"></td>
                         <td class="E"><input id="{{ i }}{{ 'E' }}" name="{{ i }}{{ 'E' }}" class="spreadsheets"
                                              type="text"
-                                             value="{{ val.D }}"></td>
+                                             value="{{ val.class_test }}"></td>
                         <td class="F"><input id="{{ i }}{{ 'F' }}" name="{{ i }}{{ 'F' }}" class="spreadsheets"
                                              type="text"
-                                             value="{{ val.E }}"></td>
+                                             value="{{ val.presentation }}"></td>
                         <td class="G"><input id="{{ i }}{{ 'G' }}" name="{{ i }}{{ 'G' }}" class="spreadsheets"
                                              type="text"
-                                             value="{{ val.F }}"></td>
+                                             value="{{ val.attendance }}"></td>
                         <td class="H"><input id="{{ i }}{{ 'H' }}" name="{{ i }}{{ 'H' }}" class="spreadsheets"
                                              type="text"
-                                             value="{{ val.G }}"></td>
+                                             value="{{ val.assignment }}"></td>
                         <td class="I"><input id="{{ i }}{{ 'I' }}" name="{{ i }}{{ 'I' }}" class="spreadsheets"
                                              type="text"
-                                             value="{{ val.H }}"></td>
+                                             value="{{ val.extra_field }}"></td>
                         <td class="J"><input id="{{ i }}{{ 'J' }}" name="{{ i }}{{ 'J' }}" class="spreadsheets"
                                              type="text"
-                                             value="{{ val.I }}"></td>
+                                             value="{{ val.total }}"></td>
                     </tr>
 
                 {% endfor %}
@@ -256,8 +255,75 @@
 {% endblock %}
 {% block script %}
     <script>
+
+        {#var start_time;#}
+        {##}
+        {#function start() {#}
+        {#    start_time = new Date();#}
+        {# } #}
+        {##}
+        {#function end() {#}
+        {#    var now = new Date();#}
+        {#    alert(now - start_time);#}
+        {# } #}
+
+        {#$('#btn').mousedown(start);#}
+        {#$('#btn').mouseup(end);#}
         const url = "nothing";
         var colmx = 74;
+
+        function addsum(sum1, sum2) {
+            if (sum1.length == 0)
+                sum1 = '0.0';
+            if (sum2.length == 0)
+                sum2 = '0.0';
+
+            var a = 0, b = '0', c = 0, d = '0', cut1 = 0, cut2 = 0;
+            var inx = sum1.indexOf('.');
+            if (inx == -1)
+                sum1 += '.0';
+            else if (inx == 0)
+                sum1 = '0' + sum1;
+
+            inx = sum1.indexOf('.');
+            if (inx != -1) {
+                cut1 = inx;
+                b = sum1.substring(cut1 + 1);
+            }
+
+            inx = sum2.indexOf('.');
+            if (inx == -1)
+                sum2 += '.0';
+            else if (inx == 0)
+                sum2 = '0' + sum2;
+            inx = sum2.indexOf('.');
+            if (inx != -1) {
+                cut2 = inx;
+                d = sum2.substring(cut2 + 1);
+            }
+
+            while (b.length < d.length)
+                b += '0';
+            while (d.length < b.length)
+                d += '0';
+            var num = 1;
+            for (let i = 0; i < b.length; i++)
+                num *= 10;
+            a = parseInt(sum1.substring(0, cut1), 10);
+            c = parseInt(sum2.substring(0, cut2), 10);
+            var d1 = parseInt(b, 10);
+            var d2 = parseInt(d, 10);
+            d1 += d2;
+            d2 = (d1 % num).toString();
+            d1 -= d1 % num;
+            var extra = '';
+            for (let i = d2.length + 1; i < num.toString().length; i++)
+                extra += '0'
+            a = a + c + Math.floor(d1 / num);
+            return a.toString() + '.' + extra + d2;
+        }
+
+
         $('.spreadsheets').keydown(function (e) {
             if (e.which === 13) {
                 var x = 1, y = $('.spreadsheets').index(this);
@@ -272,33 +338,75 @@
         const button1 = document.querySelector('#onceclickable');
 
 
-        {% if cons.constt|is_blocked %}
+        {% if cons.submitted %}
             button1.disabled = true;
             button1.value = "submitted";
             const bu = document.getElementById('hehe')
             for (let i = 0; i < 900; i++) {
                 try {
-                    const readmode=bu.getElementsByClassName('spreadsheets')[i];
-                    readmode.readOnly = true;
+                    bu.getElementsByClassName('spreadsheets')[i].readOnly = true;
                 } catch (e) {
 
                 }
 
             }
+
         {% endif %}
+        function containsAnyLetter(str) {
+            return /[a-zA-Z]/.test(str);
+        }
 
         const disableButton = () => {
             notempty();
-            for (let i = 65; i < curcolnum - 1; i++) {
-                console.log(document.getElementById('0' + String.fromCharCode(i)).value);
+            var sum = '0.0';
+            for (let i = 66; i < curcolnum; i++) {
+                var str = document.getElementById('0' + String.fromCharCode(i)).value;
+                if (str === 'None' || countString(str, "(") !== 1 || countString(str, ")") !== 1 || (str.indexOf("(") > str.indexOf(")"))) {
+                    alert('Field Name must be in "Field_name(Marks)" format.');
+                    return;
+                } else {
+                    var strcut = str.substring(str.indexOf('(') + 1, str.length - 1);
+                    if (containsAnyLetter(strcut)) {
+                        alert('Field Name must be in "Field_name(Marks)" format.');
+                        return;
+                    }
+                    sum = addsum(sum, strcut);
+                }
+            }
+            if (sum !={{ cons.head.marks}}) {
+                alert('Total Marks Condition Not satisfied.');
+                return;
             }
 
-            {#document.getElementById('po').submit();#}
+            for (let i = 0; i < 90; i++) {
+                for (let j = 66; j < curcolnum + 1; j++) {
+
+                    try {
+                        var str = document.getElementById(i.toString() + String.fromCharCode(j)).value;
+                        if (j == curcolnum && str >{{ cons.head.marks }}) {
+                            alert('Marks can\'t be greater than {{ cons.head.marks }} at cell ' + i.toString() + String.fromCharCode(j));
+                            document.getElementById(i.toString() + String.fromCharCode(j)).focus();
+                            return;
+                        }
+                        if (str.length == 0) {
+                            alert('Cell ' + i.toString() + String.fromCharCode(j) + ' can\'t be empty');
+                            document.getElementById(i.toString() + String.fromCharCode(j)).focus();
+                            return;
+                        }
+                    } catch (e) {
+
+                    }
+                }
+            }
+            document.getElementById('po').submit();
             button1.disabled = true;
             button1.value = "submitted";
             const bu = document.getElementById('hehe')
             for (let i = 0; i < 900; i++) {
-                bu.getElementsByClassName('spreadsheets')[i].readOnly = true;
+                try {
+                    bu.getElementsByClassName('spreadsheets')[i].readOnly = true;
+                } catch (e) {
+                }
 
             }
         };
@@ -336,20 +444,37 @@
                         var ll = laststr.length;
                         if (ss[0] !== '0' && (laststr[ll - 1] < '0' || laststr[ll - 1] > '9')) {
                             if (countString(laststr, ".") > 1) {
-                                alert('Oops sorry!!! Please Insert Only Numbers and only a Radix point at cell' + ss);
+                                alert('Please Insert only one Radix point at cell' + ss);
+                                laststr = laststr.slice(0, -1);
+                            } else if (laststr[ll - 1] != '.') {
+                                alert('Please Insert only Numbers and at cell' + ss);
                                 laststr = laststr.slice(0, -1);
                             }
+
                         }
+                        notempty();
+                        var total = '0';
                         inp.value = laststr;
                         var aaacellvalue = {};
                         for (let k = 65; k < 75; k++) {
                             try {
                                 cell = inp.id;
                                 cellid = cell.slice(0, -1) + String.fromCharCode(k);
+                                if (cell.slice(0, -1) !== "0") {
+                                    if (k > 65) {
+                                        if (k < curcolnum)
+                                            total = addsum(document.getElementById(cellid).value, total);
+                                        else if (k === curcolnum)
+                                            document.getElementById(cellid).value = total;
+                                    }
+                                }
+
+
                                 aaacellvalue[cellid] = document.getElementById(cellid).value;
                             } catch (e) {
                             }
                         }
+
 
                         $.ajax({
                             type: "POST",
@@ -383,7 +508,7 @@
                 }
 
             }
-            e.preventDefault();
+            {# e.preventDefault();#}
         }, false);
 
         var operationid, curcolnum;
@@ -393,8 +518,11 @@
             while (curcolnum > 65) {
                 var tmp = '0' + String.fromCharCode(curcolnum);
                 var hi = document.getElementById(tmp);
-                if (hi.value !== 'None' && hi.value !== '')
-                    break;
+                try {
+                    if (hi.value !== 'None' && hi.value !== '')
+                        break;
+                } catch (e) {
+                }
                 curcolnum--;
             }
         }
@@ -413,11 +541,37 @@
                     }
                 }
             }
+            lastreadonly();
+        }
+
+        function lastreadonly() {
+            notempty();
+            for (let i = 0; i < 90; i++) {
+                try {
+                    var tmp = i.toString() + String.fromCharCode(curcolnum);
+                    document.getElementById(tmp).setAttribute("readonly", "true");
+                } catch (e) {
+
+                }
+            }
+        }
+
+        function clearreadonly() {
+            notempty();
+            for (let i = 0; i < 90; i++) {
+                try {
+                    var tmp = i.toString() + String.fromCharCode(curcolnum);
+                    document.getElementById(tmp).removeAttribute("readonly", "true");
+                } catch (e) {
+
+                }
+            }
         }
 
 
         function addcol() {
             notempty();
+            clearreadonly();
             if (curcolnum !== colmx) {
                 var hiden = '.' + String.fromCharCode(curcolnum + 1);
                 var show = document.querySelectorAll(hiden);
@@ -427,15 +581,13 @@
                     } catch (e) {
                     }
                 }
-                console.log(curcolnum + 1);
-                console.log(operationid);
+
                 var lim = operationid.charCodeAt(0);
                 for (let i = curcolnum + 1; i > lim; i--) {
                     var dest = String.fromCharCode(i);
                     var sourc = String.fromCharCode(i - 1);
                     for (let j = 0; j < 90; j++) {
                         try {
-                            console.log(j.toString() + dest);
                             document.getElementById(j.toString() + dest).value = document.getElementById(j.toString() + sourc).value;
                             if (sourc === operationid) {
                                 document.getElementById(j.toString() + sourc).value = '';
@@ -445,6 +597,7 @@
                         }
                     }
                 }
+                lastreadonly();
                 sendall();
 
             } else {
@@ -463,7 +616,6 @@
                     var sourc = String.fromCharCode(i + 1);
                     for (let j = 0; j < 90; j++) {
                         try {
-                            console.log(j.toString() + dest);
                             document.getElementById(j.toString() + dest).value = document.getElementById(j.toString() + sourc).value;
                             if (sourc.charCodeAt(0) === curcolnum) {
                                 document.getElementById(j.toString() + sourc).value = '';
@@ -473,7 +625,6 @@
                         }
                     }
                     var hiden = '.' + String.fromCharCode(curcolnum);
-                    console.log(hiden);
                     var hidenow = document.querySelectorAll(hiden);
                     for (let i = 0; i < 90; i++) {
                         try {
@@ -482,6 +633,7 @@
                         }
                     }
                 }
+                lastreadonly();
                 sendall();
 
             } else {
@@ -491,6 +643,9 @@
 
 
         function myadd1(event) {
+            {% if cons.submitted %}
+                return;
+            {% endif %}
             var ch = event.target.id;
             operationid = ch;
             var idis = "float" + ch;
@@ -519,8 +674,6 @@
                 for (let k = 65; k < 75; k++) {
                     try {
                         cellid = i.toString() + String.fromCharCode(k);
-                        console.log(cellid);
-                        console.log(document.getElementById(cellid).value);
                         aaacellvalue[cellid] = document.getElementById(cellid).value;
                         if (aaacellvalue[cellid] === '')
                             aaacellvalue[cellid] = 'None';
@@ -545,8 +698,10 @@
             }
         }
 
+
         $(document).ready(function () {
             setTimeout('$("#hehe").css("opacity", 1)', 100);
         });
+
     </script>
 {% endblock %}

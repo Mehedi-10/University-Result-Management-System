@@ -1,157 +1,363 @@
 import datetime
 import os
+import uuid
+
+yearno = ['1st', '2nd', '3rd', '4th']
+semno = ['1st', '2nd']
+inMark = ['0', '10', '20', '40']
+# print(uuid.uuid4().hex[:6].upper())
+
 from django.shortcuts import render, HttpResponseRedirect
 from django.contrib import messages
 from django.utils.safestring import mark_safe
+from django.views.decorators.csrf import csrf_protect
 
-from .models.beforefinalbatch13 import before_final_table
 import pandas as pd
 from django.contrib.auth.hashers import make_password, check_password
 from django.http import JsonResponse
 from helloproject.middlewares.auth import is_allowed, is_allowed_student
 
-from .models.courses import courses
-from .models.enroll import enroll
-from .models.teaches import teaches
-from .models.teacher import teacher
-from .models.student import student
+from .models.Courses import courses
+from .models.Before_Final import before_final
+from .models.Assigned_Courses import assigned_course
+from .models.Teacher import teacher
+from .models.Student import student
+from .models.Published import published
+from .models.Final import final
+from .models.Officially_Published import officially_published
+from .models.Improve import improve
+from .models.Exam_Committee import exam_committe
 
-def resetall():
-    courses.objects.all().delete()
-    enroll.objects.all().delete()
-    teaches.objects.all().delete()
-    student.objects.all().delete()
-    teacher.objects.all().delete()
+
+# def resetall():
+#     courses.objects.all().delete()
+#     enroll.objects.all().delete()
+#     teaches.objects.all().delete()
+#     student.objects.all().delete()
+#     teacher.objects.all().delete()
 
 def index(request):
     return render(request, 'index.html')
 
 
-def signin_T(request):
+def signin_teacher(request):
     if request.method == 'GET':
         return render(request, 'teacherlogin.html')
-    sir = teacher.objects.filter(email=request.POST.get('email'))
-    if len(sir) == 0:
+    try:
+        sir = teacher.objects.get(t_email=request.POST.get('email'))
+    except teacher.DoesNotExist:
         messages.error(request, "The email address that you've entered doesn't match any account.")
-        return HttpResponseRedirect('/teacherlogin.html')
-    if check_password(request.POST.get('password'), sir.get().password) == True:
-        request.session['email'] = sir.get().email
-        return HttpResponseRedirect('/select_result_as_teacher.html')
+        return HttpResponseRedirect('teacherlogin.html')
+    if check_password(request.POST.get('password'), sir.password) == True:
+        request.session['email'] = sir.t_email
+        return HttpResponseRedirect('select_result_as_teacher.html')
     else:
         messages.error(request, "The password you entered is incorrect. Did you forget your password?")
-        return HttpResponseRedirect('/teacherlogin.html')
+        return HttpResponseRedirect('teacherlogin.html')
 
 
-def signin_S(request):
+def signin_student(request):
     if request.method == 'GET':
         return render(request, 'student_login.html')
-    stud = student.objects.filter(sid=request.POST.get('sid'))
-    if len(stud) == 0:
+    try:
+        stud = student.objects.get(s_id=request.POST.get('sid'))
+    except student.DoesNotExist:
         messages.error(request, "The ID that you've entered doesn't match any account.")
         return HttpResponseRedirect('student_login.html')
-    if check_password(request.POST.get('password'), stud.get().password) == True:
-        request.session['email'] = stud.get().sid
+    if check_password(request.POST.get('password'), stud.password) == True:
+        request.session['email'] = stud.s_id
         return HttpResponseRedirect('select_result_as_student.html')
     else:
         messages.error(request, "The password you entered is incorrect. Did you forget your password?")
         return HttpResponseRedirect('student_login.html')
 
 
-def signup(request):
-    print(request.POST)
+def teacher_signup(request):
     if request.method == 'GET':
-        return render(request, 'register_users.html')
+        return render(request, 'register_teacher.html')
     if request.POST.get('password1') != request.POST.get('password2'):
-        messages.error(request, 'Password doesn\'t matches.')
-        return HttpResponseRedirect('register_users.html')
-    if request.POST.get('inlineRadioOptions') == 'Teacher':
-        if teacher.objects.filter(email=request.POST.get('email')).exists():
-            messages.error(request, "This email address is already being used.")
-            return HttpResponseRedirect('register_users.html')
+        messages.error(request, 'Passwords do not match.')
+        return HttpResponseRedirect('register_teacher.html')
+    try:
+        teacher.objects.get(t_email=request.POST.get('email'))
+        messages.error(request, "This email address is already being used.")
+        return HttpResponseRedirect('register_teacher.html')
+    except teacher.DoesNotExist:
         newteacher = teacher(
-            full_name=request.POST.get('name'),
-            email=request.POST.get('email'),
-            password=make_password(request.POST.get('password1'))
+            t_name=request.POST.get('name'),
+            t_email=request.POST.get('email'),
+            password=make_password(request.POST.get('password1')),
+            guest=request.POST.get('t_type')
         )
         newteacher.save()
-    elif request.POST.get('inlineRadioOptions') == 'Student':
-        if student.objects.filter(sid=request.POST.get('id')).exists():
-            messages.error(request, "This ID is already being used.")
-            return HttpResponseRedirect('register_users.html')
+    messages.success(request, 'Registration Successful')
+    return HttpResponseRedirect('register_teacher.html')
+
+
+def student_signup(request):
+    if request.method == 'GET':
+        return render(request, 'register_student.html')
+    if request.POST.get('password1') != request.POST.get('password2'):
+        messages.error(request, 'Passwords do not match.')
+        return HttpResponseRedirect('register_teacher.html')
+    if len(request.POST.get('id')) != 8:
+        messages.error(request, "Invalid ID.")
+        return HttpResponseRedirect('register_teacher.html')
+    try:
+        student.objects.get(s_id=request.POST.get('id'))
+        messages.error(request, "This ID is already being used.")
+        return HttpResponseRedirect('register_teacher.html')
+    except student.DoesNotExist:
         ss = request.POST.get('id')
         num = int(ss[1:3])
         s1 = 2000 + num
         s1 -= 1
         newstudent = student(
-            full_name=request.POST.get('name'),
-            sid=request.POST.get('id'),
+            s_name=request.POST.get('name'),
+            s_id=request.POST.get('id'),
             password=make_password(request.POST.get('password1')),
             s_session=str(str(s1) + '-' + str(s1 + 1))
         )
         newstudent.save()
     messages.success(request, 'Registration Successful')
-    return HttpResponseRedirect('register_users.html')
+    return HttpResponseRedirect('register_teacher.html')
 
+##  update marks with credits ##
 @is_allowed
 def select_result_as_teacher(request):
     if request.method == 'GET':
         eml = request.session.get('email')
-        course = []
         session = []
-        semester = []
-        for i in teaches.objects.filter(T_email=eml).values():
-            courseid = i['course_id']
-            breakpoint = courseid.find(')') + 1
-            course.append(courseid[0:breakpoint])
-            session.append(courseid[breakpoint:breakpoint + 9])
-            semester.append(courseid[breakpoint + 9:])
-        course=list(set(course))
-        session=list(set(session))
-        semester=list(set(semester))
+        for i in assigned_course.objects.filter(t_mail=eml).values():
+            session.append(i['s_session'])
+        session = list(set(session))
         all = {
-            'course': course,
             'session': session,
-            'semester': semester
         }
         return render(request, 'select_result_as_teacher.html', {'all': all})
     else:
-        courseid = request.POST.get('SCourse') + request.POST.get('Ssession') + request.POST.get('sSemester')
-        if teaches.objects.filter(course_id=courseid).exists() == 0 or request.POST.get('SResult_type')=='Exam Type':
-            messages.warning(request, 'No Such Course Exits !!!')
-            return HttpResponseRedirect('select_result_as_teacher.html')
-        elif request.POST.get('SResult_type') == 'Before Final':
-            mark=40
-            cc=request.POST.get('SCourse')
-            start=cc.find('(')
-            cc=cc[start+1:cc.find(')')]
-            if courses.objects.filter(course_id=cc).values_list()[0][4]==2:
-                mark=20
-            dic={
-                'courseid':courseid,
-                'course':request.POST.get('SCourse')[0:start],
-                'session':request.POST.get('Ssession'),
-                'semester':request.POST.get('sSemester'),
-                'course_code':cc,
-                'marks':mark
+        if request.POST.get('SResult_type') == 'Before Semester Final':
+            mark = 0
+            cc = request.POST.get('SCourse')
+            start = cc.find('(')
+            cc = cc[start + 1:cc.find(')')]
+            mark = 20
+            dic = {
+                'course': request.POST.get('SCourse')[0:start],
+                'session': request.POST.get('Ssession'),
+                'semester': request.POST.get('sSemester'),
+                'course_code': cc,
+                'marks': mark
             }
-            request.session['all_info']=dic
+            request.session['all_info'] = dic
             return HttpResponseRedirect('teacher_beforeFinal.html')
+        else:
+            mark = 60
+            cc = request.POST.get('SCourse')
+            start = cc.find('(')
+            cc = cc[start + 1:cc.find(')')]
+            mark = 30
+            dic = {
+                'course': request.POST.get('SCourse')[0:start],
+                'session': request.POST.get('Ssession'),
+                'semester': request.POST.get('sSemester'),
+                'course_code': cc,
+                'marks': mark
+            }
+            request.session['all_info'] = dic
+            return HttpResponseRedirect('teacher_Final.html')
 
+@is_allowed
+def tselect(request):
+    course = []
+    semester = []
+    before = []
+    print(request.POST)
+    if int(request.POST.get('step')) == 1:
+        for i in assigned_course.objects.filter(t_mail=request.session.get('email')).filter(
+                s_session=request.POST.get('subject_1')).values():
+            coursevar = courses.objects.get(c_id=i['c_id_id'])
+            cutpoint = coursevar.c_id.find('-') + 1
+            semester.append(yearno[int(coursevar.c_id[cutpoint]) - 1] + ' year ' + semno[
+                int(coursevar.c_id[cutpoint + 1]) - 1] + ' semester')
+        semester = list(set(semester))
+        return JsonResponse(semester, safe=False)
+    if int(request.POST.get('step')) == 2:
+        for i in assigned_course.objects.filter(t_mail=request.session.get('email')).filter(
+                s_session=request.POST.get('subject_1')).values():
+            coursevar = courses.objects.get(c_id=i['c_id_id'])
+            cutpoint = coursevar.c_id.find('-') + 1
+            if (yearno[int(coursevar.c_id[cutpoint]) - 1] + ' year ' + semno[
+                int(coursevar.c_id[cutpoint + 1]) - 1] + ' semester') == request.POST.get('subject_2'):
+                course.append(coursevar.c_name + ' (' + coursevar.c_id + ')')
+        course = list(set(course))
+        return JsonResponse(course, safe=False)
+    if int(request.POST.get('step')) == 3:
+        if assigned_course.objects.filter(t_mail=request.session.get('email')).filter(
+                s_session=request.POST.get('subject_1')).filter(
+            c_id__c_id=request.POST.get('subject_3')).last().guest == 'internal':
+            before.append('Before Semester Final')
+            before.append('Semestar Final')
+        else:
+            before.append('Semestar Final')
+        return JsonResponse(before, safe=False)
+@is_allowed
+def sselect(request):
+    course = []
+    semester = []
+    before = []
+    print(request.POST)
+    if int(request.POST.get('step')) == 1:
+        for i in assigned_course.objects.filter(t_mail=request.session.get('email')).filter(
+                s_session=request.POST.get('subject_1')).values():
+            coursevar = courses.objects.get(c_id=i['c_id_id'])
+            cutpoint = coursevar.c_id.find('-') + 1
+            semester.append(yearno[int(coursevar.c_id[cutpoint]) - 1] + ' year ' + semno[
+                int(coursevar.c_id[cutpoint + 1]) - 1] + ' semester')
+        semester = list(set(semester))
+        return JsonResponse(semester, safe=False)
+    if int(request.POST.get('step')) == 2:
+        for i in assigned_course.objects.filter(t_mail=request.session.get('email')).filter(
+                s_session=request.POST.get('subject_1')).values():
+            coursevar = courses.objects.get(c_id=i['c_id_id'])
+            cutpoint = coursevar.c_id.find('-') + 1
+            if (yearno[int(coursevar.c_id[cutpoint]) - 1] + ' year ' + semno[
+                int(coursevar.c_id[cutpoint + 1]) - 1] + ' semester') == request.POST.get('subject_2'):
+                course.append(coursevar.c_name + ' (' + coursevar.c_id + ')')
+        course = list(set(course))
+        return JsonResponse(course, safe=False)
+    if int(request.POST.get('step')) == 3:
+        if assigned_course.objects.filter(t_mail=request.session.get('email')).filter(
+                s_session=request.POST.get('subject_1')).filter(
+            c_id__c_id=request.POST.get('subject_3')).last().guest == 'internal':
+            before.append('Before Semester Final')
+            before.append('Semestar Final')
+        else:
+            before.append('Semestar Final')
+        return JsonResponse(before, safe=False)
+
+@is_allowed
+def process_before_final(request):
+    try:
+        course_code = request.session['all_info']['course_code']
+        session_ = request.session['all_info']['session']
+    except KeyError:
+        return HttpResponseRedirect('select_result_as_teacher.html')
+    sv = published.objects.filter(c_id=course_code).filter(s_session=session_).last()
+    if request.method == 'POST':
+        sv.published_before_final = True
+        sv.save()
+    table_data = before_final.objects.filter(c_id=course_code).filter(s_session=session_).order_by('s_id')
+    if not table_data.exists():
+        return HttpResponseRedirect('select_result_as_teacher.html')
+    contents = {}
+    contents[0] = table_data[len(table_data) - 1]
+    for i in range(0, len(table_data) - 1):
+        contents[i + 1] = table_data[i]
+    all = {
+        'constt': contents,
+        'head': request.session['all_info'],
+        'submitted': sv.published_before_final
+    }
+    return render(request, 'teacher_beforeFinal.html', {'cons': all})
+
+
+@is_allowed
+def process_final_internal(request):
+    try:
+        course_code = request.session['all_info']['course_code']
+        session_ = request.session['all_info']['session']
+    except KeyError:
+        return HttpResponseRedirect('select_result_as_teacher.html')
+    sv = published.objects.filter(c_id=course_code).filter(s_session=session_).last()
+    if request.method == 'POST':
+        if request.method == 'POST':
+            sv.published_final = True
+            sv.save()
+    table_data = final.objects.filter(c_id=course_code).filter(s_session=session_).order_by('s_id')
+    if not table_data.exists():
+        return HttpResponseRedirect('select_result_as_teacher.html')
+    contents = {}
+    contents[0] = table_data[len(table_data) - 1]
+    for i in range(0, len(table_data) - 1):
+        contents[i + 1] = table_data[i]
+    all = {
+        'constt': contents,
+        'head': request.session['all_info'],
+        'submitted': sv.published_final
+    }
+    return render(request, 'teacher_Final.html', {'cons': all})
+
+
+@is_allowed
+@csrf_protect
+def saving(request):
+    try:
+        course_code = request.session['all_info']['course_code']
+        session_ = request.session['all_info']['session']
+    except KeyError:
+        return HttpResponseRedirect('select_result_as_teacher.html')
+    tabtmp1 = request.POST
+    tabtmp1 = tabtmp1.dict()
+    tmp = tabtmp1
+    tabtmp1.popitem()
+    tabtmp1 = list(tabtmp1.values())
+    tabtmp2 = before_final.objects.filter(c_id=course_code).filter(s_session=session_).filter(s_id=tabtmp1[0])
+    updt = before_final.objects.get(id=tabtmp2[0].id)
+    updt.s_id = tabtmp1[0]
+    updt.mid1 = tabtmp1[1]
+    updt.mid2 = tabtmp1[2]
+    updt.mid3 = tabtmp1[3]
+    updt.class_test = tabtmp1[4]
+    updt.presentation = tabtmp1[5]
+    updt.attendance = tabtmp1[6]
+    updt.assignment = tabtmp1[7]
+    updt.exta_field = tabtmp1[8]
+    updt.total = tabtmp1[9]
+    for k, v in before_final.objects.filter(s_id='Exam Roll').filter(c_id=course_code).values()[0].items():
+        if str(v).find('Total') != -1:
+            updt.total_ump = updt.__getattribute__(k)
+            break
+    updt.save()
+    return JsonResponse({'message': 'hendeled'})
+
+
+@is_allowed
+@csrf_protect
+def savingfinal(request):
+    try:
+        course_code = request.session['all_info']['course_code']
+        session_ = request.session['all_info']['session']
+    except KeyError:
+        return HttpResponseRedirect('select_result_as_teacher.html')
+    tabtmp1 = request.POST
+    tabtmp1 = tabtmp1.dict()
+    tabtmp1.popitem()
+    tabtmp1 = list(tabtmp1.values())
+    tabtmp2 = final.objects.filter(c_id=course_code).filter(s_session=session_).filter(s_id=tabtmp1[0])
+    updt = final.objects.get(id=tabtmp2[0].id)
+    updt.total1 = tabtmp1[1]
+    updt.save()
+    return JsonResponse({'message': 'hendeled'})
 
 
 @is_allowed_student
 def select_result_as_student(request):
     if request.method == 'GET':
-        eml = request.session.get('email')
+        try:
+            eml = request.session.get('email')
+        except KeyError:
+            return HttpResponseRedirect('student_login.html')
         course = []
         session = []
         semester = []
-        for i in enroll.objects.filter(sid=eml).values():
-            courseid = i['course_id']
-            breakpoint = courseid.find(')') + 1
-            course.append(courseid[0:breakpoint])
-            session.append(courseid[breakpoint:breakpoint + 9])
-            semester.append(courseid[breakpoint + 9:])
+        for i in before_final.objects.filter(s_id=eml).values():
+            coursevar = courses.objects.get(c_id=i['c_id_id'])
+            course.append(coursevar.c_name + ' (' + coursevar.c_id + ')')
+            session.append(i['s_session'])
+            cutpoint = coursevar.c_id.find('-') + 1
+            semester.append(yearno[int(coursevar.c_id[cutpoint]) - 1] + ' year ' + semno[
+                int(coursevar.c_id[cutpoint + 1]) - 1] + ' semester')
         course = list(set(course))
         session = list(set(session))
         semester = list(set(semester))
@@ -162,171 +368,206 @@ def select_result_as_student(request):
         }
         return render(request, 'select_result_as_student.html', {'all': all})
     else:
-        courseid = request.POST.get('SCourse') + request.POST.get('Ssession') + request.POST.get('sSemester')
-        if not teaches.objects.filter(course_id=courseid).exists():
-            messages.warning(request,'Invalid Selection')
-            return HttpResponseRedirect('select_result_as_student.html')
-        tch=teaches.objects.filter(course_id=courseid).values('T_email')
-        t_email=tch.last()['T_email']
-        Ecourse_id=courseid+'**'+t_email
-        obs=before_final_table.objects.filter(CourseidandTeacherid=Ecourse_id).filter(Student_id=request.session.get('email'))
-        obs1=before_final_table.objects.filter(CourseidandTeacherid=Ecourse_id).filter(Student_id='Exam Roll')
-        if not before_final_table.objects.filter(CourseidandTeacherid=Ecourse_id).filter(Student_id="~~THE_END~~").exists():
-            messages.info(request, mark_safe('Keep Clam <br/> and hope that <br/> exam result will be good'))
-            return HttpResponseRedirect('select_result_as_student.html')
+        if request.POST.get('SResult_type') == 'Final':
+            session_ = request.POST.get('Ssession')
+            semester_ = request.POST.get('sSemester')[0] + '-' + request.POST.get('sSemester')[9]
+            if not officially_published.objects.filter(s_session=session_).filter(s_semester=semester_).exists():
+                messages.warning(request, 'Invalid Selection')
+                return HttpResponseRedirect('select_result_as_student.html')
+            if not officially_published.objects.filter(s_session=session_).filter(
+                    s_semester=semester_).last().is_published:
+                messages.info(request, mark_safe('Keep Clam <br/> and hope that <br/> exam result will be good'))
+                return HttpResponseRedirect('select_result_as_student.html')
+            lookstr = '-' + semester_[0] + semester_[2]
+            ob1 = final.objects.filter(s_id=request.session.get('email')).filter(c_id__c_id__contains=lookstr)
+            li = {}
+            for i in range(0, len(ob1)):
+                dic = {}
+                dic['course_code'] = ob1[i].c_id.c_id
+                dic['course_name'] = ob1[i].c_id.c_name
+                dic['crourse_credit'] = ob1[i].c_id.credit
+                dic['latter_grade'] = ob1[i].lattergrade
+                dic['before_final'] = before_final.objects.filter(s_id=request.session.get('email'), ).filter(
+                    c_id=ob1[i].c_id.c_id).last().total_ump
+                li[i] = dic
+            per = {
+                'id': request.session.get('email'),
+                'name': student.objects.get(s_id=request.session.get('email')).s_name,
+                'semester': request.POST.get('sSemester'),
+                'course': request.POST.get('SCourse'),
+                'session': request.POST.get('Ssession')
+            }
+            request.session['all'] = {'per': per, 'dic': li}
+            return HttpResponseRedirect('show_final.html')
+        else:
+            coursev = request.POST.get('SCourse')
+            courseid = coursev[coursev.find('(') + 1:coursev.find(')')]
+            session_ = request.POST.get('Ssession')
+            # + request.POST.get('sSemester') selected semester
+            if not published.objects.filter(c_id=courseid).filter(s_session=session_).exists():
+                messages.warning(request, 'Invalid Selection')
+                return HttpResponseRedirect('select_result_as_student.html')
+            if not published.objects.filter(c_id=courseid).filter(s_session=session_).last().published_before_final:
+                messages.info(request, mark_safe('Keep Clam <br/> and hope that <br/> exam result will be good'))
+                return HttpResponseRedirect('select_result_as_student.html')
+            before_fin = before_final.objects.filter(c_id=courseid).filter(s_session=session_).order_by('s_id')
+            ob1 = before_fin.last()
+            ob2 = before_fin.filter(s_id=request.session.get('email')).last()
+            dic = {}
+            print(ob1.c_id)
+            dic[ob1.mid1] = ob2.mid1
+            dic[ob1.mid2] = ob2.mid2
+            dic[ob1.mid3] = ob2.mid3
+            dic[ob1.class_test] = ob2.class_test
+            dic[ob1.presentation] = ob2.presentation
+            dic[ob1.attendance] = ob2.attendance
+            dic[ob1.assignment] = ob2.assignment
+            dic[ob1.extra_field] = ob2.extra_field
+            dic[ob1.total] = ob2.total
+            try:
+                dic.__delitem__('None')
+            except KeyError:
+                pass
+            try:
+                dic.__delitem__('')
+            except KeyError:
+                pass
+            per = {
+                'id': request.session.get('email'),
+                'name': student.objects.get(s_id=request.session.get('email')).s_name,
+                'semester': request.POST.get('sSemester'),
+                'course': request.POST.get('SCourse'),
+                'session': request.POST.get('Ssession')
+            }
+            request.session['all'] = {'per': per, 'dic': dic}
+            return HttpResponseRedirect('show_before_final.html')
 
-        dic={}
 
-        for i in range(3,12):
-            dic[obs1.values_list()[0][i]]=obs.values_list()[0][i]
-        dic.__delitem__('None')
-        per={
-            'id':request.session.get('email'),
-            'name':student.objects.filter(sid=request.session.get('email')).values_list()[0][1],
-            'semester':request.POST.get('sSemester'),
-            'course':request.POST.get('SCourse'),
-            'session':request.POST.get('Ssession')
-        }
-        request.session['all']={'per':per,'dic':dic}
-        return HttpResponseRedirect('show_before_final.html')
+@is_allowed_student
+def show_before_final(request):
+    try:
+        dic = request.session['all']
+        return render(request, 'show_before_final.html', {'all': dic})
+    except KeyError:
+        return HttpResponseRedirect('select_result_as_student.html')
 
 
-@is_allowed
-def before_final(request):
-    Ecoursid = request.session['all_info']['courseid'] + '**' + request.session.get('email')
-    if request.method=='POST':
-        if not before_final_table.objects.filter(CourseidandTeacherid=Ecoursid).filter(Student_id='~~THE_END~~').exists():
-            sv=before_final_table(
-                CourseidandTeacherid=Ecoursid,
-                Student_id='~~THE_END~~'
-            )
-            sv.save()
-    table_data = before_final_table.objects.filter(CourseidandTeacherid=Ecoursid).order_by('Student_id')
-    if not table_data.exists():
-        return HttpResponseRedirect('select_result_as_teacher.html')
-    contents = {}
-    lst=1
-    if table_data[len(table_data) - 1].Student_id=='~~THE_END~~':
-        lst=2
-    contents[0] = table_data[len(table_data) - lst]
-    for i in range(0, len(table_data) - lst):
-        contents[i + 1] = table_data[i]
-    if lst==2:
-        contents[len(table_data)-1]=table_data[len(table_data)-1]
-    all={
-        'constt':contents,
-        'head':request.session['all_info']
-    }
-    return render(request, 'teacher_beforeFinal.html', {'cons': all})
-from django.views.decorators.csrf import csrf_protect
-@is_allowed
-@csrf_protect
-def saving(request):
-    Ecoursid=request.session['all_info']['courseid']+'**'+request.session.get('email')
-    tabtmp1=request.POST
-    tabtmp1=tabtmp1.dict()
-    print(tabtmp1)
-    tabtmp1.popitem()
-    tabtmp1=list(tabtmp1.values())
-    tabtmp2=before_final_table.objects.filter(CourseidandTeacherid=Ecoursid).filter(Student_id=tabtmp1[0])
-    updt=before_final_table.objects.get(id=tabtmp2[0].id)
-    updt.Student_id = tabtmp1[0]
-    updt.A = tabtmp1[1]
-    updt.B = tabtmp1[2]
-    updt.C = tabtmp1[3]
-    updt.D = tabtmp1[4]
-    updt.E = tabtmp1[5]
-    updt.F = tabtmp1[6]
-    updt.G = tabtmp1[7]
-    updt.H = tabtmp1[8]
-    updt.I = tabtmp1[9]
-    updt.save()
-    return JsonResponse({'message': 'hendeled'})
+@is_allowed_student
+def showfinal(request):
+    try:
+        dic = request.session['all']
+        return render(request, 'show_final.html', {'all': dic})
+    except KeyError:
+        return HttpResponseRedirect('select_result_as_student.html')
 
-def course_enroll(request):
-    if request.method == 'GET':
-        session = []
-        course = []
-        teachers = []
-        yearno = ['1st', '2nd', '3rd', '4th']
-        semno=['1st','2nd']
-        sem=[]
-        for i in yearno:
-            for j in semno:
-                sem.append(i+' Year '+j+' Semester ')
-        for i in range(2017, datetime.datetime.now().year):
-            session.append(str(i) + '-' + str(i + 1))
-        for i in courses.objects.all().values():
-            course.append(i['course_name'] + ' (' + i['course_id'] + ')')
-        for i in teacher.objects.all().values():
-            teachers.append(i['full_name'])
-        all = {
-            'course': course,
-            'session': session,
-            'teacher': teachers,
-            'semester': sem
-        }
-        return render(request, 'enroll_course.html', {'all': all})
-    courseid = request.POST.get('SCourse') + request.POST.get('Ssession') + request.POST.get('sSemester')
-    rolls = request.POST.get('query')
-    if len(rolls) != 14:
-        messages.error(request, 'Invalid Query format!!!')
-    elif rolls[0] != '=' or rolls[7] != '(' or rolls[10] != '-' or rolls[13] != ')':
-        messages.error(request, 'Invalid Query format!!!')
-    else:
-        start = int(rolls[1:7] + rolls[8:10])
-        end = int(rolls[1:7] + rolls[11:13])
-        cnt = False
-        eml = teacher.objects.filter(full_name=request.POST.get('STeacher'))[0].email
-        Ecoursid=courseid+'**'+eml
-        if not before_final_table.objects.filter(CourseidandTeacherid=Ecoursid).exists():
-            newbeforefinal = before_final_table(
-                CourseidandTeacherid=Ecoursid,
-                Student_id='Exam Roll',
-                A='Total',
-                B=None,
-                C=None,
-                D=None,
-                E=None,
-                F=None,
-                G=None,
-                H=None,
-                I=None
-            )
-            newbeforefinal.save()
-        for i in student.objects.values():
-            if int(i['sid']) >= start and int(i['sid']) <= end:
-                if before_final_table.objects.filter(CourseidandTeacherid=Ecoursid).filter(Student_id=i['sid']).exists():
-                    continue
-                cnt = True
-                newbeforefinal = before_final_table(
-                    CourseidandTeacherid=Ecoursid,
-                    Student_id=i['sid'],
-                    A='',
-                    B='',
-                    C='',
-                    D='',
-                    E='',
-                    F='',
-                    G='',
-                    H='',
-                    I=''
-                )
-                newbeforefinal.save()
-                newenroll = enroll(
-                    course_id=courseid,
-                    sid=i['sid']
-                )
-                newenroll.save()
-        if cnt == True:
-            newteach = teaches(
-                course_id=courseid,
-                T_email=eml
-            )
-            newteach.save()
-        messages.success(request, 'Query successful !!!')
-    return HttpResponseRedirect('enroll_course.html')
 
+# def course_enroll(request):
+#     if request.method == 'GET':
+#         session = []
+#         course = []
+#         teachers = []
+#         sem=[]
+#         for i in yearno:
+#             for j in semno:
+#                 sem.append(i+' Year '+j+' Semester ')
+#         for i in range(2017, datetime.datetime.now().year):
+#             session.append(str(i) + '-' + str(i + 1))
+#         for i in courses.objects.all().values():
+#             course.append(i['course_name'] + ' (' + i['course_id'] + ')')
+#         for i in teacher.objects.all().values():
+#             teachers.append(i['full_name'])
+#         all = {
+#             'course': course,
+#             'session': session,
+#             'teacher': teachers,
+#             'semester': sem
+#         }
+#         return render(request, 'assign_course.html', {'all': all})
+#     courseid = request.POST.get('SCourse') + request.POST.get('Ssession') + request.POST.get('sSemester')
+#     rolls = request.POST.get('query')
+#     if len(rolls) != 14:
+#         messages.error(request, 'Invalid Query format!!!')
+#     elif rolls[0] != '=' or rolls[7] != '(' or rolls[10] != '-' or rolls[13] != ')':
+#         messages.error(request, 'Invalid Query format!!!')
+#     else:
+#         start = int(rolls[1:7] + rolls[8:10])
+#         end = int(rolls[1:7] + rolls[11:13])
+#         cnt = False
+#         eml = teacher.objects.filter(full_name=request.POST.get('STeacher'))[0].email
+#         crs=request.POST.get('SCourse')
+#         crid=crs[crs.find('(')+1:len(crs)-1]
+#         crs=crs[0:crs.find('(')-1]
+#         credit=courses.objects.filter(course_id=crid).filter(course_name=crs).last().credit
+#         # update credit and marks
+#         marks=40
+#         marks1=60
+#         if credit==2:
+#             marks=20
+#             marks1=30
+#         Ecoursid=courseid+'**'+eml
+#         if not before_final_table.objects.filter(CourseidandTeacherid=Ecoursid).exists():
+#             newbeforefinal = before_final_table(
+#                 CourseidandTeacherid=Ecoursid,
+#                 Student_id='Exam Roll',
+#                 A='Total'+'('+str(marks)+')',
+#                 B=None,
+#                 C=None,
+#                 D=None,
+#                 E=None,
+#                 F=None,
+#                 G=None,
+#                 H=None,
+#                 I=None
+#             )
+#             newbeforefinal.save()
+#             newfinal=final_table(
+#                 CourseidandTeacherid=Ecoursid,
+#                 Student_id ='Exam Roll',
+#                 Marks ='Marks''('+str(marks1)+')',
+#                 Grade ='Letter Grade',
+#                 GPA = 'GPA'
+#             )
+#             newfinal.save()
+#         for i in student.objects.values():
+#             if int(i['sid']) >= start and int(i['sid']) <= end:
+#                 if before_final_table.objects.filter(CourseidandTeacherid=Ecoursid).filter(Student_id=i['sid']).exists():
+#                     continue
+#                 cnt = True
+#                 newbeforefinal = before_final_table(
+#                     CourseidandTeacherid=Ecoursid,
+#                     Student_id=i['sid'],
+#                     A='0.0',
+#                     B='',
+#                     C='',
+#                     D='',
+#                     E='',
+#                     F='',
+#                     G='',
+#                     H='',
+#                     I=''
+#                 )
+#                 newbeforefinal.save()
+#                 newfinal = final_table(
+#                     CourseidandTeacherid=Ecoursid,
+#                     Student_id=i['sid'],
+#                     Marks='',
+#                     Grade='',
+#                     GPA=''
+#                 )
+#                 newfinal.save()
+#                 newenroll = enroll(
+#                     course_id=courseid,
+#                     sid=i['sid']
+#                 )
+#                 newenroll.save()
+#         if cnt == True:
+#             newteach = teaches(
+#                 course_id=courseid,
+#                 T_email=eml
+#             )
+#             newteach.save()
+#         messages.success(request, 'Query successful !!!')
+#     return HttpResponseRedirect('assign_course.html')
 
 def add_course(request):
     if request.method == 'GET':
@@ -339,6 +580,24 @@ def add_course(request):
     )
     newcourse.save()
     return HttpResponseRedirect('add_new_course.html')
+def assign_course(request):
+    if request.method=='POST':
+        return HttpResponseRedirect('assign_course.html')
+    course=[]
+    teach=[]
+    session=[]
+    for i in courses.objects.all():
+        course.append(i.c_name+' ('+i.c_id+')')
+    for i in teacher.objects.all():
+        teach.append(i.t_name +' ('+i.t_email+')')
+    for i in student.objects.all():
+        session.append(i.s_session)
+    all={
+        'courses_':course,
+        'teacher_':teach,
+        'session_':session
+    }
+    return render(request,'assign_course.html',{'all':all})
 
 def func(request):
     vc = []
@@ -346,50 +605,49 @@ def func(request):
         vc.append(i)
     return JsonResponse({'fff': vc})
 
-@is_allowed
-def excelup(request):
-    if request.method == 'POST':
-        file = request.FILES["file"]
-        csv = pd.read_excel(file, dtype=str)
-        r_len = csv.count()[0]
-        li = []
-        ls = csv.columns.tolist()
-        li.append(ls)
-        for i in csv.values:
-            li.append(i.tolist())
-        for i in li:
-            print(len(i))
-            while len(i) < 10:
-                i.append('')
-        for i in range(0, r_len):
-            st = before_final_table(
-                Student_id=li[i][0],
-                A=li[i][1],
-                B=li[i][2],
-                C=li[i][3],
-                D=li[i][4],
-                E=li[i][5],
-                F=li[i][6],
-                G=li[i][7],
-                H=li[i][8],
-                I=li[i][9]
-            )
-            st.save()
-    return render(request, 'excel.html')
+
+# @is_allowed
+# def excelup(request):
+#     if request.method == 'POST':
+#         file = request.FILES["file"]
+#         csv = pd.read_excel(file, dtype=str)
+#         r_len = csv.count()[0]
+#         li = []
+#         ls = csv.columns.tolist()
+#         li.append(ls)
+#         for i in csv.values:
+#             li.append(i.tolist())
+#         for i in li:
+#             print(len(i))
+#             while len(i) < 10:
+#                 i.append('')
+#         for i in range(0, r_len):
+#             st = before_final_table(
+#                 Student_id=li[i][0],
+#                 A=li[i][1],
+#                 B=li[i][2],
+#                 C=li[i][3],
+#                 D=li[i][4],
+#                 E=li[i][5],
+#                 F=li[i][6],
+#                 G=li[i][7],
+#                 H=li[i][8],
+#                 I=li[i][9]
+#             )
+#             st.save()
+#     return render(request, 'excel.html')
 
 def admin_home(request):
-    all={
-        'teacher':teacher.objects.all().values()
+    all = {
+        'teacher': teacher.objects.all().values()
     }
     # print(all)
-    return render(request,'admin_home.html',{'all':all});
-def who_are_u(request):
-    return render(request,'who_are_you.html')
-@is_allowed_student
-def show_before_final(request):
-    if  request.session.get('all'):
-        dic=request.session['all']
-        return render(request, 'show_before_final.html', {'all': dic})
-    else:
-        return HttpResponseRedirect('select_result_as_student.html')
+    return render(request, 'admin_home.html', {'all': all})
 
+
+#
+# @is_allowed_student
+
+
+def who_are_u(request):
+    return render(request, 'who_are_you.html')

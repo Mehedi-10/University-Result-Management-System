@@ -1,10 +1,10 @@
 from django.shortcuts import redirect
-from helloproject.models import student,teacher
+from helloproject.models import Student,Teacher
 from django.contrib import messages
 def is_allowed(get_response):
     def gaurd(request):
 
-        if not request.session.get('email') or not teacher.teacher.objects.filter(email=request.session.get('email')).exists():
+        if not request.session.get('email') or not Teacher.teacher.objects.filter(t_email=request.session.get('email')).exists():
             # messages.warning(request,'Sign in first')
             return redirect('who_are_you')
         response = get_response(request)
@@ -20,7 +20,7 @@ def is_allowed_student(get_response):
         # Code to be executed for each request before
         # the view (and later middleware) are called.
 
-        if not request.session.get('email') or not student.student.objects.filter(sid=request.session.get('email')).exists():
+        if not request.session.get('email') or not Student.student.objects.filter(s_id=request.session.get('email')).exists():
             # messages.warning(request,'Sign in first')
             return redirect('who_are_you')
         response = get_response(request)

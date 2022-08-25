@@ -4,9 +4,10 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/teacherresult.css' %}">
     <style>
-        #selectid {
+        .selectid {
             text-align: center;
         }
+
         #s3 {
             text-align: center;
             font-family: 'Inria Sans' !important;
@@ -16,68 +17,121 @@
 {% block content %}
     <div class="bg2">
         <div style="text-align: center; margin: auto; padding: 21px; font-weight: bold;">Result Selection</div>
-        <div class="fornn">
-            <form style="text-align:center" id="formm" method="POST">
+        <div class="fornn" style="text-align: center">
+            <form style="text-align:center" id="form" method="POST" autocomplete="off">
                 {% csrf_token %}
                 <div>
-                    <select class="form-select mb-2" id="selectid" name="Ssession">
-                        <option class="s1" id="s3" selected>Select Session</option>
+                    <select class="form-select mb-2 selectid" id="s1"  name="Ssession" required>
+                        <option class="s1" selected>Select Session</option>
                         {% for k in all.session %}
-                            <option class="s1" id="s3">{{ k }}</option>
+                            <option class="s1">{{ k }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div>
-                    <select class="form-select mb-2" id="selectid" name="sSemester">
-                        <option class="s1" id="s3" selected>Select Semester</option>
-                        {% for k in all.semester %}
-                            <option class="s1" id="s3">{{ k }}</option>
-                        {% endfor %}
+                    <select class="form-select mb-2 selectid" id="s2" name="sSemester">
+                        <option class="s1">Select Semester</option>
                     </select>
                 </div>
                 <div>
-                    <select class="form-select mb-2" style="font-size: small" id="selectid" name="SCourse">
-                        <option class="s1" id="s3" selected>Select Course</option>
-                        {% for k in all.course %}
-                            <option class="s1" id="s3">{{ k }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div>
-                    <select class="form-select mb-2" id="selectid" name="SResult_type">
-                        <option class="s1" id="s3" selected>Exam Type</option>
-                        <option class="s1" id="s3">Before Final</option>
-                        <option class="s1" id="s4">Final</option>
-                    </select>
-                </div>
+                    <select class="form-select mb-2 selectid" id="s3" style="font-size: small" name="SCourse">
+                        <option class="s1">Select Course</option>
 
-                <button class="submitbtn">submit</button>
+                    </select>
+                </div>
+                <div>
+                    <select class="form-select mb-2 selectid" id="s4" name="SResult_type">
+                        <option class="s1">Select Exam Type</option>
+                    </select>
+                </div>
             </form>
+            <button class="submitbtn" onclick="mysubmit()">submit</button>
 
         </div>
     </div>
 
     <script>
-        {#$(document).ready(function () {#}
-        {#    setInterval(function () {#}
-        {#        $.ajax({#}
-        {#            type: "GET",#}
-        {#            url: "{% url 'func' %}",#}
-        {#            success: function (response) {#}
-        {#                document.getElementById("s4").innerText = "himan";#}
-        {#            }#}
-        {#        });#}
-        {#        $.ajax({#}
-        {#            type: "POST",#}
-        {#            url: "{% url 'func' %}",#}
-        {#            data: $("#formm").serialize(),#}
-        {#            success: function (response) {#}
-        {#                document.getElementById("s4").innerText = "himan";#}
-        {#            }#}
-        {#        });#}
-        {##}
-        {#    }, 1000);#}
-        {# }); #}
+        function mysubmit() {
+            for (let i = 1; i < 5; i++) {
+                if (document.getElementById('s' + i.toString()).value.includes('Select')) {
+                    alert('Required Field.');
+                    document.getElementById('s' + i.toString()).focus();
+                    return;
+                }
+            }
+            document.getElementById('form').submit();
+        }
+
+
+        url1 = 't_select';
+
+        $("#s1").change(function () {
+            const subjectId = $(this).val();
+            $.ajax({
+                type: "POST",
+                url: url1,
+                data: {
+                    'step': 1,
+                    'subject_1': subjectId,
+                    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function (data) {
+                    let html_data = '<option class="s1" >Select Semester</option>';
+                    data.forEach(function (data) {
+                        html_data += `<option class="s1" >${data}</option>`
+                    });
+                    $("#s2").html(html_data);
+                }
+            });
+        });
+
+        $("#s2").change(function () {
+            const subjectId = $(this).val();
+            $.ajax({
+                type: "POST",
+                url: url1,
+                data: {
+                    'step': 2,
+                    'subject_1': $('#s1').val(),
+                    'subject_2': subjectId,
+                    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function (data) {
+                    let html_data = '<option class="s1" >Select Course</option>';
+                    data.forEach(function (data) {
+                        html_data += `<option >${data}</option>`
+                    });
+                    $("#s3").html(html_data);
+                }
+            });
+        });
+
+        $("#s3").change(function () {
+            const subjectId = $(this).val();
+            var l = subjectId.indexOf('(')+1;
+            var r = subjectId.indexOf(')');
+
+            $.ajax({
+                type: "POST",
+                url: url1,
+                data: {
+                    'step': 3,
+                    'subject_1': $('#s1').val(),
+                    'subject_2': $('#s2').val(),
+                    'subject_3': subjectId.substring(l, r),
+                    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function (data) {
+                    let html_data = '<option class="s1" >Select Exam Type</option>';
+                    data.forEach(function (data) {
+                        html_data += `<option >${data}</option>`
+                    });
+                    $("#s4").html(html_data);
+                }
+             });
+        });
+
+
     </script>
 
 

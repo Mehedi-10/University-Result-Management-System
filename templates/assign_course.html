@@ -1,0 +1,106 @@
+{% extends 'admin_base.html' %}
+{% block title %}{{ 'Add New Course' }}{% endblock %}
+{% block style_content %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"
+            integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css"
+          integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous"/>
+    <style>
+        .selectize-input {
+            height: 60px;
+            text-align: center;
+            padding-top: 15px !important;
+        }
+
+    </style>
+{% endblock %}
+
+{% block content %}
+    <h4 class="form-title" style="padding-top:15px; margin-bottom: 30px; text-align: center; color: white">Assign Course to Teacher</h4>
+    <div style="font-family: 'Inria Sans'; width: 500px; margin: auto;">
+        <form id="form" method="POST" autocomplete="off">
+            {% csrf_token %}
+            <div style="margin-bottom: 10px">
+                <select id="select1" name="t_ype" placeholder="Assign as">
+                    <option value="">Assign as</option>
+                    <option class="s1">Internal</option>
+                    <option class="s1">External</option>
+                </select>
+            </div>
+            <div style="margin-bottom: 10px">
+                <select id="select2" name="c_ourse"  placeholder="Select Course">
+                    <option value="">Select Course</option>
+                    {% for k in all.courses_ %}
+                        <option  class="s1">{{ k }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div style="margin-bottom: 10px">
+                <select id="select3" name="t_eacher"  placeholder="Select Teacher">
+                    <option value="">Select Teacher</option>
+                    {% for k in all.teacher_ %}
+                        <option  class="s1">{{ k }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div style="margin-bottom: 10px">
+                <select id="select4" name="s_ession" placeholder="Select Session">
+                    <option value="">Select Session</option>
+                    {% for k in all.session_ %}
+                        <option  class="s1">{{ k }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+        </form>
+            <button type="submit" onclick="mysubmit()" class="btn btn-secondary btn-lg">Assign Course</button>
+
+    </div>
+    <script>
+    const arr = ["Assign as", "Select Course", "Select Teacher","Select Session"];
+    function mysubmit() {
+         for (let i = 1; i < 5; i++) {
+            if(document.getElementById('select'+i.toString()).value.length==0)
+            {
+                document.getElementById('select'+i.toString()).focus();
+                alert(arr[i-1]+' is a Required Field.');
+                return;
+            }
+        }
+         document.getElementById("form").submit();
+    }
+
+
+
+        $
+        (
+            document
+        )
+            .ready
+
+            (
+                function
+
+                    () {
+                    $
+                    (
+                        'select'
+                    )
+                        .selectize
+
+                        (
+                            {
+                                sortField: 'text'
+                            }
+                        )
+                    ;
+                }
+            )
+        ;
+    </script>
+{% endblock %}

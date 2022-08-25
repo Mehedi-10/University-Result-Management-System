@@ -17,7 +17,7 @@
 
 body {
     margin: 0;
-    background-image: linear-gradient(to right top, #f0eaed, #ede2eb, #e6dbea, #ddd5eb, #d0d0ec, #c7d1ee, #bdd2ee, #b3d3ed, #b2d9ec, #b3deea, #b8e2e7, #bfe6e4);
+    /*background-image: linear-gradient(to right top, #f0eaed, #ede2eb, #e6dbea, #ddd5eb, #d0d0ec, #c7d1ee, #bdd2ee, #b3d3ed, #b2d9ec, #b3deea, #b8e2e7, #bfe6e4);*/
 }
 
 input:focus, textarea:focus, select:focus {

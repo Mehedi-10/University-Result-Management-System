@@ -1,0 +1,66 @@
+{% extends 'base3.html' %}
+{% block resultpage %}select_result_as_student.html{% endblock %}
+{% load extra %}
+{% block title %}{{ 'Semester Final Result' }}{% endblock %}
+{% block style_content %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/teacherresult.css' %}">
+    <link rel="stylesheet" href="{% static 'css/spreadsheet.css' %}">
+    <style>
+        .row > * {
+            padding-bottom: 7px;
+        }
+    </style>
+{% endblock %}
+{% block icone %}{% endblock %}
+{% block content %}
+
+    <div style="max-width:max-content; margin: auto;display: block;background-color: white; border-radius: .2rem; padding: 3%;margin-top: 27px;">
+        <h5 style="text-align: center;margin-top: 20px;margin-bottom: 50px">Semestar Final Result</h5>
+        <div class="container" style="font-size: 18px">
+            <div class="row">
+                <div class="row-1"> Name of the student: <span
+                        style="margin-left: 7px;font-size: 25px">{{ all.per.name }}</span>
+                </div>
+                <hr>
+                <div class="col-8">
+{#                    Course: {{ all.per.course }}#}
+                </div>
+                <div class="col"> Exam Roll: {{ all.per.id }}
+                </div>
+                <hr>
+            </div>
+            <div class="row">
+                <div class="col-8">
+                    Semester: {{ all.per.semester }}
+
+                </div>
+                <div class="col">
+                    Session: {{ all.per.session }}
+                </div>
+                <hr>
+
+            </div>
+        </div>
+        <table class="table table-bordered border-primary" style="font-size: smaller">
+            <tr>
+                <td style="text-align: center">Course Code</td>
+                <td style="text-align: center">Course Name</td>
+                <td style="text-align: center">Credits</td>
+                <td style="text-align: center">Before Final Marks</td>
+                <td style="text-align: center">Obtained Letter Grades</td>
+            </tr>
+
+            {% for val in all.dic.values %}
+                <tr>
+                    <td style="text-align: center">{{ val.course_code }}</td>
+                    <td style="text-align: center">{{ val.course_name }} </td>
+                    <td style="text-align: center">{{ val.crourse_credit }}</td>
+                    <td style="text-align: center">{{ val.before_final }}</td>
+                    <td style="text-align: center">{{ val.latter_grade }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+{% endblock %}

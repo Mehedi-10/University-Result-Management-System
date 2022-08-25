@@ -17,18 +17,16 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
           rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-
 </head>
 <body id="bodyy" style="margin: 0" onbeforeprint="myFunction()">
 <div class="row" style="background: #a4a4a4;margin: 0px; padding-bottom: 11px;padding-top: 11px;">
 
     <div class="col" style="text-align: left; ">
-            <span>
-                Home
+        <span>
+                <a href="{% block resultpage %}{% endblock %}" style="text-decoration: none;color: black;font-family: 'Inria Sans'">
+                    Results
+                </a>
         </span>
-        <span class="ps-2">
-                Results
-            </span>
     </div>
     <div class="col" style="text-align: right;">
         {% with ok=1 %}
@@ -61,19 +59,20 @@ account_circle
 
     try {
         const dis = document.getElementById('vanish');
-        const displ= document.getElementById('po');
+        const displ = document.getElementById('po');
         if (dis) {
             function myFunction() {
-                setTimeout(myTimer,2000);
+                setTimeout(myTimer, 2000);
                 const bodyy = document.getElementById('bodyy');
                 bodyy.style.backgroundColor = "#F7F7F7";
                 dis.style.visibility = 'hidden';
                 {#displ.style.width='100vw';#}
             }
+
             function myTimer() {
-                    dis.style.visibility = 'visible';
-                    document.getElementById('bodyy').style.backgroundColor = "#d6d6d6";
-                }
+                dis.style.visibility = 'visible';
+                document.getElementById('bodyy').style.backgroundColor = "#d6d6d6";
+            }
         }
 
     } catch (err) {

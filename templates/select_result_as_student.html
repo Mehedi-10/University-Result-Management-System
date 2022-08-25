@@ -4,7 +4,7 @@
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/teacherresult.css' %}">
     <style>
-        #selectid {
+        .selectid {
             text-align: center;
         }
 
@@ -14,51 +14,73 @@
         }
     </style>
 {% endblock %}
+
 {% block content %}
     <div class="bg2">
         <div style="text-align: center; margin: auto; padding: 21px; font-weight: bold;">Result Selection</div>
-        <div class="fornn">
-            <form style="text-align:center" id="formm" method="POST">
+        <div class="fornn" style="text-align: center;">
+            <form style="text-align:center" id="form" method="POST">
                 {% csrf_token %}
                 <div>
-                    <select class="form-select mb-2" id="selectid" name="Ssession">
-                        <option class="s1" id="s3" selected>Select Session</option>
+                    <select class="form-select mb-2 selectid" id="s1" placeholder="Pick a state..." name="SResult_type"
+                            onchange="cdisable()" autocomplete="off">
+                        {#                        <option class="s1" selected>Select Result Type</option>#}
+                        <option value="">Select a state...</option>
+                        <option class="s1">Before Final</option>
+                        <option class="s1">Final</option>
+                    </select>
+                </div>
+                <div>
+                    <select class="form-select mb-2 selectid" id="s2" name="Ssession">
+                        <option class="s1" selected>Select Session</option>
                         {% for k in all.session %}
-                            <option class="s1" id="s3">{{ k }}</option>
+                            <option class="s1">{{ k }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div>
-                    <select class="form-select mb-2" id="selectid" name="sSemester">
-                        <option class="s1" id="s3" selected>Select Semester</option>
+                    <select class="form-select mb-2 selectid" id="s3" name="sSemester">
+                        <option class="s1" selected>Select Semester</option>
                         {% for k in all.semester %}
-                            <option class="s1" id="s3">{{ k }}</option>
+                            <option class="s1">{{ k }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div>
-                    <select class="form-select mb-2" style="font-size: small" id="selectid" name="SCourse">
-                        <option class="s1" id="s3" selected>Select Course</option>
+                    <select class="form-select mb-2 selectid" style="font-size: small" id="s4" name="SCourse">
+                        <option class="s1" selected>Select Course</option>
                         {% for k in all.course %}
-                            <option class="s1" id="s3">{{ k }}</option>
+                            <option class="s1">{{ k }}</option>
                         {% endfor %}
                     </select>
                 </div>
-                <div>
-                    <select class="form-select mb-2" id="selectid" name="SResult_type">
-                        <option class="s1" id="s3" selected>Result Type</option>
-                        <option class="s1" id="s3">Before Final</option>
-                        <option class="s1" id="s4">Final</option>
-                    </select>
-                </div>
-
-                <button class="submitbtn">submit</button>
             </form>
+            <button class="submitbtn" onclick="mysubmit()">submit</button>
 
         </div>
     </div>
 
     <script>
+        function cdisable() {
+            if (document.getElementById('s1').value == "Final") {
+                document.getElementById('s4').disabled = true;
+            } else
+                document.getElementById('s4').disabled = false;
+        }
+
+        function mysubmit() {
+            for (let i = 1; i < 5; i++) {
+                if (document.getElementById('s1').value == "Final" && i == 4)
+                    continue;
+                if (document.getElementById('s' + i.toString()).value.includes('Select')) {
+                    alert('Required Field.');
+                    document.getElementById('s' + i.toString()).focus();
+                    return;
+                }
+            }
+            document.getElementById('form').submit();
+        }
+
 
     </script>
 
