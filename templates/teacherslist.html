@@ -1,4 +1,5 @@
 {% extends 'admin_base.html' %}
+{% load extra %}
 {% block title %}{{ 'Teachers' }}{% endblock %}
 {% block style_content %}
     {% load static %}
@@ -63,10 +64,47 @@ menu_book
             </div>
 
             <div class="col">
-
                 <h1 style="text-align: center;">Home page</h1>
+                {% for i in all %}
+                    <div class="col">
+                        <div class="card">
+                            <div class="card-body">
+                                <p>
+                                    <strong class="card-title">{{ i.name.0 }}</strong>
+                                <hr>
+                                </p>
+                                <p style="margin-bottom: 10px">
+                                    <small class="card-text">I'm teaching</small>
+                                </p>
+                                {% if i.internal|isempty %}
+                                    <small>None</small>
+                                {% else %}
+                                    <p>
+                                        {% for j in i.internal %}
+                                            <small class="card-text">{{ j }}</small>
+                                        {% endfor %}
+                                    </p>
+                                {% endif %}
+                                <hr>
+                                <p style="margin-bottom: 10px">
+                                    <small class="card-text">I'm external</small>
+                                </p>
+
+                                {% if  i.external|isempty %}
+                                    <small>None</small>
+                                {% else %}
+                                    <p>
+                                        {% for j in i.external %}
+                                            <small class="card-text">{{ j }}</small>
+                                        {% endfor %}
+                                    </p>
+                                {% endif %}
 
 
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
 
 

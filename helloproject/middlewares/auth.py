@@ -31,3 +31,13 @@ def is_allowed_student(get_response):
         return response
 
     return student_gaurd
+
+
+def is_allowed_to_change_pass(get_response):
+    def checkuser(request):
+        if not request.session.get('to_verify'):
+            return redirect('who_are_you')
+        response = get_response(request)
+        return response
+
+    return checkuser

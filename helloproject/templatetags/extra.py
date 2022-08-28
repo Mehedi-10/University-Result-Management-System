@@ -25,15 +25,17 @@ def marks(dic):
     if x==-1:
         return ""
     else:
-        x+=1
+        x += 1
     return dic[x:y]
+
+
 @register.filter
-def havemark(c,val):
-    if int(c)!=int(val):
+def havemark(c, val):
+    if int(c) != int(val):
         return True
     return False
 
 
-
-
-
+@register.filter
+def isempty(li):
+    return len(li) == 0

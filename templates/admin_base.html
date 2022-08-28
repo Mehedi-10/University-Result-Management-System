@@ -22,23 +22,50 @@
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css"
           integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous"/>
+    <style>
+        .btn {
+            color: white;
+        }
+
+        {# .btn-outline-secondary:hover{#}
+        {# #}
+        {# }#}
+    </style>
 </head>
-<body style="background:#082032; color: white;">
-  <div class="row p-2" style="text-align: right; font-family: 'Inria Sans'; background-color: #383838; margin: 0;">
-        <div class="col" style="text-align: left;">
-            <span>
-                Home
-        </span>
-
-        </div>
-        <div class="col" style="text-align: right;">
-            <span class="material-icons">notifications</span>
-
-            <span class="material-icons ps-2 ">
-account_circle
-</span>
-        </div>
+<body style="background:#242637; color: white; margin: 0">
+<div class="row p-2" style=" font-family: 'Inria Sans'; background-color: #1d1e28; margin: 0;">
+    <div class="col d-grid gap-0 d-md-block" style="text-align: left;">
+        <a type="button" class="btn" href="admin_home"> Home
+        </a>
+        <a type="button" class="btn" href="teachers"> Teachers
+        </a>
+        <a type="button" class="btn" href="exam_committee"> Exam Committee
+        </a>
+        <a type="button" class="btn" href="add_new_course"> Students
+        </a>
     </div>
+    <div class="col-2" style="text-align: right;">
+        <a type="button" id="mgid" class="btn material-icons" onclick="mymessage()"> notifications</a>
+    </div>
+</div>
+<div id="message"
+     style="width: 400px; background: #8F91A2;padding: 7px; position: absolute; z-index: 1; right: 10px;border-radius: .1rem;display: none">
+    {% for i in all.teacher %}
+        <div class="toast-header">
+            <strong class="me-auto">{{ i.sender_id }}</strong>
+            <small class="text-muted">{{ i.receiving_time }}</small>
+        </div>
+        <div class="toast-body">
+            {#            {{ i.message }}#}
+        </div>
+    {% endfor %}
+    {#    {% if all.message %}#}
+    {#        <p>no new notifications</p>#}
+    {#    {% endif %}#}
+    <div class="d-grid">
+        <button class="btn" type="button">show all</button>
+    </div>
+</div>
 {% block content %} {% endblock %}
 <script>
     {% if messages %}
@@ -47,9 +74,22 @@ account_circle
             document.getElementById("hidein2sec").style.display = 'none';
         }
     {% endif %}
+    var show = 0;
 
+    function mymessage() {
+        if (show == 1) {
+            document.getElementById('message').style.display = 'block';
+            document.getElementById('mgid').innerText = 'close';
+
+        } else {
+            document.getElementById('mgid').innerText = 'notifications';
+            document.getElementById('message').style.display = 'none';
+
+        }
+        show = (show + 1) % 2;
+    }
 </script>
-</body >
+</body>
 
 
 </html>

@@ -468,8 +468,6 @@
                                             document.getElementById(cellid).value = total;
                                     }
                                 }
-
-
                                 aaacellvalue[cellid] = document.getElementById(cellid).value;
                             } catch (e) {
                             }
@@ -599,7 +597,6 @@
                 }
                 lastreadonly();
                 sendall();
-
             } else {
                 alert('can\'t add more');
             }
@@ -610,7 +607,6 @@
             notempty();
             if (curcolnum !== 66) {
                 var lim = operationid.charCodeAt(0);
-
                 for (let i = lim; i < curcolnum; i++) {
                     var dest = String.fromCharCode(i);
                     var sourc = String.fromCharCode(i + 1);
@@ -624,6 +620,8 @@
 
                         }
                     }
+
+
                     var hiden = '.' + String.fromCharCode(curcolnum);
                     var hidenow = document.querySelectorAll(hiden);
                     for (let i = 0; i < 90; i++) {
@@ -633,11 +631,29 @@
                         }
                     }
                 }
+                notempty();
+                for (let i = 1; i < 90; i++) {
+                    var total = '0';
+                    for (let k = 65; k < 75; k++) {
+                        try {
+                            cellid = i.toString() + String.fromCharCode(k);
+                            console.log(cellid);
+                            if (k > 65) {
+                                if (k < curcolnum)
+                                    total = addsum(document.getElementById(cellid).value, total);
+                                else if (k === curcolnum)
+                                    document.getElementById(cellid).value = total;
+                            }
+
+                        } catch (e) {
+                        }
+                    }
+                }
                 lastreadonly();
                 sendall();
 
             } else {
-                alert('can\'t detete');
+                alert('can\'t detete.');
             }
         }
 

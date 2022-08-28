@@ -3,6 +3,17 @@
 {% block style_content %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/common.css' %}">
+    <style>
+        input {
+            border: none !important;
+            padding: 0 !important;
+            height: 30px;
+            width: 90%;
+            outline: none !important;
+            background: white !important;
+            border-radius: 2%;
+        }
+    </style>
 {% endblock %}
 {% block content %}
     {% load static %}
@@ -12,6 +23,7 @@
     <div style="font-family: 'Inria Sans'; ">
         <div style="position: relative; height: 420px;width: 420px;  display: block; margin:auto; ">
             <h6 style="position: absolute;color:white;margin-top: 10%;margin-left: 17%">hello !</h6>
+
             <form method="POST" style="position: absolute; ">
                 {% csrf_token %}
                 <div style="position:relative; margin-left: 2%; margin-top: 31%; height: max-content;width: 400px;text-align: center">
@@ -22,7 +34,6 @@
 
                     </div>
                 </div>
-                <!-- Password input -->
                 <div style="position:relative;margin-left: 2%; margin-top: 7%; height: max-content;width: 400px;text-align: center">
                     <div style="position:relative;display:flex;margin:auto; background: white; height: 32px;width: 270px; border:1px solid black">
                         <label for="form1Example2"> <img style="height: 31px;width: 32px;margin-right: 3px;"
@@ -30,6 +41,9 @@
                         <input type="password" name="password" id="password" placeholder="Enter Password" required>
                     </div>
                 </div>
+                <a href="forgotpassword"
+                   style="text-decoration:none; color:#4407ff; margin-left: 150px;margin-top: 3px; position: absolute">Forgot
+                    your password?</a>
                 <input class="form_smbt" type="submit"
                        style="
                         margin-left: 52.1px;

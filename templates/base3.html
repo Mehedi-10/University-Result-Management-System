@@ -23,23 +23,35 @@
 
     <div class="col" style="text-align: left; ">
         <span>
-                <a href="{% block resultpage %}{% endblock %}" style="text-decoration: none;color: black;font-family: 'Inria Sans'">
+                <a type="button" class="btn" href="{% block resultpage %}{% endblock %}"
+                   style="text-decoration: none;color: black;font-family: 'Inria Sans'">
                     Results
                 </a>
         </span>
     </div>
-    <div class="col" style="text-align: right;">
-        {% with ok=1 %}
-            {% if ok == 1 %}
-                <span class="material-icons">notifications</span>
-            {% else %}
-                <span class="material-icons">notifications_active</span>
-            {% endif %}
-        {% endwith %}
-        <span class="material-icons ps-2 ">
-account_circle
-</span>
+    <div class="col" style="text-align: right;padding-right: 7px; ">
+        <a type="button" id="mgid" class="btn material-icons" onclick="mymessage()">notifications</a>
+        <a type="button" class="btn material-icons">account_circle</a>
+
         {% block icone %}{% endblock %}
+    </div>
+</div>
+<div id="message"
+     style="width: 400px; background: #8F91A2;padding: 7px; position: absolute; z-index: 1; right: 10px;border-radius: .1rem;display: none">
+    {% for i in all.teacher %}
+        <div class="toast-header">
+            <strong class="me-auto">{{ i.sender_id }}</strong>
+            <small class="text-muted">{{ i.receiving_time }}</small>
+        </div>
+        <div class="toast-body">
+            {#            {{ i.message }}#}
+        </div>
+    {% endfor %}
+    {#    {% if all.message %}#}
+    {#        <p>no new notifications</p>#}
+    {#    {% endif %}#}
+    <div class="d-grid">
+        <button class="btn" type="button">show all</button>
     </div>
 </div>
 {% block content %} {% endblock %}
@@ -77,6 +89,21 @@ account_circle
 
     } catch (err) {
 
+    }
+
+    var show = 0;
+
+    function mymessage() {
+        if (show == 1) {
+            document.getElementById('message').style.display = 'block';
+            document.getElementById('mgid').innerText = 'close';
+
+        } else {
+            document.getElementById('mgid').innerText = 'notifications';
+            document.getElementById('message').style.display = 'none';
+
+        }
+        show = (show + 1) % 2;
     }
 </script>
 </body>

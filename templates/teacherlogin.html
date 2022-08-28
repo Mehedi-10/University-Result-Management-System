@@ -3,6 +3,17 @@
 {% block style_content %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/common.css' %}">
+    <style>
+        input {
+            border: none !important;
+            padding: 0 !important;
+            height: 30px;
+            width: 90%;
+            outline: none !important;
+            background: white !important;
+            border-radius: 2%;
+        }
+    </style>
 {% endblock %}
 {% block content %}
     {% load static %}
@@ -18,7 +29,7 @@
                     <div style="position:relative;display:flex;margin:auto; background: white; height: 32px;width: 270px; border:1px solid black">
                         <label for="form1Example1"><img style="height: 32px;width: 32px;margin-right: 3px;"
                                                         src="{% static 'icons8-user-96.png' %}"></label>
-                        <input type="email" name="email" id="email" placeholder="Enter Email Address" required>
+                        <input type="email" name="email" id="email" placeholder="Enter your email" required>
 
                     </div>
                 </div>
@@ -27,9 +38,13 @@
                     <div style="position:relative;display:flex;margin:auto; background: white; height: 32px;width: 270px; border:1px solid black">
                         <label for="form1Example2"> <img style="height: 31px;width: 32px;margin-right: 3px;"
                                                          src="{% static 'icons8-password-96.png' %}"></label></label>
-                        <input type="password" name="password" id="password" placeholder="Enter Password" required>
+                        <input type="password" name="password" id="password" placeholder="Enter your password" required>
                     </div>
                 </div>
+                <a href="forgotpassword"
+                   style="text-decoration:none; color:#4407ff; margin-left: 150px;margin-top: 3px; position: absolute">Forgot
+                    your password?</a>
+
                 <input class="form_smbt" type="submit"
                        style="
                         margin-left: 52.1px;

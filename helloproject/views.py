@@ -5,17 +5,19 @@ import uuid
 yearno = ['1st', '2nd', '3rd', '4th']
 semno = ['1st', '2nd']
 inMark = ['0', '10', '20', '40']
-# print(uuid.uuid4().hex[:6].upper())
 
 from django.shortcuts import render, HttpResponseRedirect
 from django.contrib import messages
 from django.utils.safestring import mark_safe
 from django.views.decorators.csrf import csrf_protect
+from django.core.mail import EmailMessage
+from django.conf import settings
+from django.template.loader import render_to_string
 
 import pandas as pd
 from django.contrib.auth.hashers import make_password, check_password
 from django.http import JsonResponse
-from helloproject.middlewares.auth import is_allowed, is_allowed_student
+from helloproject.middlewares.auth import *
 
 from .models.Courses import courses
 from .models.Before_Final import before_final
@@ -25,6 +27,7 @@ from .models.Student import student
 from .models.Published import published
 from .models.Final import final
 from .models.Officially_Published import officially_published
+from .models.Chats import chats
 from .models.Improve import improve
 from .models.Exam_Committee import exam_committe
 
@@ -122,6 +125,7 @@ def student_signup(request):
     messages.success(request, 'Registration Successful')
     return HttpResponseRedirect('register_teacher.html')
 
+
 ##  update marks with credits ##
 @is_allowed
 def select_result_as_teacher(request):
@@ -167,6 +171,7 @@ def select_result_as_teacher(request):
             request.session['all_info'] = dic
             return HttpResponseRedirect('teacher_Final.html')
 
+
 @is_allowed
 def tselect(request):
     course = []
@@ -201,6 +206,8 @@ def tselect(request):
         else:
             before.append('Semestar Final')
         return JsonResponse(before, safe=False)
+
+
 @is_allowed
 def sselect(request):
     course = []
@@ -235,6 +242,7 @@ def sselect(request):
         else:
             before.append('Semestar Final')
         return JsonResponse(before, safe=False)
+
 
 @is_allowed
 def process_before_final(request):
@@ -580,24 +588,81 @@ def add_course(request):
     )
     newcourse.save()
     return HttpResponseRedirect('add_new_course.html')
+
+
 def assign_course(request):
-    if request.method=='POST':
+    if request.method == 'POST':
+        session_ = request.POST.get('s_ession')
+        tmp_ = request.POST.get('c_ourse')
+        tmp2_ = request.POST.get('t_eacher')
+        type_ = request.POST.get('t_ype')
+        courseid_ = tmp_[tmp_.find('(') + 1:tmp_.find(')')]
+        tmail_ = tmp2_[tmp2_.find('(') + 1:tmp2_.find(')')]
+        mark = 40
+        if courses.objects.get(c_id=courseid_).credit == 2.0:
+            mark = 20
+        if not assigned_course.objects.filter(c_id__c_id=courseid_).filter(s_session=session_).filter(
+                t_mail__t_email=tmail_).exists():
+            print(courseid_[courseid_.find('(') + 1:courseid_.find(')')])
+            nw = assigned_course(
+                c_id_id=courseid_,
+                t_mail_id=tmail_,
+                s_session=session_,
+                guest=type_
+            )
+            nw.save()
+            messages.success(request, 'Assigned Successfully')
+            if type_ == 'Internal':
+                for i in student.objects.filter(s_session=session_):
+                    nw = before_final(
+                        c_id_id=courseid_,
+                        s_session=session_,
+                        s_id=i.s_id
+                    )
+                    nw.save()
+                nw = before_final(
+                    c_id_id=courseid_,
+                    s_session=session_,
+                    s_id='Exam Roll',
+                    mid1='Total' + '(' + str(mark) + ')'
+                )
+                nw.save()
+                mark = 60
+                if courses.objects.get(c_id=courseid_).credit == 2.0:
+                    mark = 30
+                for i in student.objects.filter(s_session=session_):
+                    nw = final(
+                        c_id_id=courseid_,
+                        s_session=session_,
+                        s_id=i.s_id
+                    )
+                    nw.save()
+                nw = final(
+                    c_id_id=courseid_,
+                    s_session=session_,
+                    s_id='Exam Roll',
+                    total1='Total' + '(' + str(mark) + ')'
+                )
+                nw.save()
+        else:
+            messages.info(request, 'Already Assigned.')
         return HttpResponseRedirect('assign_course.html')
-    course=[]
-    teach=[]
-    session=[]
+    course = []
+    teach = []
+    session = []
     for i in courses.objects.all():
-        course.append(i.c_name+' ('+i.c_id+')')
+        course.append(i.c_name + ' (' + i.c_id + ')')
     for i in teacher.objects.all():
-        teach.append(i.t_name +' ('+i.t_email+')')
+        teach.append(i.t_name + ' (' + i.t_email + ')')
     for i in student.objects.all():
         session.append(i.s_session)
-    all={
-        'courses_':course,
-        'teacher_':teach,
-        'session_':session
+    all = {
+        'courses_': course,
+        'teacher_': teach,
+        'session_': session
     }
-    return render(request,'assign_course.html',{'all':all})
+    return render(request, 'assign_course.html', {'all': all})
+
 
 def func(request):
     vc = []
@@ -636,18 +701,127 @@ def func(request):
 #             )
 #             st.save()
 #     return render(request, 'excel.html')
+# def send_mg(request):
+#     pass
 
 def admin_home(request):
     all = {
-        'teacher': teacher.objects.all().values()
+        'teacher': teacher.objects.all().values(),
     }
-    # print(all)
+    # # print(all)
     return render(request, 'admin_home.html', {'all': all})
 
 
 #
 # @is_allowed_student
+def exam_com(request):
+    return render(request, 'exam_committee.html')
+
+
+def showallteacher(request):
+    dic = []
+    for i in teacher.objects.all():
+        a1 = []
+        a2 = []
+        a3 = []
+        a1.append(i.t_name)
+        for j in assigned_course.objects.filter(t_mail=i.t_email):
+            try:
+                pb = published.objects.filter(c_id__c_id=j.c_id.c_id).filter(s_session=j.s_session).last()
+                if not pb.published_final:
+                    if j.guest == 'internal':
+                        a2.append(j.c_id.c_name)
+                    else:
+                        a3.append(j.c_id.c_name)
+            except AttributeError:
+                pass
+        tmp = {
+            'name': a1,
+            'internal': a2,
+            'external': a3
+        }
+        dic.append(tmp)
+    return render(request, 'teacherslist.html', {'all': dic})
 
 
 def who_are_u(request):
     return render(request, 'who_are_you.html')
+
+
+@is_allowed_to_change_pass
+def changepass_conf(request):
+    if request.method == 'POST':
+        password = request.POST.get('password')
+        if request.session['user_type'] == 2:
+            ob = student.objects.filter(s_email=request.session['to_verify']).last()
+            ob.password = make_password(password)
+            ob.save()
+            messages.success(request, 'your password has been successfully changed.')
+            del request.session['to_verify']
+            return HttpResponseRedirect('student_login.html')
+        else:
+            ob = teacher.objects.get(t_email=request.session['to_verify'])
+            ob.password = make_password(password)
+            ob.save()
+            del request.session['to_verify']
+            messages.success(request, 'your password has been successfully changed.')
+            return HttpResponseRedirect('teacherlogin.html')
+    return render(request, 'change_pass.html')
+
+
+@is_allowed_to_change_pass
+def verify(request):
+    if request.method == 'POST':
+        li = ['false']
+        if request.session['user_type'] == 2:
+            ob = student.objects.filter(s_email=request.session['to_verify']).last()
+            if ob.code == request.POST.get('code'):
+                li[0] = 'true'
+        else:
+            ob = teacher.objects.get(t_email=request.session['to_verify'])
+            if ob.code == request.POST.get('code'):
+                li[0] = 'true'
+        return JsonResponse(li, safe=False)
+
+
+def changepassword(request):
+    if request.method == 'POST':
+        li = []
+        code = ''
+        name = ''
+        try:
+            ob = teacher.objects.get(t_email=request.POST.get('email'))
+        except teacher.DoesNotExist:
+            if not student.objects.filter(s_email=request.POST.get('email')).exists():
+                li.append('false')
+                return JsonResponse(li, safe=False)
+            else:
+                ob = student.objects.filter(s_email=request.POST.get('email')).last()
+                ob.code = uuid.uuid4().hex[:8]
+                code = ob.code
+                name = ob.s_name
+                ob.save()
+                request.session['user_type'] = 2
+                li.append('true')
+        else:
+            ob = teacher.objects.get(t_email=request.POST.get('email'))
+            ob.code = uuid.uuid4().hex[:8]
+            code = ob.code
+            name = ob.t_name
+            ob.save()
+            request.session['user_type'] = 1
+            li.append('true')
+
+        request.session['to_verify'] = request.POST.get('email')
+
+        tamp = render_to_string('passreset.html', {'username': name, 'code': code})
+        email = EmailMessage(
+            'testing email',
+            tamp,
+            settings.EMAIL_HOST_USER,
+            ['mehedihasanarafat10@gmail.com'],
+        )
+        email.fail_scilenty = True
+        email.send()
+        return JsonResponse(li, safe=False)
+    return render(request, 'forgot_password.html')
