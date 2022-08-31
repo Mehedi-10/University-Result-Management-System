@@ -9,5 +9,5 @@ class student(models.Model):
     s_session = models.CharField(max_length=25)
     password = models.CharField(max_length=500)
     s_email = models.EmailField(max_length=254, default='abc@gmail.com')
-    code = models.CharField(max_length=25, default=uuid.uuid4().hex[:8])
-    # code_time=models.DateTimeField()
+    code = models.CharField(max_length=500, default=uuid.uuid4().hex[:8])
+    s_status = models.BooleanField(default=False)

@@ -2,6 +2,7 @@ import datetime
 import os
 import uuid
 
+totalinternalteachers = 17
 yearno = ['1st', '2nd', '3rd', '4th']
 semno = ['1st', '2nd']
 inMark = ['0', '10', '20', '40']
@@ -13,6 +14,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.core.mail import EmailMessage
 from django.conf import settings
 from django.template.loader import render_to_string
+from django.db.models import Q
 
 import pandas as pd
 from django.contrib.auth.hashers import make_password, check_password
@@ -102,14 +104,14 @@ def student_signup(request):
         return render(request, 'register_student.html')
     if request.POST.get('password1') != request.POST.get('password2'):
         messages.error(request, 'Passwords do not match.')
-        return HttpResponseRedirect('register_teacher.html')
+        return HttpResponseRedirect('register_teacher')
     if len(request.POST.get('id')) != 8:
         messages.error(request, "Invalid ID.")
-        return HttpResponseRedirect('register_teacher.html')
+        return HttpResponseRedirect('register_teacher')
     try:
         student.objects.get(s_id=request.POST.get('id'))
         messages.error(request, "This ID is already being used.")
-        return HttpResponseRedirect('register_teacher.html')
+        return HttpResponseRedirect('register_teacher')
     except student.DoesNotExist:
         ss = request.POST.get('id')
         num = int(ss[1:3])
@@ -123,7 +125,7 @@ def student_signup(request):
         )
         newstudent.save()
     messages.success(request, 'Registration Successful')
-    return HttpResponseRedirect('register_teacher.html')
+    return HttpResponseRedirect('register_teacher')
 
 
 ##  update marks with credits ##
@@ -705,10 +707,44 @@ def func(request):
 #     pass
 
 def admin_home(request):
+    student_data = [['Session', 'No of Students']]
+    cnt = {}
+    for i in student.objects.order_by('s_session'):
+        try:
+            ob = officially_published.objects.filter(s_session=i.s_session).filter(s_semester='4-4').last()
+        except officially_published.DoesNotExist:
+            pass
+        else:
+            if ob != None and ob.is_published:
+                continue
+        if i.s_session not in cnt.keys():
+            cnt.__setitem__(i.s_session, 0)
+        cnt[i.s_session] += 1
+    for i, j in cnt.items():
+        student_data.append([i, j])
+
+    teacher_data = [['Current Status', 'count']]
+    not_on_leave = 0
+    for i in teacher.objects.all():
+        fnd = 0
+        for j in assigned_course.objects.filter(t_mail=i.t_email):
+            try:
+                pb = published.objects.filter(c_id__c_id=j.c_id.c_id).filter(s_session=j.s_session).last()
+                if not pb.published_final:
+                    if j.guest == 'internal':
+                        fnd = 1
+                        break
+            except AttributeError:
+                pass
+        if fnd:
+            not_on_leave += 1
+    teacher_data.append(['Not on study leave', not_on_leave])
+    teacher_data.append(['On study leave', totalinternalteachers - not_on_leave])
     all = {
-        'teacher': teacher.objects.all().values(),
+        'student_stat1': student_data,
+        'teacher_stat1': teacher_data,
     }
-    # # print(all)
+    print(teacher_data)
     return render(request, 'admin_home.html', {'all': all})
 
 
@@ -775,11 +811,11 @@ def verify(request):
         li = ['false']
         if request.session['user_type'] == 2:
             ob = student.objects.filter(s_email=request.session['to_verify']).last()
-            if ob.code == request.POST.get('code'):
+            if check_password(request.POST.get('code'), ob.code):
                 li[0] = 'true'
         else:
             ob = teacher.objects.get(t_email=request.session['to_verify'])
-            if ob.code == request.POST.get('code'):
+            if check_password(request.POST.get('code'), ob.code):
                 li[0] = 'true'
         return JsonResponse(li, safe=False)
 
@@ -797,16 +833,16 @@ def changepassword(request):
                 return JsonResponse(li, safe=False)
             else:
                 ob = student.objects.filter(s_email=request.POST.get('email')).last()
-                ob.code = uuid.uuid4().hex[:8]
-                code = ob.code
+                code = uuid.uuid4().hex[:8]
+                ob.code = make_password(code)
                 name = ob.s_name
                 ob.save()
                 request.session['user_type'] = 2
                 li.append('true')
         else:
             ob = teacher.objects.get(t_email=request.POST.get('email'))
-            ob.code = uuid.uuid4().hex[:8]
-            code = ob.code
+            code = uuid.uuid4().hex[:8]
+            ob.code = make_password(code)
             name = ob.t_name
             ob.save()
             request.session['user_type'] = 1
@@ -825,3 +861,28 @@ def changepassword(request):
         email.send()
         return JsonResponse(li, safe=False)
     return render(request, 'forgot_password.html')
+
+
+def show_all_student(request):
+    if request.method == 'POST':
+        try:
+            ob = student.objects.get(s_id=request.POST.get('id'))
+        except student.DoesNotExist:
+            messages.error(request, 'id not exits')
+            return HttpResponseRedirect('students')
+        else:
+            ob.s_status = request.POST.get('status') == 'true'
+            ob.save()
+            return JsonResponse({'message': request.POST.get('status')})
+    dic = {}
+    for i in student.objects.all():
+        if i.s_session not in dic.keys():
+            dic.__setitem__(i.s_session, [])
+        tmp = {
+            'id': i.s_id,
+            'name': i.s_name,
+            'email': i.s_email,
+            'status': i.s_status
+        }
+        dic[i.s_session].append(tmp)
+    return render(request, 'studentlist.html', {'all': dic})

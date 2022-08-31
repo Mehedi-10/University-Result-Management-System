@@ -1,23 +1,10 @@
-{% extends 'admin_base.html' %}
+{% extends 'admin_home.html' %}
 {% load extra %}
 {% block title %}{{ 'Teachers' }}{% endblock %}
 {% block style_content %}
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/signup.css' %}">
-    <style>
 
-        .btn-primary {
-            background-color: #5800FF;
-        }
-
-        div {
-            color: white;
-        }
-
-        .card {
-            background-color: #000D6B
-        }
-    </style>
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
     <link rel="stylesheet"
@@ -36,32 +23,8 @@
 
     <div class="container" style="margin-left: 10px">
         <div class="row">
-            <div class="col-sm-6 text-end " style="max-width: 210px">
-                <div class="row mt-4">
-                    <a type="button" class="btn btn-primary" href="register_teacher"> <span
-                            class="material-symbols-outlined">
-person_add</span> Add Teacher
-                    </a>
-                </div>
-                <div class="row mt-2">
+            {% include 'admin_sidebars.html' %}
 
-                    <a type="button" class="btn btn-primary" href="add_new_course"><span
-                            class="material-symbols-outlined">
-task_alt
-</span>Approve Student
-                    </a>
-                </div>
-
-                <div class="row mt-2">
-                    <a type="button" class="btn btn-primary " href="assign_course"><span
-                            class="material-symbols-outlined">
-menu_book
-</span>Assign Course
-                    </a>
-
-                </div>
-
-            </div>
 
             <div class="col">
                 <h1 style="text-align: center;">Home page</h1>
@@ -87,7 +50,7 @@ menu_book
                                 {% endif %}
                                 <hr>
                                 <p style="margin-bottom: 10px">
-                                    <small class="card-text">I'm external</small>
+                                    <small class="card-text">Examiner of</small>
                                 </p>
 
                                 {% if  i.external|isempty %}
@@ -111,6 +74,5 @@ menu_book
         </div>
 
     </div>
-
 
 {% endblock %}

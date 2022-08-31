@@ -1,0 +1,155 @@
+{% extends 'admin_home.html' %}
+{% load extra %}
+{% block title %}{{ 'Teachers' }}{% endblock %}
+{% block style_content %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0"/>
+    <style>
+
+        table {
+            width: 750px;
+            border-collapse: collapse;
+            margin: 50px auto;
+        }
+
+        th {
+            background: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+
+        td, th {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+            font-size: 18px;
+        }
+
+        .labels tr td {
+            background-color: #2cc16a;
+            font-weight: bold;
+            color: white;
+        }
+
+        .label tr td label {
+            display: block;
+        }
+
+        td {
+            background: white;
+        }
+
+        [data-toggle="toggle"] {
+            display: none;
+        }
+
+    </style>
+
+{% endblock %}
+{% block content %}
+
+    <div class="container" style="margin-left: 10px">
+        <div class="row">
+            {% include 'admin_sidebars.html' %}
+
+
+            <div class="col">
+
+
+                <table>
+                    <thead>
+                    <tr>
+                        <th style="text-align: center;">ID</th>
+                        <th style="text-align: center;">Name</th>
+                        <th style="text-align: center;">Email</th>
+                        <th style="text-align: center;">Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for k,v in all.items %}
+
+                        <tbody class="labels">
+                        <td colspan="4" style="text-align: center">
+                            <label for="{{ k }}" style="width: 100%">{{ k }}</label>
+                            <input type="checkbox" name="{{ k }}" id="{{ k }}" data-toggle="toggle">
+                        </td>
+                        </tbody>
+                        {% for i in v %}
+
+                            <tbody class="hide">
+                            <tr>
+                                <td>{{ i.id }}</td>
+                                <td>{{ i.name }}</td>
+                                <td>{{ i.email }}</td>
+                                <td>
+                                    <input type="checkbox" class="btn-check" id="{{ i.id }}"
+                                           onclick="myapprove(this)" {% if i.status %}checked{% endif %}
+                                    >
+                                    <label class="btn btn-outline-success"
+                                           for="{{ i.id }}">
+                                        <span id="label{{ i.id }}" {% if i.status %}style="color: white;"
+                                              {% else %}style="color: red;"{% endif %}>{% if i.status %}
+                                            Approved{% else %}Hold{% endif %}</span>
+                                    </label><br>
+                                </td>
+                            </tr>
+                            </tbody>
+                        {% endfor %}
+                    {% endfor %}
+                </table>
+
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        function myapprove(element) {
+            $.ajax({
+                type: "POST",
+                url: "students",
+                data: {
+                    id: element.id,
+                    status: element.checked,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function (message) {
+                    var enb = 'label' + element.id;
+                    if (element.checked) {
+                        document.getElementById(enb).style.color = "white";
+                        document.getElementById(enb).innerText = "Approved";
+                    } else {
+                        document.getElementById(enb).style.color = "red";
+                        document.getElementById(enb).innerText = "Hold";
+                    }
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            $('[data-toggle="toggle"]').change(function () {
+                $(this).parents().next('.hide').toggle();
+            });
+        });
+
+    </script>
+
+{% endblock %}
+
+

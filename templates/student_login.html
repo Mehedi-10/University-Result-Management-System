@@ -24,15 +24,19 @@
         <div style="position: relative; height: 420px;width: 420px;  display: block; margin:auto; ">
             <h6 style="position: absolute;color:white;margin-top: 10%;margin-left: 17%">hello !</h6>
 
-            <form method="POST" style="position: absolute; ">
+            <form id="form" method="POST" style="position: absolute; ">
+                <a type="button" class="btn" href="register_student.html"
+                   style="text-decoration:none; color:black; border: none; margin-left: 290px;margin-top: 15px;font-weight: lighter; position: absolute">signup</a>
                 {% csrf_token %}
                 <div style="position:relative; margin-left: 2%; margin-top: 31%; height: max-content;width: 400px;text-align: center">
+
                     <div style="position:relative;display:flex;margin:auto; background: white; height: 32px;width: 270px; border:1px solid black">
                         <label for="form1Example1"><img style="height: 32px;width: 32px;margin-right: 3px;"
                                                         src="{% static 'icons8-user-96.png' %}"></label>
                         <input type="text" name="sid" id="email" placeholder="Enter Your Id" required>
 
                     </div>
+
                 </div>
                 <div style="position:relative;margin-left: 2%; margin-top: 7%; height: max-content;width: 400px;text-align: center">
                     <div style="position:relative;display:flex;margin:auto; background: white; height: 32px;width: 270px; border:1px solid black">
@@ -42,21 +46,13 @@
                     </div>
                 </div>
                 <a href="forgotpassword"
-                   style="text-decoration:none; color:#4407ff; margin-left: 150px;margin-top: 3px; position: absolute">Forgot
+                   style="text-decoration:none; color:#4407ff; margin-left: 150px;margin-top: 3px; position: absolute;font-weight: lighter;">Forgot
                     your password?</a>
-                <input class="form_smbt" type="submit"
-                       style="
-                        margin-left: 52.1px;
-                        margin-top: 99.3px;
-                        border-radius: 25%;
-                        background: #A4A4A4 !important;
-                        border-bottom-right-radius: 70%;
-                        border-top-right-radius: 70%;
-                        color: #190933;
-                        padding:2px;
-                        width: 70px;
-                        height: 39px;
-                        font-weight: bold;" value="next ⊳">
+                <a class="btn" style="margin-left: 50px;margin-top: 96px; border: none;"
+                   onclick="mysubmitstudent()"><span
+                        style="font-weight: bold"> next</span> <img style="height: 17px;width: 17px"
+                                                                    src="{% static 'right-arrow.png' %}"> </a>
+
             </form>
 
             <svg style="display: block; margin: auto;" width="370" height="370" viewBox="0 0 463 532" fill="none"
@@ -70,4 +66,10 @@
             </svg>
         </div>
     </div>
+    <script>
+        function mysubmitstudent() {
+            document.getElementById("form").submit();
+        }
+    </script>
+
 {% endblock %}

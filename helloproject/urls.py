@@ -16,7 +16,6 @@ urlpatterns = [
     path('student_login.html', signin_student),
     path('show_before_final.html', show_before_final),
     path('show_final.html', showfinal),
-    #     path('excel.html', excelup),
     path('select_result_as_student.html', select_result_as_student),
     path('assign_course', assign_course),
     path('add_new_course', add_course),
@@ -27,4 +26,5 @@ urlpatterns = [
     path('forgotpassword', changepassword),
     path('sendcode', verify),
     path('change_pass', changepass_conf),
+    path('students', show_all_student),
 ]
