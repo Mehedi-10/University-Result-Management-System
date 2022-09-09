@@ -1,4 +1,4 @@
-{% extends 'headtail.html' %}
+{% extends 'user_headtail_without_navbar.html' %}
 {% block title %}{{ 'Login as Student' }}{% endblock %}
 {% block style_content %}
     {% load static %}
@@ -25,8 +25,6 @@
             <h6 style="position: absolute;color:white;margin-top: 10%;margin-left: 17%">hello !</h6>
 
             <form id="form" method="POST" style="position: absolute; ">
-                <a type="button" class="btn" href="register_student.html"
-                   style="text-decoration:none; color:black; border: none; margin-left: 290px;margin-top: 15px;font-weight: lighter; position: absolute">signup</a>
                 {% csrf_token %}
                 <div style="position:relative; margin-left: 2%; margin-top: 31%; height: max-content;width: 400px;text-align: center">
 
@@ -34,7 +32,6 @@
                         <label for="form1Example1"><img style="height: 32px;width: 32px;margin-right: 3px;"
                                                         src="{% static 'icons8-user-96.png' %}"></label>
                         <input type="text" name="sid" id="email" placeholder="Enter Your Id" required>
-
                     </div>
 
                 </div>
@@ -46,7 +43,7 @@
                     </div>
                 </div>
                 <a href="forgotpassword"
-                   style="text-decoration:none; color:#4407ff; margin-left: 150px;margin-top: 3px; position: absolute;font-weight: lighter;">Forgot
+                   style="text-decoration:none; color:#4407ff; margin-left: 168px;margin-top: 3px; position: absolute;font-size: small;">Forgot
                     your password?</a>
                 <a class="btn" style="margin-left: 50px;margin-top: 96px; border: none;"
                    onclick="mysubmitstudent()"><span
@@ -64,7 +61,13 @@
                 <path d="M152.478 471.744C157.95 472.908 158.392 480.548 153.091 482.335L83.3456 505.853L83.3402 505.854L8.63417 529.101C5.09387 530.202 1.49999 527.557 1.49999 523.849V446.411C1.49999 442.913 4.72299 440.303 8.14471 441.032L152.478 471.744Z"
                       fill="#A4A4A4" stroke="#1402E2"/>
             </svg>
+            <p style="display: inline; margin-left: 28%; margin-top: 10%; position: absolute;">
+                New student? <a href="register_student.html"
+                                style="text-decoration:none; color:black; "> SIGNUP</a>
+            </p>
+
         </div>
+
     </div>
     <script>
         function mysubmitstudent() {

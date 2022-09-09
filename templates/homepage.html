@@ -1,0 +1,63 @@
+{% extends 'admin_home.html' %}
+
+{% block title %}{{ 'Home' }}{% endblock %}
+
+
+{% block inner_col_content %}
+    <table>
+        <tr>
+            <td>
+                <div id="donutchart1"></div>
+            </td>
+            <td>
+                <div id="donutchart2"></div>
+            </td>
+        </tr>
+
+    </table>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load("current", {packages: ["corechart"]});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function opt(name) {
+            return {
+                title: name,
+                pieHole: 0.6,
+                titleTextStyle: {
+                    {#color: 'white',#}
+                    fontSize: 20,
+                },
+                pieSliceTextStyle: {
+                    color: 'black',
+                },
+                fontName: 'Inria Sans',
+                height: 400,
+                width: 400,
+                {#legend: {textStyle: {color: 'white'}},#}
+                backgroundColor: {fill: 'transparent'}
+            };
+        }
+
+
+        function drawChart() {
+            var data1 = google.visualization.arrayToDataTable(
+                {{ all.student_stat1|safe }}
+            );
+            var data2 = google.visualization.arrayToDataTable(
+                {{ all.teacher_stat1|safe }}
+            );
+
+
+            var chart1 = new google.visualization.PieChart(document.getElementById('donutchart1'));
+            var chart2 = new google.visualization.PieChart(document.getElementById('donutchart2'));
+            chart1.draw(data1, opt('Students'));
+            chart2.draw(data2, opt('Teachers'));
+        }
+    </script>
+{% endblock %}
+
+
+
+

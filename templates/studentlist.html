@@ -1,124 +1,328 @@
 {% extends 'admin_home.html' %}
 {% load extra %}
-{% block title %}{{ 'Teachers' }}{% endblock %}
-{% block style_content %}
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+{% block title %}{{ 'Students' }}{% endblock %}
+{% block inner_style_content %}
 
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0"/>
-    <style>
+    table {
+    min-width: 750px;
+    border-collapse: collapse;
+    margin: 50px auto;
+    }
 
-        table {
-            width: 750px;
-            border-collapse: collapse;
-            margin: 50px auto;
-        }
+    th {
+    background: #0F044C;
+    color: white;
+    font-weight: bold;
+    }
 
-        th {
-            background: #3498db;
-            color: white;
-            font-weight: bold;
-        }
+    td, th {
+    padding: 10px;
+    text-align: left;
+    font-size: 18px;
+    }
+    .selectize-input {
+    min-height: 60px !important;
+    text-align: center;
+    padding-top: 15px !important;
+    }
+    .labels tr td {
+    background-color: #141E61;
+    font-weight: bold;
+    color: white;
+    }
 
-        td, th {
-            padding: 10px;
-            border: 1px solid #ccc;
-            text-align: left;
-            font-size: 18px;
-        }
+    .label tr td label {
+    display: block;
+    }
 
-        .labels tr td {
-            background-color: #2cc16a;
-            font-weight: bold;
-            color: white;
-        }
+    td {
+    border: 1px solid black;
+    background: white;
+    }
+    th{
+    border: 1px solid white;
+    }
 
-        .label tr td label {
-            display: block;
-        }
+    [data-toggle="toggle"] {
+    display: none;
+    }
+    .selectid{
+    height:70px;
+    }
 
-        td {
-            background: white;
-        }
-
-        [data-toggle="toggle"] {
-            display: none;
-        }
-
-    </style>
 
 {% endblock %}
-{% block content %}
+{% block inner_col_content %}
 
-    <div class="container" style="margin-left: 10px">
-        <div class="row">
-            {% include 'admin_sidebars.html' %}
+    <div id="improve" class="p-4 mt-3"
+         style="display:none;left: 51%; transform: translate(-49%, 0);height: 433px;width:650px;  background-color: white; position: fixed;">
+        <h4 class="text-center pb-3">Improve form</h4>
+        <form method="post" id="improve_form" action="improvefinally">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col">
+                    <div class="form-floating mb-3" id="Student_id">
+                        <input type="text" class="form-control imp" id="did" placeholder="enter your id" name="id"
+                               autocomplete="off" required>
+                        <label for="floatingTextarea">Enter student ID</label>
+                    </div>
 
+                    <div style="margin-bottom: 10px">
+                        <select class="form-select mb-2 imp selectid" id="s1" name="Ssemester" required>
+                            <option selected>Select semester</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary mt-5" type="button" onclick="mysubmit_i()"> submit</button>
+                    <button type="button" onclick="myimprove()" class="btn btn-primary mt-5" style="margin-left: 45px">
+                        cancel
+                    </button>
+                </div>
+                <div class="col">
 
-            <div class="col">
+                    <div style="margin-bottom: 10px">
+                        <select class="form-select mb-2 imp selectid" id="s2" name="Ssession" required>
+                            <option selected>Select session</option>
 
+                        </select>
+                    </div>
+                    <div id="radios" style="overflow-y: scroll">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
 
-                <table>
-                    <thead>
-                    <tr>
-                        <th style="text-align: center;">ID</th>
-                        <th style="text-align: center;">Name</th>
-                        <th style="text-align: center;">Email</th>
-                        <th style="text-align: center;">Status</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for k,v in all.items %}
+    <div id="re_add" class="p-4 mt-3"
+         style="display:none;left: 51%; transform: translate(-49%, 0);height: 433px;width:650px;  background-color: white; position: fixed;">
+        <h4 class="text-center pb-3">Re-add form</h4>
+        <form id="readd_form" method="post" action="readdfinally">
+            {% csrf_token %}
+            <div class="row">
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control radd" id="redid" placeholder="enter your id" name="id"
+                               autocomplete="off" required>
+                        <label for="floatingTextarea">Enter student ID</label>
+                    </div>
 
-                        <tbody class="labels">
-                        <td colspan="4" style="text-align: center">
-                            <label for="{{ k }}" style="width: 100%">{{ k }}</label>
-                            <input type="checkbox" name="{{ k }}" id="{{ k }}" data-toggle="toggle">
-                        </td>
-                        </tbody>
-                        {% for i in v %}
+                    <div style="margin-bottom: 10px">
+                        <select class="form-select mb-2 selectid radd" id="s3" name="Ssemester" required>
+                            <option selected>Select semester</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary mt-5" type="button" onclick="mysubmit_f()"> submit</button>
+                    <button type="button" onclick="myreadd()" class="btn btn-primary mt-5" style="margin-left: 45px">
+                        cancel
+                    </button>
+                </div>
+                <div class="col">
+                    <div class="form-floating mb-3">
+                        <input readonly type="text" class="form-control" id="cur_session" placeholder="enter your id"
+                               name="pre_Ssession"
+                               autocomplete="off" required>
+                        <label for="floatingTextarea">Current session</label>
+                    </div>
 
-                            <tbody class="hide">
-                            <tr>
-                                <td>{{ i.id }}</td>
-                                <td>{{ i.name }}</td>
-                                <td>{{ i.email }}</td>
-                                <td>
-                                    <input type="checkbox" class="btn-check" id="{{ i.id }}"
-                                           onclick="myapprove(this)" {% if i.status %}checked{% endif %}
-                                    >
-                                    <label class="btn btn-outline-success"
-                                           for="{{ i.id }}">
+                    <div style="margin-bottom: 10px">
+                        <select class="form-select mb-2 selectid radd" id="s4" name="post_Ssession" required>
+                            <option selected>Wanna re-add at session</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th style="text-align: center;">ID</th>
+            <th style="text-align: center;">Name</th>
+            <th style="text-align: center;">Email</th>
+            <th style="text-align: center;">Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for k,v in all.items %}
+            <tbody class="labels">
+            <td colspan="4" style="text-align: center">
+                <label for="{{ k }}" style="width: 100%">{{ k }}</label>
+                <input type="checkbox" name="{{ k }}" id="{{ k }}" data-toggle="toggle">
+            </td>
+            </tbody>
+            {% for i in v %}
+
+                <tbody class="hide">
+                <tr>
+                    <td>{{ i.id }}</td>
+                    <td>{{ i.name }}</td>
+                    <td>{{ i.email }}</td>
+                    <td>
+                        <input type="checkbox" class="btn-check" id="{{ i.id }}"
+                               onclick="myapprove(this)" {% if i.status %}checked{% endif %}
+                        >
+                        <label class="btn btn-outline-success"
+                               for="{{ i.id }}">
                                         <span id="label{{ i.id }}" {% if i.status %}style="color: white;"
                                               {% else %}style="color: red;"{% endif %}>{% if i.status %}
                                             Approved{% else %}Hold{% endif %}</span>
-                                    </label><br>
-                                </td>
-                            </tr>
-                            </tbody>
-                        {% endfor %}
-                    {% endfor %}
-                </table>
+                        </label><br>
+                    </td>
+                </tr>
+                </tbody>
+            {% endfor %}
+        {% endfor %}
+    </table>
 
 
-            </div>
-
-        </div>
-
-    </div>
 
     <script>
+
+        const inp = document.getElementById('did');
+        const reinp = document.getElementById('redid');
+
+        inp.addEventListener("input", myFunction);
+        reinp.addEventListener("input", myreFunction);
+
+        function myFunction() {
+            if (inp.value === 'None')
+                inp.value = 0;
+            var ss = inp.value;
+            var ll = ss.length;
+            if ((ss[ll - 1] < '0' || ss[ll - 1] > '9')) {
+                alert('Please Insert a valid id');
+                for (let i = 0; i < ll; i++) {
+                    if (ss[i] > '9' || ss[i] < '0') {
+                        var x = i;
+                        if (i === 0)
+                            x = 0;
+                        ss = ss.slice(0, x);
+                        break;
+                    }
+                }
+            } else if (ll > 8) {
+                alert('Please Insert a valid id');
+                ss = ss.slice(0, 8);
+            } else if (ll == 8) {
+                $.ajax({
+                    type: "POST",
+                    url: 'improve',
+                    data: {
+                        'step': 1,
+                        'id': inp.value,
+                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                    },
+                    success: function (data) {
+                        let html_data = '<option class="s1" >Select semester</option>';
+                        data.forEach(function (data) {
+                            html_data += `<option >${data}</option>`;
+                        });
+                        $("#s1").html(html_data);
+                    }
+                });
+            }
+
+            inp.value = ss;
+        }
+
+        $("#s1").change(function () {
+            const subjectId = $(this).val();
+            $.ajax({
+                type: "POST",
+                url: 'improve',
+                data: {
+                    'step': 2,
+                    'id': inp.value,
+                    'subject_2': subjectId,
+                    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function (data) {
+                    let session_data = '<option class="s2" >Select session</option>';
+                    data[0].forEach(function (data) {
+                        session_data += `<option >${data}</option>`;
+                    });
+                    $("#s2").html(session_data);
+
+                    let radio_data = '';
+                    data[1].forEach(function (data) {
+                        var str = data.toString();
+                        str = str.slice(str.indexOf('(') + 1, str.indexOf(')'));
+                        radio_data += '<div class="form-check form-check-inline">' +
+                            `<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="${str}">`
+                            + `<label class="form-check-label" for="inlineCheckbox1">${data}</label>`
+                            + '</div>';
+                    });
+                    $("#radios").html(radio_data);
+
+
+                }
+            });
+        });
+
+        function myreFunction() {
+            if (reinp.value === 'None')
+                reinp.value = 0;
+            var ss = reinp.value;
+            var ll = ss.length;
+            if ((ss[ll - 1] < '0' || ss[ll - 1] > '9')) {
+                alert('Please Insert a valid id');
+                for (let i = 0; i < ll; i++) {
+                    if (ss[i] > '9' || ss[i] < '0') {
+                        var x = i;
+                        if (i === 0)
+                            x = 0;
+                        ss = ss.slice(0, x);
+                        break;
+                    }
+                }
+            } else if (ll > 8) {
+                alert('Please Insert a valid id');
+                ss = ss.slice(0, 8);
+            } else if (ll == 8) {
+                $.ajax({
+                    type: "POST",
+                    url: 'readd',
+                    data: {
+                        'step': 1,
+                        'id': reinp.value,
+                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                    },
+                    success: function (data) {
+                        let html_data = '<option class="s1" >Select semester</option>';
+                        data[0].forEach(function (data) {
+                            html_data += `<option >${data}</option>`;
+                        });
+                        $("#s3").html(html_data);
+                        document.getElementById("cur_session").value = data[1];
+                    }
+                });
+            }
+
+            reinp.value = ss;
+        }
+
+
+        $("#s3").change(function () {
+            const subjectId = $(this).val();
+            $.ajax({
+                type: "POST",
+                url: 'readd',
+                data: {
+                    'step': 2,
+                    'id': reinp.value,
+                    'subject_2': subjectId,
+                    'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                },
+                success: function (data) {
+                    let session_data = '<option class="s2" >Select session</option>';
+                    data.forEach(function (data) {
+                        session_data += `<option >${data}</option>`;
+                    });
+                    $("#s4").html(session_data);
+                }
+            });
+        });
+
 
         function myapprove(element) {
             $.ajax({
@@ -147,7 +351,62 @@
                 $(this).parents().next('.hide').toggle();
             });
         });
+        document.getElementById('extrasidebar').style.display = 'block';
+        var improvecnt = 0;
+        var improvecnt1 = 0;
 
+        function myimprove() {
+            if (improvecnt1) {
+                improvecnt1 = 0;
+                document.getElementById('re_add').style.display = 'none';
+            }
+            improvecnt++;
+            improvecnt %= 2;
+            if (improvecnt)
+                document.getElementById('improve').style.display = 'block';
+            else
+                document.getElementById('improve').style.display = 'none';
+        }
+
+
+        function myreadd() {
+            if (improvecnt) {
+                improvecnt = 0;
+                document.getElementById('improve').style.display = 'none';
+            }
+            improvecnt1++;
+            improvecnt1 %= 2;
+            if (improvecnt1)
+                document.getElementById('re_add').style.display = 'block';
+            else
+                document.getElementById('re_add').style.display = 'none';
+        }
+
+        function mysubmit_i() {
+            const imp = document.getElementsByClassName('imp');
+            for (let i = 0; i < imp.length; i++) {
+                if (imp.item(i).value == '' || imp.item(i).value.includes('Select')) {
+                    alert('required field.');
+                    imp.item(i).focus();
+                    return;
+                }
+            }
+            document.getElementById('improve_form').submit();
+
+        }
+
+        function mysubmit_f() {
+            const imp = document.getElementsByClassName('radd');
+            for (let i = 0; i < imp.length; i++) {
+                if (imp.item(i).value == '' || imp.item(i).value.includes('Select')) {
+                    alert('required field.');
+                    imp.item(i).focus();
+                    return;
+                }
+            }
+            document.getElementById('readd_form').submit();
+
+        }
     </script>
 
 {% endblock %}

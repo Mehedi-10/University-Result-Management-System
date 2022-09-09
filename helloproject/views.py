@@ -92,11 +92,10 @@ def teacher_signup(request):
             t_name=request.POST.get('name'),
             t_email=request.POST.get('email'),
             password=make_password(request.POST.get('password1')),
-            guest=request.POST.get('t_type')
         )
         newteacher.save()
     messages.success(request, 'Registration Successful')
-    return HttpResponseRedirect('register_teacher.html')
+    return HttpResponseRedirect('register_teacher')
 
 
 def student_signup(request):
@@ -175,11 +174,10 @@ def select_result_as_teacher(request):
 
 
 @is_allowed
-def tselect(request):
+def teacher_select_with_ajax(request):
     course = []
     semester = []
     before = []
-    print(request.POST)
     if int(request.POST.get('step')) == 1:
         for i in assigned_course.objects.filter(t_mail=request.session.get('email')).filter(
                 s_session=request.POST.get('subject_1')).values():
@@ -203,9 +201,11 @@ def tselect(request):
         if assigned_course.objects.filter(t_mail=request.session.get('email')).filter(
                 s_session=request.POST.get('subject_1')).filter(
             c_id__c_id=request.POST.get('subject_3')).last().guest == 'internal':
+            request.session['status'] = True
             before.append('Before Semester Final')
             before.append('Semestar Final')
         else:
+            request.session['status'] = False
             before.append('Semestar Final')
         return JsonResponse(before, safe=False)
 
@@ -215,7 +215,6 @@ def sselect(request):
     course = []
     semester = []
     before = []
-    print(request.POST)
     if int(request.POST.get('step')) == 1:
         for i in assigned_course.objects.filter(t_mail=request.session.get('email')).filter(
                 s_session=request.POST.get('subject_1')).values():
@@ -251,9 +250,14 @@ def process_before_final(request):
     try:
         course_code = request.session['all_info']['course_code']
         session_ = request.session['all_info']['session']
+        status_ = request.session.get('status')
     except KeyError:
         return HttpResponseRedirect('select_result_as_teacher.html')
-    sv = published.objects.filter(c_id=course_code).filter(s_session=session_).last()
+    else:
+        if course_code == None or session_ == None or status_ == None or status_:
+            return HttpResponseRedirect('select_result_as_teacher.html')
+    sv = published.objects.filter(c_id=course_code).filter(s_session=session_).filter(
+        t_email=request.session.get('email')).last()
     if request.method == 'POST':
         sv.published_before_final = True
         sv.save()
@@ -267,7 +271,7 @@ def process_before_final(request):
     all = {
         'constt': contents,
         'head': request.session['all_info'],
-        'submitted': sv.published_before_final
+        'submitted': sv.published_before_final,
     }
     return render(request, 'teacher_beforeFinal.html', {'cons': all})
 
@@ -279,7 +283,8 @@ def process_final_internal(request):
         session_ = request.session['all_info']['session']
     except KeyError:
         return HttpResponseRedirect('select_result_as_teacher.html')
-    sv = published.objects.filter(c_id=course_code).filter(s_session=session_).last()
+    sv = published.objects.filter(c_id=course_code).filter(s_session=session_).filter(
+        t_email=request.session.get('email')).last()
     if request.method == 'POST':
         if request.method == 'POST':
             sv.published_final = True
@@ -291,10 +296,12 @@ def process_final_internal(request):
     contents[0] = table_data[len(table_data) - 1]
     for i in range(0, len(table_data) - 1):
         contents[i + 1] = table_data[i]
+    print(contents)
     all = {
         'constt': contents,
         'head': request.session['all_info'],
-        'submitted': sv.published_final
+        'submitted': sv.published_final,
+        'status_': request.session['status']
     }
     return render(request, 'teacher_Final.html', {'cons': all})
 
@@ -338,15 +345,20 @@ def savingfinal(request):
     try:
         course_code = request.session['all_info']['course_code']
         session_ = request.session['all_info']['session']
+        status_ = request.session.get('status')
     except KeyError:
         return HttpResponseRedirect('select_result_as_teacher.html')
+
     tabtmp1 = request.POST
     tabtmp1 = tabtmp1.dict()
     tabtmp1.popitem()
     tabtmp1 = list(tabtmp1.values())
     tabtmp2 = final.objects.filter(c_id=course_code).filter(s_session=session_).filter(s_id=tabtmp1[0])
     updt = final.objects.get(id=tabtmp2[0].id)
-    updt.total1 = tabtmp1[1]
+    if request.session.get('status'):
+        updt.total1 = tabtmp1[1]
+    else:
+        updt.total2 = tabtmp1[1]
     updt.save()
     return JsonResponse({'message': 'hendeled'})
 
@@ -599,13 +611,12 @@ def assign_course(request):
         tmp2_ = request.POST.get('t_eacher')
         type_ = request.POST.get('t_ype')
         courseid_ = tmp_[tmp_.find('(') + 1:tmp_.find(')')]
-        tmail_ = tmp2_[tmp2_.find('(') + 1:tmp2_.find(')')]
+        tmail_ = tmp2_[tmp2_.find('<') + 1:tmp2_.find('>')]
         mark = 40
         if courses.objects.get(c_id=courseid_).credit == 2.0:
             mark = 20
         if not assigned_course.objects.filter(c_id__c_id=courseid_).filter(s_session=session_).filter(
                 t_mail__t_email=tmail_).exists():
-            print(courseid_[courseid_.find('(') + 1:courseid_.find(')')])
             nw = assigned_course(
                 c_id_id=courseid_,
                 t_mail_id=tmail_,
@@ -613,6 +624,15 @@ def assign_course(request):
                 guest=type_
             )
             nw.save()
+            if not published.objects.filter(c_id__c_id=courseid_).filter(s_session=session_).filter(
+                    t_mail__t_email=tmail_).exists():
+                nw = published(
+                    c_id_id=courseid_,
+                    t_mail_id=tmail_,
+                    s_session=session_,
+                )
+            nw.save()
+
             messages.success(request, 'Assigned Successfully')
             if type_ == 'Internal':
                 for i in student.objects.filter(s_session=session_):
@@ -648,14 +668,14 @@ def assign_course(request):
                 nw.save()
         else:
             messages.info(request, 'Already Assigned.')
-        return HttpResponseRedirect('assign_course.html')
+        return HttpResponseRedirect('assign_course')
     course = []
     teach = []
     session = []
     for i in courses.objects.all():
         course.append(i.c_name + ' (' + i.c_id + ')')
     for i in teacher.objects.all():
-        teach.append(i.t_name + ' (' + i.t_email + ')')
+        teach.append(i.t_name + ' <' + i.t_email + '>')
     for i in student.objects.all():
         session.append(i.s_session)
     all = {
@@ -745,13 +765,35 @@ def admin_home(request):
         'teacher_stat1': teacher_data,
     }
     print(teacher_data)
-    return render(request, 'admin_home.html', {'all': all})
+    return render(request, 'homepage.html', {'all': all})
 
 
 #
 # @is_allowed_student
 def exam_com(request):
-    return render(request, 'exam_committee.html')
+    dic = {}
+    ec = exam_committe.objects.filter(ec_status=True).last()
+    ec_ = {
+        'Memeber 1': 'None',
+        'Memeber 2': 'None',
+        'Memeber 3': 'None'
+    }
+
+    if ec != None:
+        ec_ = {
+            'Memeber 1': ec.t_mail1.t_name,
+            'Memeber 2': ec.t_mail2.t_name,
+            'Memeber 3': ec.t_mail3.t_name
+        }
+    teach = []
+    for i in teacher.objects.all():
+        teach.append(i.t_name + ' <' + i.t_email + '>')
+    dic = {
+        'ec_': ec_,
+        'teachers_': teach,
+    }
+
+    return render(request, 'exam_committee.html', {'all': dic})
 
 
 def showallteacher(request):
@@ -886,3 +928,61 @@ def show_all_student(request):
         }
         dic[i.s_session].append(tmp)
     return render(request, 'studentlist.html', {'all': dic})
+
+
+def student_improve(request):
+    dic = []
+    if request.POST.get('step') == '1':
+        for i in final.objects.filter(s_id=request.POST.get('id')):
+            for j in officially_published.objects.filter(s_session=i.s_session).filter(is_published=True):
+                dic.append(yearno[int(j.s_semester[0]) - 1] + ' year ' + semno[int(j.s_semester[2])] + ' semester')
+        return JsonResponse(dic, safe=False)
+    else:
+        ob = student.objects.get(s_id=request.POST.get('id'))
+        for i in student.objects.order_by().values('s_session').distinct():
+            for j in i.values():
+                if j >= ob.s_session:
+                    dic.append(j)
+        subjects_ = []
+        for i in final.objects.filter(s_id=request.POST.get('id')).filter(pointgrade__lt=3.0):
+            subjects_.append(i.c_id.c_name + ' (' + i.c_id.c_id + ')')
+        alldata = []
+        alldata.append(dic)
+        alldata.append(subjects_)
+        return JsonResponse(alldata, safe=False)
+
+
+def student_readd(request):
+    dic = []
+    if request.POST.get('step') == '1':
+        sem = []
+        for i in final.objects.filter(s_id=request.POST.get('id')):
+            for j in officially_published.objects.filter(s_session=i.s_session).filter(is_published=True):
+                sem.append(yearno[int(j.s_semester[0]) - 1] + ' year ' + semno[int(j.s_semester[2])] + ' semester')
+        dic.append(sem)
+        try:
+            ob = student.objects.get(s_id=request.POST.get('id'))
+        except student.DoesNotExist:
+            pass
+        else:
+            dic.append(ob.s_session)
+        return JsonResponse(dic, safe=False)
+    else:
+        ob = student.objects.get(s_id=request.POST.get('id'))
+        got_sem = request.POST.get('subject_2')
+        for i in student.objects.order_by().values('s_session').distinct():
+            for j in i.values():
+                ob1 = officially_published.objects.filter(s_session=j).filter(s_semester=got_sem).last()
+                if j >= ob.s_session and ob1 != None and not ob1.is_published:
+                    dic.append(j)
+        return JsonResponse(dic, safe=False)
+
+
+def saveimprove(request):
+    print(request.POST)
+    pass
+
+
+def savereadd(request):
+    print(request.POST)
+    pass

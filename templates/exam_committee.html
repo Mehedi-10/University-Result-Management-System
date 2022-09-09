@@ -1,61 +1,82 @@
-{% extends 'admin_base.html' %}
-{% block title %}{{ 'Teachers' }}{% endblock %}
-{% block style_content %}
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
-
-
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0"/>
-
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-        google.charts.load("current", {packages: ["corechart"]});
-        google.charts.setOnLoadCallback(drawChart);
-
-        function drawChart() {
-            var data = google.visualization.arrayToDataTable([
-                ['Students', 'Batch'],
-                ['no', 11],
-                ['Eat', 2],
-                ['Commute', 2],
-                ['Watch TV', 2],
-                ['Sleep', 7]
-            ]);
-
-            var options = {
-                title: 'My Daily Activities',
-                pieHole: 0.5,
-                backgroundColor: {fill: 'transparent'}
-            };
-            var chart = new google.visualization.PieChart(document.getElementById('donutchart'));
-            chart.draw(data, options);
-        }
-    </script>
-
+{% extends 'admin_home.html' %}
+{% block title %}{{ 'Exam committee' }}{% endblock %}
+{% block inner_style_content %}
+    .selectize-input {
+    min-height: 49px !important;
+    text-align: center;
+    padding-top: 15px !important;
+    }
 {% endblock %}
-{% block content %}
+{% block inner_col_content %}
+    <h3 class="m-2">Team members</h3>
+    <div class="row">
+        {% for i,j in all.ec_.items %}
+            <div class="col-sm-4">
+                <div class="card m-3" style="box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;">
+                    <div class="card-body">
+                        <p>
+                            <strong class="card-title">{{ i }}</strong>
+                        <hr>
+                        </p>
 
-    <div class="container" style="margin-left: 10px">
-        <div class="row">
-            {% include 'admin_sidebars.html' %}
-            <div class="col">
-
+                        <p>
+                            <small class="card-title">{{ j }}</small>
+                        </p>
+                    </div>
+                </div>
             </div>
+        {% endfor %}
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col">
+            <form id="form" method="POST" autocomplete="off">
+                {% csrf_token %}
+                <div class="col-md-5">
+                    <strong> Create team</strong>
+                    <div style="margin: 10px 0px">
+                        <select id="select1" name="ec_member1" placeholder="Select Member">
+                            <option value="">Select Member</option>
+                            {% for k in all.teachers_ %}
+                                <option class="s1">{{ k }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
 
+                <div class="col-md-5">
+                    <div style="margin-bottom: 10px">
+                        <select id="select1" name="ec_member1" placeholder="Select Member">
+                            <option value="">Select Member</option>
+                            {% for k in all.teachers_ %}
+                                <option class="s1">{{ k }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div style="margin-bottom: 10px">
+                        <select id="select1" name="ec_member1" placeholder="Select Member">
+                            <option value="">Select Member</option>
+                            {% for k in all.teachers_ %}
+                                <option class="s1">{{ k }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <button class="btn btn-secondary"> save</button>
+            </form>
         </div>
-
+        <div class="col-md-3">
+            <strong>Recent actions</strong>
+        </div>
     </div>
 
 
+    <script>
+        $(document).ready(function () {
+                $('select').selectize({sortField: 'text'});
+            }
+        );
+    </script>
 {% endblock %}

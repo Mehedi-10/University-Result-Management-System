@@ -1,27 +1,35 @@
 {% load static %}
-<div class="col-sm-6 text-end g-0" style="max-width: 210px; height: 100vh; background-color: #D6E5FA">
-    <div class="row mt-4">
-        <a type="button" class="btn btn-primary" href="register_teacher"> <span
-                class="material-symbols-outlined">
-person_add</span> Add Teacher
-        </a>
-    </div>
-    <div class="row mt-2">
 
-        <a type="button" class="btn btn-primary" href="students">
-            <img style="height: 22px; width: 22px;  filter: invert(1);" src="{% static 'manage.png' %}">
+<div id="slidebar" class="col-sm-6 myside g-0 p-1"
+     style="z-index:1;position:fixed;width: 205px; background-color: #DDDDDD;height: 100%; ">
+    <a type="button" class="btn mygraybutton  mt-1" href="register_teacher"> <span
+            class="material-symbols-outlined beautify">
+person_add</span>Add Teacher
+    </a>
 
-            Manage Student
-        </a>
-    </div>
+    <a type="button" id="btnexception" class="btn mygraybutton mt-1" href="students">
+        <img id="iconexception" style="height: 22px; width: 22px;" src="{% static 'manage.png' %}">
+        <div style="width:13px; display: inline-block;"></div>
+        Manage Student
+    </a>
 
-    <div class="row mt-2">
-        <a type="button" class="btn btn-primary " href="assign_course"><span
-                class="material-symbols-outlined">
+    <a type="button" class="btn mygraybutton mt-1" href="assign_course"><span
+            class="material-symbols-outlined beautify">
 menu_book
-</span>Assign Course
-        </a>
+    </span>Assign Course
+    </a>
 
+    <div id="extrasidebar" style="display: none">
+        <hr>
+        <button type="button" class="btn mygraybutton mt-1" onclick="myimprove()"><span
+                class="material-symbols-outlined beautify">moving
+</span>Improve
+        </button>
+
+        <button type="button" class="btn mygraybutton mt-1" onclick="myreadd()"><span
+                class="material-symbols-outlined beautify">
+add_box
+</span>Re-add
+        </button>
     </div>
-
 </div>

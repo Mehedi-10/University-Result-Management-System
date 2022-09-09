@@ -1,4 +1,4 @@
-{% extends 'base3.html' %}
+{% extends 'user_navbar.html' %}
 {% block resultpage %}select_result_as_teacher.html{% endblock %}
 {% load extra %}
 {% block title %}{{ 'Semester Final Result' }}{% endblock %}
@@ -81,7 +81,8 @@
                             <input id="{{ i }}{{ 'A' }}" name="{{ i }}{{ 'A' }}" class="spreadsheets" type="text"
                                    readonly value="{{ val.s_id }}"></td>
                         <td><input id="{{ i }}{{ 'B' }}" name="{{ i }}{{ 'B' }}" class="spreadsheets" type="text"
-                                   value="{{ val.total1 }}"></td>
+                                   value="{% if cons.status_ %}{{ val.total1 }}{% else %}{{ val.total2 }}{% endif %}">
+                        </td>
                     </tr>
 
                 {% endfor %}

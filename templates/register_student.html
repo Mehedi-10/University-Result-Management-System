@@ -1,4 +1,4 @@
-{% extends 'headtail.html' %}
+{% extends 'user_headtail_without_navbar.html' %}
 {% block title %}{{ 'Add New Student' }}{% endblock %}
 {% block style_content %}
     {% load static %}
@@ -16,7 +16,7 @@
             <div class="form-floating mb-3" id="Student_id">
                 <input type="text" class="form-control" id="did" placeholder="enter your id" name="id"
                        autocomplete="off" required>
-                <label for="floatingTextarea">Enter your ID no</label>
+                <label for="floatingTextarea">Enter your ID</label>
             </div>
             <div class="form-floating mb-3" id="smail">
                 <input type="email" id="eid" class="form-control" placeholder="enter your email" name="email" required>

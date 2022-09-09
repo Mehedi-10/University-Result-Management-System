@@ -13,11 +13,11 @@ import os
 from django.contrib.messages import constants as messages
 
 MESSAGE_TAGS = {
-    messages.DEBUG: 'alert alert-secondary position-absolute text-center w-100 ',
-    messages.INFO: 'alert alert-info position-absolute text-center w-100',
-    messages.SUCCESS: 'alert alert-success position-absolute text-center w-100',
-    messages.WARNING: 'alert alert-warning position-absolute text-center w-100',
-    messages.ERROR: 'alert alert-danger position-absolute text-center w-100',
+    messages.DEBUG: 'alert alert-secondary position-fixed text-center w-100 ',
+    messages.INFO: 'alert alert-info position-fixed text-center w-100',
+    messages.SUCCESS: 'alert alert-success position-fixed text-center w-100',
+    messages.WARNING: 'alert alert-warning position-fixed text-center w-100',
+    messages.ERROR: 'alert alert-danger position-fixed text-center w-100',
 }
 from pathlib import Path
 

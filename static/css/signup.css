@@ -37,3 +37,12 @@ input:-webkit-autofill {
     outline: none;
 }
 
+#slidebar .btn {
+    width: 100% !important;
+}
+
+.mycontainer {
+    padding-left: 15px;
+    margin: 0;
+    display: block;
+}

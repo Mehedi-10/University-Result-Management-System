@@ -36,24 +36,7 @@
         {% block icone %}{% endblock %}
     </div>
 </div>
-<div id="message"
-     style="width: 400px; background: #8F91A2;padding: 7px; position: absolute; z-index: 1; right: 10px;border-radius: .1rem;display: none">
-    {% for i in all.teacher %}
-        <div class="toast-header">
-            <strong class="me-auto">{{ i.sender_id }}</strong>
-            <small class="text-muted">{{ i.receiving_time }}</small>
-        </div>
-        <div class="toast-body">
-            {#            {{ i.message }}#}
-        </div>
-    {% endfor %}
-    {#    {% if all.message %}#}
-    {#        <p>no new notifications</p>#}
-    {#    {% endif %}#}
-    <div class="d-grid">
-        <button class="btn" type="button">show all</button>
-    </div>
-</div>
+
 {% block content %} {% endblock %}
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
@@ -78,7 +61,6 @@
                 const bodyy = document.getElementById('bodyy');
                 bodyy.style.backgroundColor = "#F7F7F7";
                 dis.style.visibility = 'hidden';
-                {#displ.style.width='100vw';#}
             }
 
             function myTimer() {
