@@ -43,40 +43,27 @@
     position: relative;
     height: 150px;
     width: 160px;
-    /*border: 3px solid black;*/
     padding: 27px;
-    text-align: center;
 }
 
 .icon-x .tooltrip {
     position: absolute;
     background: whitesmoke;
     border-radius: .3rem;
-    font-size: 17px;
-    height: 29px;
-    width: 145px;
-    transition: 0.5s;
-    transform: translateX(-15%);
+    font-weight: bold;
+    height: 60px;
+    width: 205px;
+    transition: 0.3s;
+    transform: translateX(-30%) translateY(22%);
     box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
     opacity: 0;
 }
 
 .icon-x:hover .tooltrip {
     opacity: 1;
-    transform: translateY(-100%) translateX(-15%);
+    transform: translateX(21%) translateY(22%);
 }
 
-
-
-/*.icon-x .icon .tooltrip > span ::after {*/
-/*    content: " ";*/
-/*    top: 100%;*/
-/*    position: absolute;*/
-/*    left: 50%;*/
-/*    margin-left: -5px;*/
-/*    border-width: 5px;*/
-/*    border-style: solid;*/
-/*}*/
 
 .icon-x .icon {
     box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
@@ -89,14 +76,15 @@
     border: 1px solid blue;
 }
 
-.icon-x .icon:hover {
-    background: #8F91A2;
+.icon-x:hover .icon {
+    height: 70px;
+    width: 70px;
     transition: 0.4s;
 }
 
 .icon-x .icon img {
     position: absolute;
-    height: 65px;
-    width: 65px;
+    height: 75%;
+    width: 75%;
     transform: translateX(-50%) translateY(20%);
 }

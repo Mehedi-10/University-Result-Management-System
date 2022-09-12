@@ -66,13 +66,12 @@
                                autocomplete="off" required>
                         <label for="floatingTextarea">Enter student ID</label>
                     </div>
-
                     <div style="margin-bottom: 10px">
                         <select class="form-select mb-2 imp selectid" id="s1" name="Ssemester" required>
                             <option selected>Select semester</option>
                         </select>
                     </div>
-                    <button class="btn btn-primary mt-5" type="button" onclick="mysubmit_i()"> submit</button>
+                    <button class="btn btn-primary mt-5"> submit</button>
                     <button type="button" onclick="myimprove()" class="btn btn-primary mt-5" style="margin-left: 45px">
                         cancel
                     </button>
@@ -81,8 +80,7 @@
 
                     <div style="margin-bottom: 10px">
                         <select class="form-select mb-2 imp selectid" id="s2" name="Ssession" required>
-                            <option selected>Select session</option>
-
+                            <option selected>Improvement session</option>
                         </select>
                     </div>
                     <div id="radios" style="overflow-y: scroll">
@@ -106,11 +104,12 @@
                     </div>
 
                     <div style="margin-bottom: 10px">
-                        <select class="form-select mb-2 selectid radd" id="s3" name="Ssemester" required>
-                            <option selected>Select semester</option>
+                        <select class="form-select mb-2 selectid radd" id="s3" name="post_Ssession" required>
+                            <option selected>Re-add to session</option>
                         </select>
                     </div>
-                    <button class="btn btn-primary mt-5" type="button" onclick="mysubmit_f()"> submit</button>
+
+                    <button class="btn btn-primary mt-5" type="submit"> submit</button>
                     <button type="button" onclick="myreadd()" class="btn btn-primary mt-5" style="margin-left: 45px">
                         cancel
                     </button>
@@ -124,10 +123,11 @@
                     </div>
 
                     <div style="margin-bottom: 10px">
-                        <select class="form-select mb-2 selectid radd" id="s4" name="post_Ssession" required>
-                            <option selected>Wanna re-add at session</option>
+                        <select class="form-select mb-2 selectid radd" id="s4" name="Ssemester" required>
+                            <option selected>Select semester</option>
                         </select>
                     </div>
+
                 </div>
             </div>
         </form>
@@ -150,9 +150,10 @@
                 <input type="checkbox" name="{{ k }}" id="{{ k }}" data-toggle="toggle">
             </td>
             </tbody>
+            <tbody class="hide">
+
             {% for i in v %}
 
-                <tbody class="hide">
                 <tr>
                     <td>{{ i.id }}</td>
                     <td>{{ i.name }}</td>
@@ -169,12 +170,10 @@
                         </label><br>
                     </td>
                 </tr>
-                </tbody>
             {% endfor %}
+            </tbody>
         {% endfor %}
     </table>
-
-
 
     <script>
 
@@ -213,6 +212,12 @@
                         'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
                     },
                     success: function (data) {
+                        try {
+                            if (data[0] == 'error')
+                                return;
+                        } catch (e) {
+
+                        }
                         let html_data = '<option class="s1" >Select semester</option>';
                         data.forEach(function (data) {
                             html_data += `<option >${data}</option>`;
@@ -237,20 +242,28 @@
                     'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
                 },
                 success: function (data) {
-                    let session_data = '<option class="s2" >Select session</option>';
+                    try {
+                        if (data[0] == 'error')
+                            return;
+                    } catch (e) {
+
+                    }
+                    let session_data = '<option class="s2">Improvement session</option>';
                     data[0].forEach(function (data) {
                         session_data += `<option >${data}</option>`;
                     });
                     $("#s2").html(session_data);
 
                     let radio_data = '';
+                    var subcnt = 0;
                     data[1].forEach(function (data) {
                         var str = data.toString();
                         str = str.slice(str.indexOf('(') + 1, str.indexOf(')'));
                         radio_data += '<div class="form-check form-check-inline">' +
-                            `<input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="${str}">`
+                            `<input class="form-check-input" type="checkbox" id="inlineCheckbox1" name="sub${subcnt}" value="${str}">`
                             + `<label class="form-check-label" for="inlineCheckbox1">${data}</label>`
                             + '</div>';
+                        subcnt++;
                     });
                     $("#radios").html(radio_data);
 
@@ -288,7 +301,13 @@
                         'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
                     },
                     success: function (data) {
-                        let html_data = '<option class="s1" >Select semester</option>';
+                        try {
+                            if (data[0] == 'error')
+                                return;
+                        } catch (e) {
+
+                        }
+                        let html_data = '<option class="s1" >Re-add to session</option>';
                         data[0].forEach(function (data) {
                             html_data += `<option >${data}</option>`;
                         });
@@ -314,7 +333,13 @@
                     'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
                 },
                 success: function (data) {
-                    let session_data = '<option class="s2" >Select session</option>';
+                    try {
+                        if (data[0] == 'error')
+                            return;
+                    } catch (e) {
+
+                    }
+                    let session_data = '<option class="s2" >Select semester</option>';
                     data.forEach(function (data) {
                         session_data += `<option >${data}</option>`;
                     });
@@ -334,6 +359,12 @@
                     csrfmiddlewaretoken: '{{ csrf_token }}'
                 },
                 success: function (message) {
+                    try {
+                        if (data[0] == 'error')
+                            return;
+                    } catch (e) {
+
+                    }
                     var enb = 'label' + element.id;
                     if (element.checked) {
                         document.getElementById(enb).style.color = "white";
@@ -382,33 +413,39 @@
                 document.getElementById('re_add').style.display = 'none';
         }
 
-        function mysubmit_i() {
+
+        $('#improve_form').on('submit', function () {
             const imp = document.getElementsByClassName('imp');
             for (let i = 0; i < imp.length; i++) {
-                if (imp.item(i).value == '' || imp.item(i).value.includes('Select')) {
+                if (imp.item(i).value == '' || imp.item(i).value.includes('Select') || imp.item(i).value.includes('session')) {
+                    console.log(imp.item(i).value);
                     alert('required field.');
                     imp.item(i).focus();
-                    return;
+                    return false;
                 }
             }
-            document.getElementById('improve_form').submit();
+            if (imp.item(0).value.length != 8)
+                return false;
 
-        }
+            return true;
+        });
 
-        function mysubmit_f() {
+        $('#readd_form').on('submit', function () {
             const imp = document.getElementsByClassName('radd');
             for (let i = 0; i < imp.length; i++) {
-                if (imp.item(i).value == '' || imp.item(i).value.includes('Select')) {
+                if (imp.item(i).value == '' || imp.item(i).value.includes('Select') || imp.item(i).value.includes('session')) {
                     alert('required field.');
                     imp.item(i).focus();
-                    return;
+                    return false;
                 }
             }
-            document.getElementById('readd_form').submit();
-
-        }
+            if (imp.item(0).value.length != 8)
+                return false;
+            return true;
+        });
+        {% for k,v in all.items %}
+            $('#{{ k }}').parents().next('.hide').toggle();
+        {% endfor %}
     </script>
 
 {% endblock %}
-
-

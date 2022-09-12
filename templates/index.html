@@ -7,11 +7,11 @@
             <div class="leftside ">
                 <h1 style="text-align: center; font-family: 'Inria Sans'; font-size: 36px; padding: 23px; color: aliceblue">
                     login as</h1>
-                <div style="font-family:'Inria Sans'; margin-top: 17%; text-align: center; display: flex;
+                <div style="font-family:'Inria Sans'; margin-top: 5%; text-align: center; display: flex;
 align-items: center;
 justify-content: center;">
                     <div class="icon-x">
-                        <div class="tooltrip">Teacher</div>
+                        <div class="tooltrip"><p style="transform: translateY(47%)">Teacher</p></div>
                         <div class="icon">
                             <a href="teacherlogin.html">
                                 <img src="{% static 'teacher.png' %}"
@@ -20,20 +20,24 @@ justify-content: center;">
                         </div>
                     </div>
 
-                    <div class="icon-x">
-                        <div class="tooltrip"><span>Controller Of Exam</span></div>
+                    <div class="icon-x" style="display: none">
+                        <div class="tooltrip"><p style="transform: translateY(50%)">Controller Of Exam</p></div>
                         <div class="icon">
                             <a href="coe.html">
                                 <img src="{% static 'maintenance.png' %}" alt="Controller of Exm">
                             </a>
                         </div>
                     </div>
-
-
+                </div>
+                <div style="font-family:'Inria Sans'; text-align: center; display: flex;
+align-items: center;
+justify-content: center;">
                     <div class="icon-x">
-                        <div class="tooltrip">Exam Committee</div>
+                        <div class="tooltrip" style="padding-left: 15px;"><p style="transform: translateY(47%)">Exam
+                            Committee
+                            <p></p></div>
                         <div class="icon">
-                            <a href="ec.html">
+                            <a href="ec_teacherlogin">
                                 <img src="{% static 'group.png' %}"
                                      alt="Exam Committee">
                             </a>
@@ -45,9 +49,9 @@ justify-content: center;">
 align-items: center;
 justify-content: center;">
                     <div class="icon-x">
-                        <div class="tooltrip">Student</div>
+                        <div class="tooltrip"><p style="transform: translateY(47%); right: 10px">Student</p></div>
                         <div class="icon">
-                            <a href="student_login.html">
+                            <a href="student_login">
                                 <img src="{% static 'rocket.png' %}"
                                      alt="student">
                             </a>
@@ -68,8 +72,8 @@ justify-content: center;">
         </div>
     </div>
     {% block script %}
-       <script>
-       {#document.getElementsByClassName(tooltrip)#}
-       </script>
+        <script>
+            {#document.getElementsByClassName(tooltrip)#}
+        </script>
     {% endblock %}
 {% endblock %}

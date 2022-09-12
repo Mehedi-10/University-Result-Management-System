@@ -9,7 +9,7 @@ from .models.Improve import improve
 from .models.Exam_Committee import exam_committe
 from .models.Published import published
 from .models.Officially_Published import officially_published
-from .models.Chats import chats
+from .models.Notifications import notifications
 
 
 # Register your models here.
@@ -23,4 +23,4 @@ admin.site.register(final)
 admin.site.register(exam_committe)
 admin.site.register(published)
 admin.site.register(officially_published)
-admin.site.register(chats)
+admin.site.register(notifications)

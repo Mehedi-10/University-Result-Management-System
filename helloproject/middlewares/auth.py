@@ -41,3 +41,13 @@ def is_allowed_to_change_pass(get_response):
         return response
 
     return checkuser
+
+
+def is_admin(get_response):
+    def checkadmin(request):
+        if not request.session.get('email'):
+            return redirect('who_are_you')
+        response = get_response(request)
+        return response
+
+    return checkadmin

@@ -1,7 +1,7 @@
 {% load static %}
 
 <div id="slidebar" class="col-sm-6 myside g-0 p-1"
-     style="z-index:1;position:fixed;width: 205px; background-color: #DDDDDD;height: 100%; ">
+     style="z-index:1;position:fixed;width: 204px; background-color: #e0e5ec;height: 100%;">
     <a type="button" class="btn mygraybutton  mt-1" href="register_teacher"> <span
             class="material-symbols-outlined beautify">
 person_add</span>Add Teacher
@@ -9,7 +9,7 @@ person_add</span>Add Teacher
 
     <a type="button" id="btnexception" class="btn mygraybutton mt-1" href="students">
         <img id="iconexception" style="height: 22px; width: 22px;" src="{% static 'manage.png' %}">
-        <div style="width:13px; display: inline-block;"></div>
+        <div style="width:7px; display: inline-block;"></div>
         Manage Student
     </a>
 
@@ -21,8 +21,9 @@ menu_book
 
     <div id="extrasidebar" style="display: none">
         <hr>
-        <button type="button" class="btn mygraybutton mt-1" onclick="myimprove()"><span
-                class="material-symbols-outlined beautify">moving
+        <button type="button" class="btn mygraybutton mt-1" onclick="myimprove()">
+            <span class="material-symbols-rounded beautify">
+whatshot
 </span>Improve
         </button>
 

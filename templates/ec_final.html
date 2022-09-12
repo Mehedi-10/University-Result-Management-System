@@ -75,6 +75,10 @@
                     </td>
                     <td id="B" class="hello B">B
                     </td>
+                    <td id="C" class="hello C">C
+                    </td>
+                    <td id="D" class="hello D">D
+                    </td>
                 </tr>
 
                 {% for i,val in cons.constt|dicfast %}
@@ -85,9 +89,23 @@
                         <td>
                             <input id="{{ i }}{{ 'A' }}" name="{{ i }}{{ 'A' }}" class="spreadsheets" type="text"
                                    readonly value="{{ val.s_id }}"></td>
+
                         <td><input id="{{ i }}{{ 'B' }}" name="{{ i }}{{ 'B' }}" class="spreadsheets" type="text"
-                                   value="{% if cons.status_ %}{{ val.total1 }}{% else %}{{ val.total2 }}{% endif %}">
+                                   value="
+                                           {% if val.total1 == 'Total' %}{{ 'Total-1' }}{% else %}{{ val.total1 }}{% endif %}">
                         </td>
+                        <td><input id="{{ i }}{{ 'C' }}" name="{{ i }}{{ 'C' }}" class="spreadsheets" type="text"
+                                   value="
+                                           {% if val.total2 == 'Total' %}{{ 'Total-2' }}{% else %}{{ val.total2 }}{% endif %}">
+                        </td>
+
+                        <td>
+                            <input disabled id="{{ i }}{{ 'D' }}" name="{{ i }}{{ 'D' }}" class="spreadsheets"
+                                   type="text"
+                                   value="
+                                           {% if val.total2 == 'Total' %}{{ 'Difference' }}{% else %}{% if val.total1|perdiff:val.total2 < cons.head.marks|multiply:20 %}{{ 'Acceptable' }}{% else %}{{ 'Unacceptable' }}{% endif %}{% endif %}">
+                        </td>
+
                     </tr>
 
                 {% endfor %}
@@ -105,10 +123,30 @@
 {% block script %}
     <script>
 
-        const url = "final";
+        const url = "ecfinal";
         var colmx = 67;
 
+        setInterval(function () {
+            for (let i = 1; i < 90; i++) {
+                try {
+                    const difference = document.getElementById(i.toString() + 'D');
+                    if (difference.value == 'Acceptable') {
+                        difference.style.color = 'green';
+                        difference.style.fontWeight = 'bold';
+                    } else if (difference.value == 'Unacceptable') {
+                        difference.style.color = 'red';
+                        difference.style.fontWeight = 'bold';
+                    }
+                } catch (e) {
+
+                }
+
+            }
+
+        }, 500)
+
         document.getElementById('0B').readOnly = true;
+        document.getElementById('0C').readOnly = true;
         $('.spreadsheets').keydown(function (e) {
             if (e.which === 13) {
                 var x = 1, y = $('.spreadsheets').index(this);
@@ -120,19 +158,6 @@
         });
         const button1 = document.querySelector('#onceclickable');
 
-
-        {% if cons.submitted %}
-            button1.disabled = true;
-            button1.innerHTML = "submitted";
-            const bu = document.getElementById('hehe')
-            for (let i = 0; i < 360; i++) {
-                try {
-                    bu.getElementsByClassName('spreadsheets')[i].readOnly = true;
-                } catch (e) {
-
-                }
-            }
-        {% endif %}
 
         function containsAnyLetter(str) {
             return /[a-zA-Z]/.test(str);
@@ -227,18 +252,16 @@
                             }
                         }
 
-                        {% if not cons.submitted %}
 
-                            $.ajax({
-                                type: "POST",
-                                url: url,
-                                data:
-                                    {
-                                        aaacellvalue,
-                                        csrfmiddlewaretoken: '{{ csrf_token }}'
-                                    }
-                            });
-                        {% endif %}
+                        $.ajax({
+                            type: "POST",
+                            url: url,
+                            data:
+                                {
+                                    aaacellvalue,
+                                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                                }
+                        });
 
                     }
 
@@ -249,14 +272,6 @@
             }
         }
 
-
-        {#window.addEventListener('contextmenu', function (e) {#}
-        {#    e.preventDefault();#}
-        {# }, false);#}
-        {##}
-        {#window.addEventListener('click', function (e) {#}
-        {#    e.preventDefault();#}
-        {# }, false);#}
 
         var operationid, curcolnum;
 
@@ -291,6 +306,7 @@
                 }
             }
         }
+
 
         $(document).ready(function () {
             setTimeout('$("#hehe").css("opacity", 1)', 100);

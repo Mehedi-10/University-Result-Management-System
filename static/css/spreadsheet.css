@@ -28,28 +28,3 @@
     font-weight: bold;
 }
 
-/*@media screen and (min-width: 1030px) {*/
-/*    #hehe {*/
-/*        !*max-width: 100vw;*!*/
-/*        !*overflow-y: scroll;*!*/
-/*    }*/
-/*}*/
-
-#onceclickable {
-    margin-top: 5px;
-    width: 100px;
-    padding-top: 7px;
-    padding-bottom: 7px;
-    background-color: #A4A4A4;
-    display: inline-block;
-    border: 1px solid blueviolet;
-    border-radius: .2rem;
-    box-sizing: border-box;
-    text-align: center;
-    font-weight: bold;
-}
-
-#onceclickable:disabled {
-    background-color: #C6CFFF !important;
-    font-size: 19px;
-}

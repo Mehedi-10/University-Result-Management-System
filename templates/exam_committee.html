@@ -12,7 +12,7 @@
     <div class="row">
         {% for i,j in all.ec_.items %}
             <div class="col-sm-4">
-                <div class="card m-3" style="box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;">
+                <div class="card mycard m-3" style="box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;">
                     <div class="card-body">
                         <p>
                             <strong class="card-title">{{ i }}</strong>
@@ -32,44 +32,64 @@
         <div class="col">
             <form id="form" method="POST" autocomplete="off">
                 {% csrf_token %}
-                <div class="col-md-5">
-                    <strong> Create team</strong>
-                    <div style="margin: 10px 0px">
-                        <select id="select1" name="ec_member1" placeholder="Select Member">
-                            <option value="">Select Member</option>
-                            {% for k in all.teachers_ %}
-                                <option class="s1">{{ k }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div>
+                <div class="row">
+                    <div class="col">
 
-                <div class="col-md-5">
-                    <div style="margin-bottom: 10px">
-                        <select id="select1" name="ec_member1" placeholder="Select Member">
-                            <option value="">Select Member</option>
-                            {% for k in all.teachers_ %}
+                        <div class="col-md-7">
+                            <strong> Create team</strong>
+                            <div style="margin: 10px 0px">
+                                <select id="select1" name="ec_member1" placeholder="Select Member">
+                                    <option value="">Select Member</option>
+                                    {% for k in all.teachers_ %}
                                 <option class="s1">{{ k }}</option>
                             {% endfor %}
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-5">
-                    <div style="margin-bottom: 10px">
-                        <select id="select1" name="ec_member1" placeholder="Select Member">
-                            <option value="">Select Member</option>
-                            {% for k in all.teachers_ %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div style="margin-bottom: 10px">
+                                <select id="select1" name="ec_member2" placeholder="Select Member">
+                                    <option value="">Select Member</option>
+                                    {% for k in all.teachers_ %}
                                 <option class="s1">{{ k }}</option>
                             {% endfor %}
-                        </select>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div style="margin-bottom: 10px">
+                                <select id="select1" name="ec_member3" placeholder="Select Member">
+                                    <option value="">Select Member</option>
+                                    {% for k in all.teachers_ %}
+                                        <option class="s1">{{ k }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <button class="btn btn-primary" onclick="mysubmit()">save</button>
                     </div>
+                    <div class="col">
+
+                        <strong>Recent actions</strong>
+                        <div class="col-md-7">
+                            <div style="margin-bottom: 10px">
+                                <select id="select1" name="ec_session" placeholder="Select Session">
+                                    <option value="">Select Session</option>
+                                    {% for k in all.sessions_ %}
+                                        <option class="s1">{{ k }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+
                 </div>
-                <button class="btn btn-secondary"> save</button>
             </form>
         </div>
-        <div class="col-md-3">
-            <strong>Recent actions</strong>
-        </div>
+
     </div>
 
 

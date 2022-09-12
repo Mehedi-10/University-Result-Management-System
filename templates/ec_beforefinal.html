@@ -246,7 +246,7 @@
 
     <div class="row vanish" style="margin: 0px; padding-bottom: 11px;padding-top: 11px;">
         <div class="col" style="padding-right: 100px ;text-align: right">
-            <button type="button" id="onceclickable" class="btn btn-primary">submit</button>
+            <input type="button" class="btn btn-primary" id="onceclickable" value="submit">
         </div>
     </div>
 
@@ -267,7 +267,7 @@
 
         {#$('#btn').mousedown(start);#}
         {#$('#btn').mouseup(end);#}
-        const url = "nothing";
+        const url = "ecnothing";
         var colmx = 74;
 
         function addsum(sum1, sum2) {
@@ -325,32 +325,15 @@
         $('.spreadsheets').keydown(function (e) {
             if (e.which === 13) {
                 var x = 1, y = $('.spreadsheets').index(this);
-                if (y % 10 === (curcolnum - 65) % 10) {
-                    x += (10 - curcolnum + 64);
-                }
-                $('.spreadsheets').eq(y + x).focus();
+                if (y % 10 === 9)
+                    x++;
+                var index = $('.spreadsheets').index(this) + x;
+                $('.spreadsheets').eq(index).focus();
             }
         });
 
 
         const button1 = document.querySelector('#onceclickable');
-
-
-        {% if cons.submitted %}
-
-            button1.disabled = true;
-            button1.value = "submitted";
-            const bu = document.getElementById('hehe')
-            for (let i = 0; i < 900; i++) {
-                try {
-                    bu.getElementsByClassName('spreadsheets')[i].readOnly = true;
-                } catch (e) {
-
-                }
-
-            }
-
-        {% endif %}
 
         function containsAnyLetter(str) {
             return /[a-zA-Z]/.test(str);
@@ -471,18 +454,16 @@
                             } catch (e) {
                             }
                         }
-                        {% if not cons.submitted %}
 
-                            $.ajax({
-                                type: "POST",
-                                url: url,
-                                data:
-                                    {
-                                        aaacellvalue,
-                                        csrfmiddlewaretoken: '{{ csrf_token }}'
-                                    }
-                            });
-                        {% endif %}
+                        $.ajax({
+                            type: "POST",
+                            url: url,
+                            data:
+                                {
+                                    aaacellvalue,
+                                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                                }
+                        });
                     }
                 } catch (e) {
 

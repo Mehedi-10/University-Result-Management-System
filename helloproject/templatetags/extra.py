@@ -39,3 +39,15 @@ def havemark(c, val):
 @register.filter
 def isempty(li):
     return len(li) == 0
+
+
+@register.filter
+def perdiff(a, b):
+    x = int(a)
+    y = int(b)
+    return abs(x - y) * 100
+
+
+@register.filter
+def multiply(a, b):
+    return int(a) * int(b)
