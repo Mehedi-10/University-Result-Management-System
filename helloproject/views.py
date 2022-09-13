@@ -544,7 +544,17 @@ def ec_process_before_final(request):
     else:
         if course_code == None or session_ == None:
             return HttpResponseRedirect('ec_select_result_as_teacher')
-    sv = published.objects.filter(c_id=course_code).filter(s_session=session_).last()
+    try:
+        sv = published.objects.filter(c_id=course_code).filter(s_session=session_).filter(
+            published_before_final=True).last()
+    except Exception:
+        messages.info(request, 'Selected result is not submitted yet.')
+        return HttpResponseRedirect('ec_select_result_as_teacher')
+    else:
+        pass
+    if sv == None:
+        messages.info(request, 'Selected result is not submitted yet.')
+        return HttpResponseRedirect('ec_select_result_as_teacher')
     if request.method == 'POST':
         sv.published_before_final = True
         sv.save()
@@ -555,10 +565,11 @@ def ec_process_before_final(request):
     contents[0] = table_data[len(table_data) - 1]
     for i in range(0, len(table_data) - 1):
         contents[i + 1] = table_data[i]
-    request.session['beforefinal_pb'] = sv.published_before_final
+
     if not sv.published_before_final:
         messages.info(request, 'Selected result is not submitted yet.')
         return HttpResponseRedirect('ec_select_result_as_teacher')
+    request.session['beforefinal_pb'] = sv.published_before_final
     all = {
         'constt': contents,
         'head': request.session['all_info'],
@@ -725,6 +736,36 @@ def ec_process_final_internal(request):
         else:
             fsv.is_published = True
             fsv.save()
+            table_data = final.objects.filter(c_id=course_code).filter(s_session=session_).order_by('s_id')
+            for i in range(0, len(table_data) - 1):
+                ob = table_data[i]
+                ob.totalFinal = str((int(ob.total1) + int(ob.total2)) / 2)
+                if courses.objects.get(c_id=course_code).credit == 3.0:
+                    total1 = 60
+                else:
+                    total1 = 30
+                sum = (int(ob.total1) + int(ob.total2)) / 2
+                if sum > total1 * 0.79:
+                    ob.lattergrade = 'A+'
+                elif sum > total1 * 0.74:
+                    ob.lattergrade = 'A'
+                elif sum > total1 * 0.69:
+                    ob.lattergrade = 'A-'
+                elif sum > total1 * 0.64:
+                    ob.lattergrade = 'B+'
+                elif sum > total1 * 0.59:
+                    ob.lattergrade = 'B'
+                elif sum > total1 * 0.54:
+                    ob.lattergrade = 'B-'
+                elif sum > total1 * 0.49:
+                    ob.lattergrade = 'C+'
+                elif sum > total1 * 0.44:
+                    ob.lattergrade = 'C'
+                elif sum > total1 * 0.40:
+                    ob.lattergrade = 'D'
+                else:
+                    ob.lattergrade = 'F'
+                ob.save()
     table_data = final.objects.filter(c_id=course_code).filter(s_session=session_).order_by('s_id')
     if not table_data.exists():
         return HttpResponseRedirect('ec_select_result_as_teacher')
@@ -919,7 +960,7 @@ def adminlogout(request):
 def admin_signin(request):
     if request.method == 'GET':
         return render(request, 'admin_login.html')
-    if request.POST.get('email') == 'mehedi10@gm.com' and request.POST.get('password') == 'mehedi10':
+    if request.POST.get('email') == 'mehedi10@gmail.com' and request.POST.get('password') == 'mehedi10':
         request.session['email'] = 'mehedi'
         return HttpResponseRedirect('admin_home')
     else:

@@ -1,5 +1,5 @@
 {% extends 'user_navbar.html' %}
-{% block resultpage %}select_result_as_teacher.html{% endblock %}
+{% block resultpage %}ec_select_result_as_teacher{% endblock %}
 {% load extra %}
 {% block title %}{{ 'Semester Final Result' }}{% endblock %}
 {% block style_content %}
@@ -78,8 +78,8 @@
                     </td>
                     <td id="D" class="hello D">D
                     </td>
-                    <td id="E" class="hello E">E
-                    </td>
+                    {#                    <td id="E" class="hello E">E#}
+                    {#                    </td>#}
                 </tr>
 
                 {% for i,val in cons.constt|dicfast %}
@@ -99,12 +99,11 @@
                                    value="
                                            {% if val.total2 == 'Total' %}{{ 'Teacher-2' }}{% else %}{{ val.total2|ec_is_empty }}{% endif %}">
                         </td>
-                        <td>
-                            <input disabled id="{{ i }}{{ 'D' }}" name="{{ i }}{{ 'D' }}" class="spreadsheets"
-                                   type="text"
-                                   value="
-                                           {% if val.total1 == 'Total' %}{{ 'Difference' }}{% else %}{% if val.total1|perdiff:val.total2 < cons.head.marks|multiply:20 %}{{ 'Acceptable' }}{% else %}{{ 'Unacceptable' }}{% endif %}{% endif %}">
-                        </td>
+                        {#                        <td>#}
+                        {#                            <input disabled id="{{ i }}{{ 'D' }}" name="{{ i }}{{ 'D' }}" class="spreadsheets"#}
+                        {#                                   type="text"#}
+                        {#                                   value="{% if val.total1 == 'Total' %}{{ 'Difference' }}{% else %}{% if val.total1|perdiff:val.total2 < cons.head.marks|multiply:20 %}{{ 'Acceptable' }}{% else %}{{ 'Unacceptable' }}{% endif %}{% endif %}">#}
+                        {#                        </td>#}
                         <td>
                             <input disabled id="{{ i }}{{ 'D' }}" name="{{ i }}{{ 'D' }}" class="spreadsheets"
                                    type="text"
@@ -285,12 +284,10 @@
 
         }
         {% if cons.submitted %}
-
             button1.disabled = true;
             button1.value = "Published";
-
-
         {% endif %}
+
         var operationid, curcolnum;
 
         function notempty() {

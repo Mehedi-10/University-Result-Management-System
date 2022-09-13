@@ -60,16 +60,16 @@
     </div>
 
     <script>
-        function cdisable() {
-            if (document.getElementById('s1').value == "Semester Final") {
-                document.getElementById('s4').disabled = true;
-            } else
-                document.getElementById('s4').disabled = false;
-        }
+        {#function cdisable() {#}
+        {#    if (document.getElementById('s1').value == "Semester Final") {#}
+        {#        document.getElementById('s4').disabled = true;#}
+        {#    } else#}
+        {#        document.getElementById('s4').disabled = false;#}
+        {# }#}
 
         function mysubmit() {
             for (let i = 1; i < 5; i++) {
-                if (document.getElementById('s1').value == "Semester Final" && i == 4)
+                if (i == 4)
                     continue;
                 if (document.getElementById('s' + i.toString()).value.includes('Select')) {
                     alert('Required Field.');
