@@ -64,7 +64,6 @@
     <hr>
 
 
-
     <div id="hehe" style="height: 67vh; width: max-content;display: block;margin: auto; opacity: 0">
         <form id="po" method="POST" action="" autocomplete="off">
             {% csrf_token %}
@@ -79,6 +78,8 @@
                     </td>
                     <td id="D" class="hello D">D
                     </td>
+                    <td id="E" class="hello E">E
+                    </td>
                 </tr>
 
                 {% for i,val in cons.constt|dicfast %}
@@ -92,22 +93,25 @@
 
                         <td><input id="{{ i }}{{ 'B' }}" name="{{ i }}{{ 'B' }}" class="spreadsheets" type="text"
                                    value="
-                                           {% if val.total1 == 'Total' %}{{ 'Total-1' }}{% else %}{{ val.total1 }}{% endif %}">
+                                           {% if val.total1 == 'Total' %}{{ 'Teacher-1' }}{% else %}{{ val.total1|ec_is_empty }}{% endif %}">
                         </td>
                         <td><input id="{{ i }}{{ 'C' }}" name="{{ i }}{{ 'C' }}" class="spreadsheets" type="text"
                                    value="
-                                           {% if val.total2 == 'Total' %}{{ 'Total-2' }}{% else %}{{ val.total2 }}{% endif %}">
+                                           {% if val.total2 == 'Total' %}{{ 'Teacher-2' }}{% else %}{{ val.total2|ec_is_empty }}{% endif %}">
                         </td>
-
                         <td>
                             <input disabled id="{{ i }}{{ 'D' }}" name="{{ i }}{{ 'D' }}" class="spreadsheets"
                                    type="text"
                                    value="
-                                           {% if val.total2 == 'Total' %}{{ 'Difference' }}{% else %}{% if val.total1|perdiff:val.total2 < cons.head.marks|multiply:20 %}{{ 'Acceptable' }}{% else %}{{ 'Unacceptable' }}{% endif %}{% endif %}">
+                                           {% if val.total1 == 'Total' %}{{ 'Difference' }}{% else %}{% if val.total1|perdiff:val.total2 < cons.head.marks|multiply:20 %}{{ 'Acceptable' }}{% else %}{{ 'Unacceptable' }}{% endif %}{% endif %}">
                         </td>
-
+                        <td>
+                            <input disabled id="{{ i }}{{ 'D' }}" name="{{ i }}{{ 'D' }}" class="spreadsheets"
+                                   type="text"
+                                   value="
+                                           {% if val.total1 == 'Total' %}{{ 'FINAL MARKS' }}{% else %}{% if val.total1|perdiff:val.total2 < cons.head.marks|multiply:20 %}{{ val.total1|ec_is_empty }}{% else %}{{ val.total1|myavg:val.total2 }}{% endif %}{% endif %}">
+                        </td>
                     </tr>
-
                 {% endfor %}
             </table>
         </form>
@@ -115,7 +119,7 @@
 
     <div class="row vanish" style="margin: 0px; padding-bottom: 11px;padding-top: 11px;">
         <div class="col" style="padding-right: 100px ;text-align: right">
-            <button type="button" id="onceclickable" class="btn btn-primary">submit</button>
+            <input type="button" id="onceclickable" class="btn btn-primary" value="Publish">
         </div>
     </div>
 
@@ -184,7 +188,7 @@
             }
             document.getElementById('po').submit();
             button1.disabled = true;
-            button1.value = "submitted";
+            button1.value = "Published";
             const bu = document.getElementById('hehe')
             for (let i = 0; i < 360; i++) {
                 try {
@@ -271,8 +275,22 @@
                 }
             }
         }
+        const bu = document.getElementById('hehe')
+        for (let i = 0; i < 900; i++) {
+            try {
+                bu.getElementsByClassName('spreadsheets')[i].readOnly = true;
+            } catch (e) {
+
+            }
+
+        }
+        {% if cons.submitted %}
+
+            button1.disabled = true;
+            button1.value = "Published";
 
 
+        {% endif %}
         var operationid, curcolnum;
 
         function notempty() {
@@ -287,23 +305,6 @@
                     break;
                 }
                 curcolnum--;
-            }
-        }
-
-        window.onload = function () {
-            notempty();
-            console.log(curcolnum);
-            for (let i = curcolnum + 1; i < colmx + 1; i++) {
-                var hid = '.';
-                hid += String.fromCharCode(i);
-                var willhide = document.querySelectorAll(hid);
-                for (let j = 0; j < 90; j++) {
-                    try {
-                        willhide[j].style.display = "none";
-                    } catch (e) {
-
-                    }
-                }
             }
         }
 

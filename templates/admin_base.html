@@ -92,7 +92,7 @@
 </div>
 
 <div class="p-2"
-     style="display:none;max-height: 370px;border: 1px solid blueviolet; width: 290px;right: 13px; background-color: #F9F9F9;position: fixed; z-index: 1; animation: 3s; border-radius: .2rem "
+     style=" overflow-y: scroll; display:none;height: 370px; width: 290px;right: 13px; background-color: #F9F9F9;position: fixed; z-index: 1; animation: 3s; border-radius: .2rem; border: 1px solid blueviolet; "
      id="message">hi
 </div>
 {% block content %}
@@ -113,13 +113,13 @@
             type: "POST",
             url: 'check_notifications',
             data: {
-                'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                csrfmiddlewaretoken: '{{ csrf_token }}'
             },
             success: function (data) {
                 let html_data = '';
                 data.forEach(function (data) {
                     html_data += `
-    <div class="card border-0 rounded-0" >
+    <div class="card border-1 rounded-0" style="border-bottom-color: purple;" >
   <p class="card-header p-1">${data['sender']}</p>
   <div class="card-body p-2">
     <small class="card-text">${data['message']}</small>

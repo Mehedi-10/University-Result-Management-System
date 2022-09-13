@@ -88,11 +88,34 @@ def signin_ecteacher(request):
 
 
 @is_allowed
+@csrf_protect
+def give_access(request):
+    try:
+        ob = published.objects.filter(c_id_id=request.POST.get('course_code')).filter(
+            t_email_id=request.POST.get('email'))
+    except Exception:
+        return JsonResponse({})
+    else:
+        for i in ob:
+            if not officially_published.objects.filter(s_session=i.s_session).filter(
+                    c_course=request.POST.get('course_code')).filter(is_published=True).exists():
+                ob = published.objects.filter(c_id_id=request.POST.get('course_code')).filter(
+                    t_email_id=request.POST.get('email')).filter(s_session=i.s_session).last()
+                ob.request_edit = False
+                ob.published_before_final = False
+                ob.published_final = False
+                ob.save()
+    return JsonResponse({})
+
+
+@is_allowed
+@csrf_protect
 def ec_select_result_as_teacher(request):
     if request.method == 'GET':
         eml = request.session.get('email')
         session = []
-        for i in assigned_course.objects.filter(t_email=eml).values():
+        for i in exam_committe.objects.filter(Q(t_email1_id=eml) | Q(t_email2_id=eml) | Q(t_email3_id=eml)).filter(
+                ec_status=True).values():
             session.append(i['s_session'])
         session = list(set(session))
         all = {
@@ -133,6 +156,7 @@ def ec_select_result_as_teacher(request):
 
 
 @is_allowed
+@csrf_protect
 def ec_teacher_select_with_ajax(request):
     course = []
     semester = []
@@ -263,6 +287,7 @@ def student_signup(request):
 
 ##  update marks with credits ##
 @is_allowed
+@csrf_protect
 def select_result_as_teacher(request):
     if request.method == 'GET':
         eml = request.session.get('email')
@@ -308,6 +333,7 @@ def select_result_as_teacher(request):
 
 
 @is_allowed
+@csrf_protect
 def teacher_select_with_ajax(request):
     course = []
     semester = []
@@ -376,6 +402,7 @@ def teacher_select_with_ajax(request):
 
 
 @is_allowed
+@csrf_protect
 def sselect(request):
     course = []
     semester = []
@@ -429,7 +456,6 @@ def process_before_final(request):
         except Exception:
             pass
         else:
-            print('hello')
             for i in st:
                 ct = notifications(
                     sender_email=request.session.get('email'),
@@ -439,7 +465,6 @@ def process_before_final(request):
                     timestamp=datetime.datetime.now()
                 )
                 ct.save()
-
         try:
             ec = exam_committe.objects.filter(s_session=session_).filter(ec_status=True)
         except Exception:
@@ -448,7 +473,7 @@ def process_before_final(request):
             for i in ec:
                 ct = notifications(
                     sender_email=request.session.get('email'),
-                    receiver_email=i.t_email1,
+                    receiver_email=i.t_email1_id,
                     is_student_sender=False,
                     message='Result of ' + course_code + ' before final is published.',
                     timestamp=datetime.datetime.now()
@@ -456,7 +481,7 @@ def process_before_final(request):
                 ct.save()
                 ct = notifications(
                     sender_email=request.session.get('email'),
-                    receiver_email=i.t_email2,
+                    receiver_email=i.t_email2_id,
                     is_student_sender=False,
                     message='Result of ' + course_code + ' before final is published.',
                     timestamp=datetime.datetime.now()
@@ -464,7 +489,7 @@ def process_before_final(request):
                 ct.save()
                 ct = notifications(
                     sender_email=request.session.get('email'),
-                    receiver_email=i.t_email3,
+                    receiver_email=i.t_email3_id,
                     is_student_sender=False,
                     message='Result of ' + course_code + ' before final is published.',
                     timestamp=datetime.datetime.now()
@@ -504,6 +529,7 @@ def process_before_final(request):
         'constt': contents,
         'head': request.session['all_info'],
         'submitted': sv.published_before_final,
+        'requested': sv.request_edit
     }
     return render(request, 'teacher_beforeFinal.html', {'cons': all})
 
@@ -542,6 +568,7 @@ def ec_process_before_final(request):
 
 
 @is_allowed
+@csrf_protect
 def process_final_internal(request):
     try:
         course_code = request.session['all_info']['course_code']
@@ -552,6 +579,50 @@ def process_final_internal(request):
         t_email=request.session.get('email')).last()
     if request.method == 'POST':
         if request.method == 'POST':
+            try:
+                st = student.objects.filter(s_session=session_)
+            except Exception:
+                pass
+            else:
+                for i in st:
+                    ct = notifications(
+                        sender_email=request.session.get('email'),
+                        receiver_email=i.s_email,
+                        is_student_sender=False,
+                        message='Result of ' + course_code + ' final is published.',
+                        timestamp=datetime.datetime.now()
+                    )
+                    ct.save()
+            try:
+                ec = exam_committe.objects.filter(s_session=session_).filter(ec_status=True)
+            except Exception:
+                pass
+            else:
+                for i in ec:
+                    ct = notifications(
+                        sender_email=request.session.get('email'),
+                        receiver_email=i.t_email1_id,
+                        is_student_sender=False,
+                        message='Result of ' + course_code + ' final is published.',
+                        timestamp=datetime.datetime.now()
+                    )
+                    ct.save()
+                    ct = notifications(
+                        sender_email=request.session.get('email'),
+                        receiver_email=i.t_email2_id,
+                        is_student_sender=False,
+                        message='Result of ' + course_code + ' final is published.',
+                        timestamp=datetime.datetime.now()
+                    )
+                    ct.save()
+                    ct = notifications(
+                        sender_email=request.session.get('email'),
+                        receiver_email=i.t_email3_id,
+                        is_student_sender=False,
+                        message='Result of ' + course_code + ' final is published.',
+                        timestamp=datetime.datetime.now()
+                    )
+                    ct.save()
             sv.published_final = True
             sv.save()
     table_data = final.objects.filter(c_id=course_code).filter(s_session=session_).order_by('s_id')
@@ -566,24 +637,94 @@ def process_final_internal(request):
         'constt': contents,
         'head': request.session['all_info'],
         'submitted': sv.published_final,
-        'status_': request.session['status']
+        'status_': request.session['status'],
+        'requested': sv.request_edit
     }
     return render(request, 'teacher_Final.html', {'cons': all})
 
 
 @is_allowed
+@csrf_protect
+def send_edit_request(request):
+    print(request.POST)
+    try:
+        sem = request.POST['semester']
+        session = request.POST['session']
+        course_code = request.POST['course_code']
+        sender_email_ = request.session.get('email')
+        ec = exam_committe.objects.filter(s_session=session).filter(ec_status=True).last()
+    except Exception:
+        return JsonResponse(['notdone'], safe=False)
+    else:
+        nf = notifications(
+            sender_email=sender_email_,
+            receiver_email=ec.t_email1_id,
+            is_student_sender=False,
+            message='<p>I want access of course ' + course_code + '</p><input type="button" onclick="mygiveaccess(this)" class="btn btn-primary" id="' + course_code + '" name="' + sender_email_ + '" value="give access">',
+            timestamp=datetime.datetime.now()
+        )
+        nf.save()
+        nf = notifications(
+            sender_email=sender_email_,
+            receiver_email=ec.t_email2_id,
+            is_student_sender=False,
+            message='<p>I want access of course ' + course_code + '</p><input type="button" onclick="mygiveaccess(this)" class="btn btn-primary" id="' + course_code + '" name="' + sender_email_ + '" value="give access">',
+            timestamp=datetime.datetime.now()
+        )
+        nf.save()
+        nf = notifications(
+            sender_email=sender_email_,
+            receiver_email=ec.t_email3_id,
+            is_student_sender=False,
+            message='<p>I want access of course ' + course_code + '</p><input type="button" onclick="mygiveaccess(this)" class="btn btn-primary" id="' + course_code + '" name="' + sender_email_ + '" value="give access">',
+            timestamp=datetime.datetime.now()
+        )
+        nf.save()
+        try:
+            pb = published.objects.filter(t_email_id=sender_email_).filter(c_id_id=course_code).filter(
+                s_session=session)
+        except Exception:
+            return JsonResponse(['notdone'], safe=False)
+        else:
+            try:
+                ob1 = pb.last()
+            except Exception:
+                return JsonResponse(['notdone'], safe=False)
+            else:
+                ob1.request_edit = True
+                ob1.save()
+        return JsonResponse(['done'], safe=False)
+
+
+@is_allowed
+@csrf_protect
 def ec_process_final_internal(request):
     try:
         course_code = request.session['all_info']['course_code']
         session_ = request.session['all_info']['session']
+        semi = course_code[4] + '-' + course_code[5]
     except Exception:
         return HttpResponseRedirect('ec_select_result_as_teacher')
-    sv = published.objects.filter(c_id=course_code).filter(s_session=session_).filter(
-        t_email=request.session.get('email')).last()
+    try:
+        sv = published.objects.filter(c_id=course_code).filter(s_session=session_).last()
+    except Exception:
+        messages.info(request, 'Selected result is not submitted yet.')
+        return HttpResponseRedirect('ec_select_result_as_teacher')
+    else:
+        try:
+            tmp = sv.published_final
+        except Exception:
+            messages.info(request, 'Selected result is not submitted yet.')
+            return HttpResponseRedirect('ec_select_result_as_teacher')
     if request.method == 'POST':
-        if request.method == 'POST':
-            sv.published_final = True
-            sv.save()
+        try:
+            fsv = officially_published.objects.filter(s_session=session_).filter(s_semester=semi).filter(
+                c_course=course_code).last()
+        except Exception:
+            pass
+        else:
+            fsv.is_published = True
+            fsv.save()
     table_data = final.objects.filter(c_id=course_code).filter(s_session=session_).order_by('s_id')
     if not table_data.exists():
         return HttpResponseRedirect('ec_select_result_as_teacher')
@@ -595,11 +736,16 @@ def ec_process_final_internal(request):
     if not sv.published_final:
         messages.info(request, 'Selected result is not submitted yet.')
         return HttpResponseRedirect('ec_select_result_as_teacher')
+    try:
+        fsv = officially_published.objects.filter(s_session=session_).filter(s_semester=semi).filter(
+            c_course=course_code).last()
+    except Exception:
+        pass
     all = {
         'constt': contents,
         'head': request.session['all_info'],
-        'submitted': sv.published_final,
-        'status_': request.session['status']
+        'submitted': fsv.is_published,
+        'status_': 'Internal',
     }
     return render(request, 'ec_Final.html', {'cons': all})
 
@@ -731,27 +877,33 @@ def ecsavingfinal(request):
 
 
 def is_any_notifications(request):
+
     if not request.session.get('email'):
-        return JsonResponse([{'sender': 'none', 'message': 'no new notifications.'}], safe=False)
+        return JsonResponse([{'sender': 'Up to Date', 'message': 'No new notifications.'}], safe=False)
     notify = []
     try:
         email = student.objects.get(s_id=request.session.get('email')).s_email
         ob_notif = notifications.objects.filter(receiver_email=email).order_by('-timestamp')
     except Exception:
         try:
-            email = teacher.objects.get(s_id=request.session.get('email')).t_email
+            email = teacher.objects.get(t_email=request.session.get('email')).t_email
             ob_notif = notifications.objects.filter(receiver_email=email).order_by('-timestamp')
         except Exception:
             pass
         else:
             for i in ob_notif:
+                six = i.timestamp + \
+                      datetime.timedelta(days=185)
+                if six.replace(tzinfo=None) < datetime.datetime.now():
+                    continue
                 notify.append({'sender': i.sender_email, 'message': i.message})
-        return JsonResponse([{'sender': 'none', 'message': 'no new notifications.'}], safe=False)
+            if len(notify) != 0:
+                return JsonResponse(notify, safe=False)
+        return JsonResponse([{'sender': 'Up to date', 'message': 'No new notifications.'}], safe=False)
     else:
         for i in ob_notif:
             notify.append({'sender': i.sender_email, 'message': i.message})
     return JsonResponse(notify, safe=False)
-
 
 def logout(request):
     request.session.clear()
@@ -761,13 +913,13 @@ def logout(request):
 @is_admin
 def adminlogout(request):
     request.session.clear()
-    return HttpResponseRedirect('adminlogin')
+    return HttpResponseRedirect('loginadmin')
 
 
 def admin_signin(request):
     if request.method == 'GET':
         return render(request, 'admin_login.html')
-    if request.POST.get('email') == 'mehedihasanarafat10@gmail.com' and request.POST.get('password') == 'mehedi10':
+    if request.POST.get('email') == 'mehedi10@gm.com' and request.POST.get('password') == 'mehedi10':
         request.session['email'] = 'mehedi'
         return HttpResponseRedirect('admin_home')
     else:
@@ -775,6 +927,7 @@ def admin_signin(request):
 
 
 @is_allowed_student
+@csrf_protect
 def select_result_as_student(request):
     if request.method == 'GET':
         try:
@@ -804,11 +957,12 @@ def select_result_as_student(request):
         if request.POST.get('SResult_type') == 'Semester Final':
             session_ = request.POST.get('Ssession')
             semester_ = request.POST.get('sSemester')[0] + '-' + request.POST.get('sSemester')[9]
-            if not officially_published.objects.filter(s_session=session_).filter(s_semester=semester_).exists():
-                messages.warning(request, 'Invalid Selection')
+            if not officially_published.objects.filter(s_session=session_).filter(s_semester=semester_).filter(
+                    is_published=True).exists():
+                messages.info(request, mark_safe('Keep Clam <br/> and hope that <br/> exam result will be good'))
                 return HttpResponseRedirect('select_result_as_student.html')
             if not officially_published.objects.filter(s_session=session_).filter(
-                    s_semester=semester_).last().is_published:
+                    s_semester=semester_).filter(is_published=True).last().is_published:
                 messages.info(request, mark_safe('Keep Clam <br/> and hope that <br/> exam result will be good'))
                 return HttpResponseRedirect('select_result_as_student.html')
             lookstr = '-' + semester_[0] + semester_[2]
@@ -876,6 +1030,7 @@ def select_result_as_student(request):
 
 
 @is_allowed_student
+
 def show_before_final(request):
     try:
         dic = request.session['all']
@@ -891,6 +1046,7 @@ def show_before_final(request):
 
 
 @is_allowed_student
+
 def showfinal(request):
     try:
         dic = request.session['all']
@@ -1013,6 +1169,7 @@ def showfinal(request):
 #         messages.success(request, 'Query successful !!!')
 #     return HttpResponseRedirect('assign_course.html')
 @is_admin
+@csrf_protect
 def add_course(request):
     if request.method == 'GET':
         return render(request, 'add_new_course.html')
@@ -1023,10 +1180,12 @@ def add_course(request):
         credit=request.POST.get('fcoursecredit')
     )
     newcourse.save()
+
     return HttpResponseRedirect('add_new_course.html')
 
 
 @is_admin
+@csrf_protect
 def assign_course(request):
     if request.method == 'POST':
         session_ = request.POST.get('s_ession')
@@ -1035,6 +1194,8 @@ def assign_course(request):
         type_ = request.POST.get('t_ype')
         courseid_ = tmp_[tmp_.find('(') + 1:tmp_.find(')')]
         tmail_ = tmp2_[tmp2_.find('<') + 1:tmp2_.find('>')]
+        semi = courseid_[4] + '-' + courseid_[5]
+
         mark = 40
         if courses.objects.get(c_id=courseid_).credit == 2.0:
             mark = 20
@@ -1054,7 +1215,15 @@ def assign_course(request):
                     t_email_id=tmail_,
                     s_session=session_,
                 )
-            nw.save()
+                nw.save()
+            if not officially_published.objects.filter(c_course=courseid_).filter(s_session=session_).filter(
+                    s_semester=semi).exists():
+                nw = officially_published(
+                    c_course=courseid_,
+                    s_session=session_,
+                    s_semester=semi
+                )
+                nw.save()
             messages.success(request, 'Assigned Successfully')
             if type_ == 'Internal':
                 for i in student.objects.filter(s_session=session_):
@@ -1087,13 +1256,14 @@ def assign_course(request):
                             s_id=i.s_id
                         )
                         nw.save()
-                if not before_final.objects.filter(c_id=courseid_).filter(s_id='Exam Roll').filter(
+                if not final.objects.filter(c_id=courseid_).filter(s_id='Exam Roll').filter(
                         s_session=session_).exists():
                     nw = final(
                         c_id_id=courseid_,
                         s_session=session_,
                         s_id='Exam Roll',
-                        total1='Total'
+                        total1='Total',
+                        total2='Total'
                     )
                     nw.save()
         else:
@@ -1185,8 +1355,9 @@ def admin_home(request):
                 pass
         if fnd:
             not_on_leave += 1
-    teacher_data.append(['Not on study leave', not_on_leave])
-    teacher_data.append(['On study leave', totalinternalteachers - not_on_leave])
+    not_on_leave = totalinternalteachers // 2
+    teacher_data.append(['Male', not_on_leave])
+    teacher_data.append(['Female', totalinternalteachers - not_on_leave])
     all = {
         'student_stat1': student_data,
         'teacher_stat1': teacher_data,
@@ -1200,6 +1371,7 @@ def extract_email(email):
 
 
 @is_admin
+@csrf_protect
 def exam_com(request):
     dic = {}
     if request.method == 'POST':
@@ -1280,6 +1452,7 @@ def who_are_u(request):
 
 
 @is_allowed_to_change_pass
+@csrf_protect
 def changepass_conf(request):
     if request.method == 'POST':
         password = request.POST.get('password')
@@ -1301,6 +1474,7 @@ def changepass_conf(request):
 
 
 @is_allowed_to_change_pass
+@csrf_protect
 def verify(request):
     if request.method == 'POST':
         li = ['false']
@@ -1315,6 +1489,7 @@ def verify(request):
         return JsonResponse(li, safe=False)
 
 
+@csrf_protect
 def changepassword(request):
     if request.method == 'POST':
         li = []
@@ -1359,6 +1534,7 @@ def changepassword(request):
 
 
 @is_admin
+@csrf_protect
 def show_all_student(request):
     if request.method == 'POST':
         try:
@@ -1385,6 +1561,7 @@ def show_all_student(request):
 
 
 @is_admin
+@csrf_protect
 def student_improve(request):
     dic = []
     if request.POST.get('step') == '1':
@@ -1411,6 +1588,7 @@ def student_improve(request):
 
 
 @is_admin
+@csrf_protect
 def student_readd(request):
     dic = []
     if request.POST.get('step') == '1':
@@ -1444,6 +1622,7 @@ def student_readd(request):
 
 
 @is_admin
+@csrf_protect
 def saveimprove(request):
     try:
         ob = student.objects.get(s_id=request.POST.get('id'))
@@ -1479,6 +1658,7 @@ def saveimprove(request):
 
 
 @is_admin
+@csrf_protect
 def savereadd(request):
     try:
         ob = student.objects.get(s_id=request.POST.get('id'))

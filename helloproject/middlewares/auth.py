@@ -45,8 +45,8 @@ def is_allowed_to_change_pass(get_response):
 
 def is_admin(get_response):
     def checkadmin(request):
-        if not request.session.get('email'):
-            return redirect('who_are_you')
+        if not request.session.get('email') or request.session.get('email') != 'mehedi':
+            return redirect('getout')
         response = get_response(request)
         return response
 

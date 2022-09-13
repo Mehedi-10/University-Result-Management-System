@@ -5,8 +5,10 @@ from .views import *
 urlpatterns = [
     path('', index, name='index_page'),
     path('logout', logout),
+    path('give_access', give_access),
     path('logoutadmin', adminlogout),
-    path('adminlogin', admin_signin),
+    path('loginadmin', admin_signin, name='getout'),
+    path('send_edit_request', send_edit_request),
     path('who_are_you.html', who_are_u, name='who_are_you'),
     path('teacherlogin.html', signin_teacher),
     path('ec_teacherlogin', signin_ecteacher),

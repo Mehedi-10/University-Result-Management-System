@@ -43,6 +43,10 @@ def isempty(li):
 
 @register.filter
 def perdiff(a, b):
+    if len(a) == 0:
+        a = '0'
+    if len(b) == 0:
+        b = '0'
     x = int(a)
     y = int(b)
     return abs(x - y) * 100
@@ -50,4 +54,25 @@ def perdiff(a, b):
 
 @register.filter
 def multiply(a, b):
+    if len(a) == 0:
+        a = '0'
+    if len(b) == 0:
+        b = '0'
     return int(a) * int(b)
+
+
+@register.filter
+def ec_is_empty(a):
+    if a == '':
+        return 'None'
+    else:
+        return a
+
+
+@register.filter
+def myavg(a, b):
+    if len(a) == 0:
+        a = '0'
+    if len(b) == 0:
+        b = '0'
+    return (int(a) + int(b)) / 2

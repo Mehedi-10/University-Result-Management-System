@@ -246,7 +246,7 @@
 
     <div class="row vanish" style="margin: 0px; padding-bottom: 11px;padding-top: 11px;">
         <div class="col" style="padding-right: 100px ;text-align: right">
-            <button type="button" id="onceclickable" class="btn btn-primary">submit</button>
+            <input type="button" id="onceclickable" class="btn btn-primary" value="submit">
         </div>
     </div>
 
@@ -333,13 +333,15 @@
         });
 
 
-        const button1 = document.querySelector('#onceclickable');
+        const button1 = document.getElementById('onceclickable');
+
+
 
 
         {% if cons.submitted %}
 
-            button1.disabled = true;
-            button1.value = "submitted";
+            button1.value = "{% if cons.requested %}{{ 'Requested' }}{% else %}{{ 'Request Edit' }} {% endif %}";
+
             const bu = document.getElementById('hehe')
             for (let i = 0; i < 900; i++) {
                 try {
@@ -347,9 +349,7 @@
                 } catch (e) {
 
                 }
-
             }
-
         {% endif %}
 
         function containsAnyLetter(str) {
@@ -357,6 +357,27 @@
         }
 
         const disableButton = () => {
+            if (button1.value.includes("Requested"))
+                return;
+            if (button1.value.includes("Request Edit")) {
+                $.ajax({
+                    type: "POST",
+                    url: 'send_edit_request',
+                    data: {
+                        'semester': '{{ cons.head.semester }}',
+                        'session': '{{ cons.head.session }}',
+                        'course_code': '{{ cons.head.course_code }}',
+                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+                    },
+                    success: function (data) {
+
+                        if (data[0] == 'notdone')
+                            return;
+                        button1.value = 'Requested';
+                    }
+                });
+                return;
+            }
             notempty();
             var sum = '0.0';
             for (let i = 66; i < curcolnum; i++) {
@@ -373,6 +394,7 @@
                     sum = addsum(sum, strcut);
                 }
             }
+
             if (sum !={{ cons.head.marks}}) {
                 alert('Total Marks Condition Not satisfied.');
                 return;
@@ -399,8 +421,7 @@
                 }
             }
             document.getElementById('po').submit();
-            button1.disabled = true;
-            button1.value = "submitted";
+            button1.value = "{% if cons.requested %}{{ 'Requested' }}{% else %}{{ 'Request Edit' }} {% endif %}";
             const bu = document.getElementById('hehe')
             for (let i = 0; i < 900; i++) {
                 try {
@@ -410,6 +431,7 @@
 
             }
         };
+
         button1.addEventListener('click', disableButton);
 
         function countString(str, letter) {
@@ -712,7 +734,6 @@
 
             }
         }
-
 
         $(document).ready(function () {
             setTimeout('$("#hehe").css("opacity", 1)', 100);

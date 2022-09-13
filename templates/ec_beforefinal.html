@@ -246,7 +246,7 @@
 
     <div class="row vanish" style="margin: 0px; padding-bottom: 11px;padding-top: 11px;">
         <div class="col" style="padding-right: 100px ;text-align: right">
-            <input type="button" class="btn btn-primary" id="onceclickable" value="submit">
+            <input style="display: none" type="button" class="btn btn-primary" id="onceclickable" value="submit">
         </div>
     </div>
 
@@ -254,19 +254,7 @@
 {% block script %}
     <script>
 
-        {#var start_time;#}
-        {##}
-        {#function start() {#}
-        {#    start_time = new Date();#}
-        {# } #}
-        {##}
-        {#function end() {#}
-        {#    var now = new Date();#}
-        {#    alert(now - start_time);#}
-        {# } #}
 
-        {#$('#btn').mousedown(start);#}
-        {#$('#btn').mouseup(end);#}
         const url = "ecnothing";
         var colmx = 74;
 
@@ -321,7 +309,14 @@
             return a.toString() + '.' + extra + d2;
         }
 
+        const bu = document.getElementById('hehe')
+        for (let i = 0; i < 900; i++) {
+            try {
+                bu.getElementsByClassName('spreadsheets')[i].readOnly = true;
+            } catch (e) {
 
+            }
+        }
         $('.spreadsheets').keydown(function (e) {
             if (e.which === 13) {
                 var x = 1, y = $('.spreadsheets').index(this);
