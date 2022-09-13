@@ -21,7 +21,7 @@
             <form style="text-align:center" id="form" method="POST" autocomplete="off">
                 {% csrf_token %}
                 <div>
-                    <select class="form-select mb-2 selectid" id="s1"  name="Ssession" required>
+                    <select class="form-select mb-2 selectid" id="s1" name="Ssession" required>
                         <option class="s1" selected>Select Session</option>
                         {% for k in all.session %}
                             <option class="s1">{{ k }}</option>
@@ -63,7 +63,7 @@
         }
 
 
-        url1 = 't_select';
+        url1 = 'ec_t_select';
 
         $("#s1").change(function () {
             const subjectId = $(this).val();
@@ -108,7 +108,7 @@
 
         $("#s3").change(function () {
             const subjectId = $(this).val();
-            var l = subjectId.indexOf('(')+1;
+            var l = subjectId.indexOf('(') + 1;
             var r = subjectId.indexOf(')');
 
             $.ajax({
@@ -128,7 +128,7 @@
                     });
                     $("#s4").html(html_data);
                 }
-             });
+            });
         });
 
 

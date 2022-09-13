@@ -1,5 +1,5 @@
 {% extends 'user_navbar.html' %}
-{% block resultpage %}select_result_as_teacher.html{% endblock %}
+{% block resultpage %}ec_select_result_as_teacher{% endblock %}
 {% load extra %}
 {% block title %}{{ 'Before Final result' }}{% endblock %}
 {% block style_content %}
@@ -246,7 +246,7 @@
 
     <div class="row vanish" style="margin: 0px; padding-bottom: 11px;padding-top: 11px;">
         <div class="col" style="padding-right: 100px ;text-align: right">
-            <input type="button" id="onceclickable" class="btn btn-primary" value="submit">
+            <input style="display: none" type="button" class="btn btn-primary" id="onceclickable" value="submit">
         </div>
     </div>
 
@@ -254,20 +254,8 @@
 {% block script %}
     <script>
 
-        {#var start_time;#}
-        {##}
-        {#function start() {#}
-        {#    start_time = new Date();#}
-        {# } #}
-        {##}
-        {#function end() {#}
-        {#    var now = new Date();#}
-        {#    alert(now - start_time);#}
-        {# } #}
 
-        {#$('#btn').mousedown(start);#}
-        {#$('#btn').mouseup(end);#}
-        const url = "nothing";
+        const url = "ecnothing";
         var colmx = 74;
 
         function addsum(sum1, sum2) {
@@ -321,63 +309,32 @@
             return a.toString() + '.' + extra + d2;
         }
 
+        const bu = document.getElementById('hehe')
+        for (let i = 0; i < 900; i++) {
+            try {
+                bu.getElementsByClassName('spreadsheets')[i].readOnly = true;
+            } catch (e) {
 
+            }
+        }
         $('.spreadsheets').keydown(function (e) {
             if (e.which === 13) {
                 var x = 1, y = $('.spreadsheets').index(this);
-                if (y % 10 === (curcolnum - 65) % 10) {
-                    x += (10 - curcolnum + 64);
-                }
-                $('.spreadsheets').eq(y + x).focus();
+                if (y % 10 === 9)
+                    x++;
+                var index = $('.spreadsheets').index(this) + x;
+                $('.spreadsheets').eq(index).focus();
             }
         });
 
 
-        const button1 = document.getElementById('onceclickable');
-
-
-
-
-        {% if cons.submitted %}
-
-            button1.value = "{% if cons.requested %}{{ 'Requested' }}{% else %}{{ 'Request Edit' }} {% endif %}";
-
-            const bu = document.getElementById('hehe')
-            for (let i = 0; i < 900; i++) {
-                try {
-                    bu.getElementsByClassName('spreadsheets')[i].readOnly = true;
-                } catch (e) {
-
-                }
-            }
-        {% endif %}
+        const button1 = document.querySelector('#onceclickable');
 
         function containsAnyLetter(str) {
             return /[a-zA-Z]/.test(str);
         }
 
         const disableButton = () => {
-            if (button1.value.includes("Requested"))
-                return;
-            if (button1.value.includes("Request Edit")) {
-                $.ajax({
-                    type: "POST",
-                    url: 'send_edit_request',
-                    data: {
-                        'semester': '{{ cons.head.semester }}',
-                        'session': '{{ cons.head.session }}',
-                        'course_code': '{{ cons.head.course_code }}',
-                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
-                    },
-                    success: function (data) {
-
-                        if (data[0] == 'notdone')
-                            return;
-                        button1.value = 'Requested';
-                    }
-                });
-                return;
-            }
             notempty();
             var sum = '0.0';
             for (let i = 66; i < curcolnum; i++) {
@@ -394,7 +351,6 @@
                     sum = addsum(sum, strcut);
                 }
             }
-
             if (sum !={{ cons.head.marks}}) {
                 alert('Total Marks Condition Not satisfied.');
                 return;
@@ -421,7 +377,8 @@
                 }
             }
             document.getElementById('po').submit();
-            button1.value = "{% if cons.requested %}{{ 'Requested' }}{% else %}{{ 'Request Edit' }} {% endif %}";
+            button1.disabled = true;
+            button1.value = "submitted";
             const bu = document.getElementById('hehe')
             for (let i = 0; i < 900; i++) {
                 try {
@@ -431,7 +388,6 @@
 
             }
         };
-
         button1.addEventListener('click', disableButton);
 
         function countString(str, letter) {
@@ -493,18 +449,16 @@
                             } catch (e) {
                             }
                         }
-                        {% if not cons.submitted %}
 
-                            $.ajax({
-                                type: "POST",
-                                url: url,
-                                data:
-                                    {
-                                        aaacellvalue,
-                                        csrfmiddlewaretoken: '{{ csrf_token }}'
-                                    }
-                            });
-                        {% endif %}
+                        $.ajax({
+                            type: "POST",
+                            url: url,
+                            data:
+                                {
+                                    aaacellvalue,
+                                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                                }
+                        });
                     }
                 } catch (e) {
 
@@ -734,6 +688,7 @@
 
             }
         }
+
 
         $(document).ready(function () {
             setTimeout('$("#hehe").css("opacity", 1)', 100);

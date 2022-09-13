@@ -1,84 +1,62 @@
 {% extends 'admin_base.html' %}
-{% block title %}{{ 'Add New Member' }}{% endblock %}
-{% block style_content %}
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
-    <style>
+{% block title %}{{ 'Add new teacher' }}{% endblock %}
 
-
-        .btn-primary {
-            background-color: #5800FF;
-        }
-
-    </style>
-
-{% endblock %}
 {% block content %}
-    <h1 style="color: white;text-align: center;font-family: 'Inria Sans">Register New Teacher</h1>
 
-    <div style="font-family: 'Inria Sans';height: max-content; width: 500px; margin: auto;  margin-top: 40px;">
-        <form method="POST" id="signup" style="width: 500px;" autocomplete="off">{% csrf_token %}
+
+    <h4 style=";text-align: center;font-family: 'Inria Sans'; margin-top: 17px">Register New Teacher</h4>
+
+    <div style="font-family: 'Inria Sans';height: max-content; width: 500px; margin: auto;  margin-top: 30px;">
+        <form method="POST" id="form" style="width: 500px;" autocomplete="off">{% csrf_token %}
             <div class="form-floating mb-3">
                 <input class="form-control" placeholder="enter your name" name="name" required>
                 <label for="floatingTextarea">Full name</label>
             </div>
             <div class="form-floating mb-3" id="tmail">
                 <input type="email" id="eid" class="form-control" placeholder="enter your email" name="email" required>
-                <label for="floatingTextarea">Email</label>
+                <label for="floatingTextarea">Enter your email</label>
             </div>
             <div class="form-floating mb-3">
-                <input type="password" class="form-control" placeholder="enter a password" name="password1" required>
-                <label for="floatingTextarea">Password</label>
+                <input type="password" id="password1" class="form-control" placeholder="enter a password"
+                       name="password1" required>
+                <label for="floatingTextarea">Enter password</label>
             </div>
             <div class="form-floating mb-3">
-                <input type="password" class="form-control" placeholder="re-enter password" name="password2" required>
-                <label for="floatingTextarea">Re-password</label>
+                <input type="password" id="password2" class="form-control" placeholder="re-enter password"
+                       name="password2" required>
+                <label for="floatingTextarea">Confirm your password</label>
             </div>
         </form>
+        <button type="submit" class="btn btn-secondary btn-lg" onclick="mysubmit()">Register</button>
 
-        <button type="submit" onclick="mysubmit()" class="btn btn-secondary btn-lg">Register User</button>
 
     </div>
 
     <script>
 
-
-        const inp = document.getElementById('did');
-        inp.addEventListener("input", myFunction);
-        const Student_id = document.getElementById('Student_id');
-
-        function myFunction() {
-            if (inp.value === 'None')
-                inp.value = 0;
-            var ss = inp.value;
-            var ll = ss.length;
-            if ((ss[ll - 1] < '0' || ss[ll - 1] > '9')) {
-                alert('Please Insert a valid id');
-                for (let i = 0; i < ll; i++) {
-                    if (ss[i] > '9' || ss[i] < '0') {
-                        var x = i;
-                        if (i === 0)
-                            x = 0;
-                        ss = ss.slice(0, x);
-                        break;
-                    }
-                }
-            }
-            inp.value = ss;
-        }
+        const p1 = document.getElementById('password1');
+        const p2 = document.getElementById('password2');
+        const errormg = document.getElementById('errors');
 
         function mysubmit() {
-            if (document.getElementById('s1').value=='Register As')
-            {
-                alert('please select an option.')
-                document.getElementById('s1').focus();
+            if (p1.value != p2.value) {
+
+                errormg.style.display = 'block';
+                errormg.innerText = 'Passwords does not match.';
+                setTimeout(message, 3000);
+
+                function message() {
+                    errormg.style.display = 'none';
+                }
+
                 return;
             }
-            document.getElementById('signup').submit();
 
+            document.getElementById('form').submit();
         }
 
-
     </script>
+
+
 
 {% endblock %}

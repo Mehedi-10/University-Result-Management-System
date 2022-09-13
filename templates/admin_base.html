@@ -6,14 +6,18 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
     <title>{% block title %} {% endblock %} | Result processing system</title>
-    {% block style_content %} {% endblock %}
+
+
     {% if messages %}
         {% for message in messages %}
-            <p id="hidein2sec" {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</p>
+            <p id="hidein2sec" style="z-index: 10;" {% if message.tags %}
+               class="{{ message.tags }}"{% endif %}>{{ message }}</p>
         {% endfor %}
     {% endif %}
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
-          rel="stylesheet">
+
+    <p id="errors" style="top: 0; z-index: 10; display: none"
+       class="alert alert-danger position-fixed text-center w-100"></p>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -22,25 +26,81 @@
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css"
           integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous"/>
+    <style>
+
+        .mycard {
+            background-color: #5D13E7;
+            color: white;
+        }
+
+        #header .btn {
+            color: black;
+        }
+
+        #header {
+            background: #e8eef4;
+            font-family: 'Inria Sans';
+            margin: 0;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        .mybgblack {
+            color: #EEF2FF;
+        }
+
+        {% block style_content %} {% endblock %}
+
+    </style>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0"/>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,400,0,0"/>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+
 </head>
-<body style="background:#082032; color: white;">
-  <div class="row p-2" style="text-align: right; font-family: 'Inria Sans'; background-color: #383838; margin: 0;">
-        <div class="col" style="text-align: left;">
-            <span>
-                Home
-        </span>
-
-        </div>
-        <div class="col" style="text-align: right;">
-            <span class="material-icons">notifications</span>
-
-            <span class="material-icons ps-2 ">
-account_circle
-</span>
-        </div>
+<body style="  margin: 0;background: #e0e5ec ;padding-bottom: 110px">
+<div id="header" class="row p-2">
+    <div class="col d-grid gap-0 d-md-block" style="text-align: left;">
+        <a type="button" class="btn" href="admin_home"> Home
+        </a>
+        <a type="button" class="btn" href="teachers"> Teachers
+        </a>
+        <a type="button" class="btn" href="exam_committee"> Exam Committee
+        </a>
     </div>
-{% block content %} {% endblock %}
+    <div class="col-2" style="text-align: right;">
+        <a type="button" id="mgid" class="btn material-icons" onclick="mymessage()"> notifications</a>
+        <a type="button" class="material-symbols-outlined btn" href="logoutadmin">
+            logout
+        </a>
+    </div>
+</div>
+
+<div class="p-2"
+     style=" overflow-y: scroll; display:none;height: 370px; width: 290px;right: 13px; background-color: #F9F9F9;position: fixed; z-index: 1; animation: 3s; border-radius: .2rem; border: 1px solid blueviolet; "
+     id="message">hi
+</div>
+{% block content %}
+
+{% endblock %}
+
 <script>
+
     {% if messages %}
         setTimeout(message, 3000);
         function message() {
@@ -48,8 +108,48 @@ account_circle
         }
     {% endif %}
 
+    function checkmsg() {
+        $.ajax({
+            type: "POST",
+            url: 'check_notifications',
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function (data) {
+                let html_data = '';
+                data.forEach(function (data) {
+                    html_data += `
+    <div class="card border-1 rounded-0" style="border-bottom-color: purple;" >
+  <p class="card-header p-1">${data['sender']}</p>
+  <div class="card-body p-2">
+    <small class="card-text">${data['message']}</small>
+  </div>
+</div>
+  `;
+                });
+                $("#message").html(html_data);
+            }
+        });
+    }
+
+
+    var show = 1;
+
+    function mymessage() {
+        if (show == 1) {
+            document.getElementById('message').style.display = 'block';
+            document.getElementById('mgid').innerText = 'close';
+            checkmsg();
+        } else {
+            document.getElementById('mgid').innerText = 'notifications';
+            document.getElementById('message').style.display = 'none';
+
+        }
+        show = (show + 1) % 2;
+    }
+
 </script>
-</body >
+</body>
 
 
 </html>

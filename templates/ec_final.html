@@ -1,5 +1,5 @@
 {% extends 'user_navbar.html' %}
-{% block resultpage %}select_result_as_teacher.html{% endblock %}
+{% block resultpage %}ec_select_result_as_teacher{% endblock %}
 {% load extra %}
 {% block title %}{{ 'Semester Final Result' }}{% endblock %}
 {% block style_content %}
@@ -64,7 +64,6 @@
     <hr>
 
 
-
     <div id="hehe" style="height: 67vh; width: max-content;display: block;margin: auto; opacity: 0">
         <form id="po" method="POST" action="" autocomplete="off">
             {% csrf_token %}
@@ -75,6 +74,12 @@
                     </td>
                     <td id="B" class="hello B">B
                     </td>
+                    <td id="C" class="hello C">C
+                    </td>
+                    <td id="D" class="hello D">D
+                    </td>
+                    {#                    <td id="E" class="hello E">E#}
+                    {#                    </td>#}
                 </tr>
 
                 {% for i,val in cons.constt|dicfast %}
@@ -85,11 +90,27 @@
                         <td>
                             <input id="{{ i }}{{ 'A' }}" name="{{ i }}{{ 'A' }}" class="spreadsheets" type="text"
                                    readonly value="{{ val.s_id }}"></td>
+
                         <td><input id="{{ i }}{{ 'B' }}" name="{{ i }}{{ 'B' }}" class="spreadsheets" type="text"
-                                   value="{% if cons.status_ %}{{ val.total1 }}{% else %}{{ val.total2 }}{% endif %}">
+                                   value="
+                                           {% if val.total1 == 'Total' %}{{ 'Teacher-1' }}{% else %}{{ val.total1|ec_is_empty }}{% endif %}">
+                        </td>
+                        <td><input id="{{ i }}{{ 'C' }}" name="{{ i }}{{ 'C' }}" class="spreadsheets" type="text"
+                                   value="
+                                           {% if val.total2 == 'Total' %}{{ 'Teacher-2' }}{% else %}{{ val.total2|ec_is_empty }}{% endif %}">
+                        </td>
+                        {#                        <td>#}
+                        {#                            <input disabled id="{{ i }}{{ 'D' }}" name="{{ i }}{{ 'D' }}" class="spreadsheets"#}
+                        {#                                   type="text"#}
+                        {#                                   value="{% if val.total1 == 'Total' %}{{ 'Difference' }}{% else %}{% if val.total1|perdiff:val.total2 < cons.head.marks|multiply:20 %}{{ 'Acceptable' }}{% else %}{{ 'Unacceptable' }}{% endif %}{% endif %}">#}
+                        {#                        </td>#}
+                        <td>
+                            <input disabled id="{{ i }}{{ 'D' }}" name="{{ i }}{{ 'D' }}" class="spreadsheets"
+                                   type="text"
+                                   value="
+                                           {% if val.total1 == 'Total' %}{{ 'FINAL MARKS' }}{% else %}{% if val.total1|perdiff:val.total2 < cons.head.marks|multiply:20 %}{{ val.total1|ec_is_empty }}{% else %}{{ val.total1|myavg:val.total2 }}{% endif %}{% endif %}">
                         </td>
                     </tr>
-
                 {% endfor %}
             </table>
         </form>
@@ -97,7 +118,7 @@
 
     <div class="row vanish" style="margin: 0px; padding-bottom: 11px;padding-top: 11px;">
         <div class="col" style="padding-right: 100px ;text-align: right">
-            <input type="button" id="onceclickable" class="btn btn-primary" value="submit">
+            <input type="button" id="onceclickable" class="btn btn-primary" value="Publish">
         </div>
     </div>
 
@@ -105,10 +126,30 @@
 {% block script %}
     <script>
 
-        const url = "final";
+        const url = "ecfinal";
         var colmx = 67;
 
+        setInterval(function () {
+            for (let i = 1; i < 90; i++) {
+                try {
+                    const difference = document.getElementById(i.toString() + 'D');
+                    if (difference.value == 'Acceptable') {
+                        difference.style.color = 'green';
+                        difference.style.fontWeight = 'bold';
+                    } else if (difference.value == 'Unacceptable') {
+                        difference.style.color = 'red';
+                        difference.style.fontWeight = 'bold';
+                    }
+                } catch (e) {
+
+                }
+
+            }
+
+        }, 500)
+
         document.getElementById('0B').readOnly = true;
+        document.getElementById('0C').readOnly = true;
         $('.spreadsheets').keydown(function (e) {
             if (e.which === 13) {
                 var x = 1, y = $('.spreadsheets').index(this);
@@ -121,46 +162,11 @@
         const button1 = document.querySelector('#onceclickable');
 
 
-        {% if cons.submitted %}
-            button1.value = "{% if cons.requested %}{{ 'Requested' }}{% else %}{{ 'Request Edit' }} {% endif %}";
-            const bu = document.getElementById('hehe')
-            for (let i = 0; i < 360; i++) {
-                try {
-                    bu.getElementsByClassName('spreadsheets')[i].readOnly = true;
-                } catch (e) {
-
-                }
-            }
-        {% endif %}
-
         function containsAnyLetter(str) {
             return /[a-zA-Z]/.test(str);
         }
 
         const disableButton = () => {
-            if (button1.value.includes("Requested"))
-                return;
-            if (button1.value.includes("Request Edit")) {
-                $.ajax({
-                    type: "POST",
-                    url: 'send_edit_request',
-                    data: {
-                        'semester': '{{ cons.head.semester }}',
-                        'session': '{{ cons.head.session }}',
-                        'course_code': '{{ cons.head.course_code }}',
-                        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
-                    },
-                    success: function (data) {
-
-                        if (data[0] == 'notdone')
-                            return;
-                        button1.value = 'Requested';
-                    }
-                });
-                return;
-            }
-
-
             notempty();
             for (let i = 0; i < 90; i++) {
                 try {
@@ -180,7 +186,8 @@
                 }
             }
             document.getElementById('po').submit();
-            button1.value = "{% if cons.requested %}{{ 'Requested' }}{% else %}{{ 'Request Edit' }} {% endif %}";
+            button1.disabled = true;
+            button1.value = "Published";
             const bu = document.getElementById('hehe')
             for (let i = 0; i < 360; i++) {
                 try {
@@ -248,18 +255,16 @@
                             }
                         }
 
-                        {% if not cons.submitted %}
 
-                            $.ajax({
-                                type: "POST",
-                                url: url,
-                                data:
-                                    {
-                                        aaacellvalue,
-                                        csrfmiddlewaretoken: '{{ csrf_token }}'
-                                    }
-                            });
-                        {% endif %}
+                        $.ajax({
+                            type: "POST",
+                            url: url,
+                            data:
+                                {
+                                    aaacellvalue,
+                                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                                }
+                        });
 
                     }
 
@@ -269,15 +274,19 @@
                 }
             }
         }
+        const bu = document.getElementById('hehe')
+        for (let i = 0; i < 900; i++) {
+            try {
+                bu.getElementsByClassName('spreadsheets')[i].readOnly = true;
+            } catch (e) {
 
+            }
 
-        {#window.addEventListener('contextmenu', function (e) {#}
-        {#    e.preventDefault();#}
-        {# }, false);#}
-        {##}
-        {#window.addEventListener('click', function (e) {#}
-        {#    e.preventDefault();#}
-        {# }, false);#}
+        }
+        {% if cons.submitted %}
+            button1.disabled = true;
+            button1.value = "Published";
+        {% endif %}
 
         var operationid, curcolnum;
 
@@ -296,22 +305,6 @@
             }
         }
 
-        window.onload = function () {
-            notempty();
-            console.log(curcolnum);
-            for (let i = curcolnum + 1; i < colmx + 1; i++) {
-                var hid = '.';
-                hid += String.fromCharCode(i);
-                var willhide = document.querySelectorAll(hid);
-                for (let j = 0; j < 90; j++) {
-                    try {
-                        willhide[j].style.display = "none";
-                    } catch (e) {
-
-                    }
-                }
-            }
-        }
 
         $(document).ready(function () {
             setTimeout('$("#hehe").css("opacity", 1)', 100);

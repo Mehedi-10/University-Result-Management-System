@@ -28,30 +28,19 @@
 
 }
 
-input {
-    border: none !important;
-    padding: 0 !important;
-    height: 30px;
-    width: 90%;
+input:focus, textarea:focus, select:focus {
     outline: none !important;
-    background: white !important;
-    border-radius: 2%;
-}
-input:focus, textarea:focus, select:focus{
-        outline: none !important;
 }
 
-.select select, .textarea
-{
-        border: 1px solid transparent;
+.select select, .textarea {
+    border: 1px solid transparent;
 
 }
+
 input:-webkit-autofill {
     -webkit-box-shadow: 0 0 0 1000px white inset !important;
 }
+
 .no-outline:focus {
-  outline: none;
+    outline: none;
 }
-
-
-

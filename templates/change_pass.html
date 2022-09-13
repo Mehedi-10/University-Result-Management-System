@@ -1,0 +1,97 @@
+{% extends 'user_headtail_without_navbar.html' %}
+{% block title %}{{ 'Password recovery' }}{% endblock %}
+{% block style_content %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/common.css' %}">
+    <style>
+        body {
+            background-image: linear-gradient(to right, #ffffff, #efefef, #dfdfdf, #cfcfcf, #c0c0c0) !important;
+        }
+
+        #loader {
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+
+    <p id="errors" style="top: 0; z-index: 4; display: none"
+       class="alert alert-danger position-absolute text-center w-100"></p>
+{% endblock %}
+{% block content %}
+    {% load static %}
+    <div class="container-md mt-5">
+        <div class="row">
+
+            <div class="col">
+                <img style="width: 81%; height: 85%; border-radius: 3px"
+                     src="{% static 'imageedit_1_5251570219.png' %}">
+            </div>
+            <div class="col-5">
+                <img style=" margin-left:15px;width: 100px;height: 100px"
+                     src="{% static 'change.png' %}">
+
+                <h4 style="font-weight: bold; padding-bottom: 10px">
+                    Create new password
+                </h4>
+
+
+                <form id="form" method="post">
+                    {% csrf_token %}
+                    <div class="form-floating mb-3 hide2">
+                        <input class="form-control p-2" id="password1" placeholder="enter your code" name="password">
+                        <label for="floatingTextarea">New password</label>
+                    </div>
+                    <div class="form-floating mb-3 hide2">
+                        <input class="form-control p-2" id="password2" placeholder="enter your code" name="repassword">
+                        <label for="floatingTextarea">Confirm your password</label>
+                    </div>
+
+                </form>
+                <button type="button" style="width: 90px;" class="btn btn-primary" onclick="history.back()"> cancel
+                </button>
+                <button type="button" id="bt1" style=" margin-left: 10px" class="btn btn-primary"
+                        onclick="mysubmit()">
+
+                    <span><img id="loader" style="display: none; height: 23px;width: 23px"
+                               src="{% static 'spinner-of-dots.png' %}"> </span><span>next</span>
+                </button>
+
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+
+        const p1 = document.getElementById('password1');
+        const p2 = document.getElementById('password2');
+        const errormg = document.getElementById('errors');
+
+        function mysubmit() {
+            if (p1.value != p2.value) {
+
+                errormg.style.display = 'block';
+                errormg.innerText = 'Passwords does not match.';
+                setTimeout(message, 3000);
+
+                function message() {
+                    errormg.style.display = 'none';
+                }
+
+                return;
+            }
+
+            document.getElementById('form').submit();
+        }
+
+
+    </script>
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends 'admin_home.html' %}
+{% block title %}{{ 'Exam committee' }}{% endblock %}
+{% block inner_style_content %}
+    .selectize-input {
+    min-height: 49px !important;
+    text-align: center;
+    padding-top: 15px !important;
+    }
+{% endblock %}
+{% block inner_col_content %}
+    <h3 class="m-2">Team members</h3>
+    <div class="row">
+        {% for i,j in all.ec_.items %}
+            <div class="col-sm-4">
+                <div class="card mycard m-3" style="box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;">
+                    <div class="card-body">
+                        <p>
+                            <strong class="card-title">{{ i }}</strong>
+                        <hr>
+                        </p>
+
+                        <p>
+                            <small class="card-title">{{ j }}</small>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <hr>
+    <div class="row">
+        <div class="col">
+            <form id="form" method="POST" autocomplete="off">
+                {% csrf_token %}
+                <div class="row">
+                    <div class="col">
+
+                        <div class="col-md-7">
+                            <strong> Create team</strong>
+                            <div style="margin: 10px 0px">
+                                <select id="select1" name="ec_member1" placeholder="Select Member">
+                                    <option value="">Select Member</option>
+                                    {% for k in all.teachers_ %}
+                                <option class="s1">{{ k }}</option>
+                            {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div style="margin-bottom: 10px">
+                                <select id="select1" name="ec_member2" placeholder="Select Member">
+                                    <option value="">Select Member</option>
+                                    {% for k in all.teachers_ %}
+                                <option class="s1">{{ k }}</option>
+                            {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <div style="margin-bottom: 10px">
+                                <select id="select1" name="ec_member3" placeholder="Select Member">
+                                    <option value="">Select Member</option>
+                                    {% for k in all.teachers_ %}
+                                        <option class="s1">{{ k }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <button class="btn btn-primary" onclick="mysubmit()">save</button>
+                    </div>
+                    <div class="col">
+
+                        <strong>Recent actions</strong>
+                        <div class="col-md-7">
+                            <div style="margin-bottom: 10px">
+                                <select id="select1" name="ec_session" placeholder="Select Session">
+                                    <option value="">Select Session</option>
+                                    {% for k in all.sessions_ %}
+                                        <option class="s1">{{ k }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+
+    <script>
+        $(document).ready(function () {
+                $('select').selectize({sortField: 'text'});
+            }
+        );
+    </script>
+{% endblock %}

@@ -1,4 +1,4 @@
-{% extends 'base3.html' %}
+{% extends 'user_navbar.html' %}
 {% block title %}{{ 'Select result' }}{% endblock %}
 {% block style_content %}
     {% load static %}
@@ -24,10 +24,9 @@
                 <div>
                     <select class="form-select mb-2 selectid" id="s1" placeholder="Pick a state..." name="SResult_type"
                             onchange="cdisable()" autocomplete="off">
-                        {#                        <option class="s1" selected>Select Result Type</option>#}
-                        <option value="">Select a state...</option>
-                        <option class="s1">Before Final</option>
-                        <option class="s1">Final</option>
+                        <option>Select result type</option>
+                        <option class="s1">Before Semester Final</option>
+                        <option class="s1">Semester Final</option>
                     </select>
                 </div>
                 <div>
@@ -55,22 +54,22 @@
                     </select>
                 </div>
             </form>
-            <button class="submitbtn" onclick="mysubmit()">submit</button>
+            <button class="submitbtn" type="button" onclick="mysubmit()">submit</button>
 
         </div>
     </div>
 
     <script>
-        function cdisable() {
-            if (document.getElementById('s1').value == "Final") {
-                document.getElementById('s4').disabled = true;
-            } else
-                document.getElementById('s4').disabled = false;
-        }
+        {#function cdisable() {#}
+        {#    if (document.getElementById('s1').value == "Semester Final") {#}
+        {#        document.getElementById('s4').disabled = true;#}
+        {#    } else#}
+        {#        document.getElementById('s4').disabled = false;#}
+        {# }#}
 
         function mysubmit() {
             for (let i = 1; i < 5; i++) {
-                if (document.getElementById('s1').value == "Final" && i == 4)
+                if (i == 4)
                     continue;
                 if (document.getElementById('s' + i.toString()).value.includes('Select')) {
                     alert('Required Field.');

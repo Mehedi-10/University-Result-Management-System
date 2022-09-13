@@ -1,5 +1,5 @@
-{% extends 'base3.html' %}
-{% block resultpage %}select_result_as_student.html{% endblock %}
+{% extends 'user_navbar.html' %}
+{% block resultpage %}ec_select_result_as_teacher{% endblock %}
 {% load extra %}
 {% block title %}{{ 'Semester Final Result' }}{% endblock %}
 {% block style_content %}
@@ -10,14 +10,25 @@
         .row > * {
             padding-bottom: 7px;
         }
+
+        @media screen and (max-width: 900px) {
+            #marksheet {
+                padding: 10px;
+                overflow-x: scroll;
+            }
+
+        }
+
     </style>
 {% endblock %}
 {% block icone %}{% endblock %}
 {% block content %}
 
-    <div style="max-width:max-content; margin: auto;display: block;background-color: white; border-radius: .2rem; padding: 3%;margin-top: 27px;">
+    <div id="marksheet" style="max-width:900px; margin: auto;display: block;background-color: #F9F9F9; border-radius: .2rem; padding: 3%;margin-top: 27px;margin-bottom: 27px;
+border: 1px solid black;
+">
         <h5 style="text-align: center;margin-top: 20px;margin-bottom: 50px">Semestar Final Result</h5>
-        <div class="container" style="font-size: 18px">
+        <div class="container" style="font-size: 18px;">
             <div class="row">
                 <div class="row-1"> Name of the student: <span
                         style="margin-left: 7px;font-size: 25px">{{ all.per.name }}</span>
@@ -61,6 +72,7 @@
                 </tr>
             {% endfor %}
         </table>
+
     </div>
 
 {% endblock %}

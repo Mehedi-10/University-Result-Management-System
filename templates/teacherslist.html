@@ -1,0 +1,68 @@
+{% extends 'admin_home.html' %}
+{% load extra %}
+{% block title %}{{ 'Teachers' }}{% endblock %}
+{% block inner_style_content %}
+    div .myoverflow
+    {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    }
+    div .myoverflow:hover{
+    overflow: visible;
+    height:max-content;
+    width:max-content;
+    max-width:400px;
+    max-height:470px;
+    }
+{% endblock %}
+{% block inner_col_content %}
+
+    <div class="row">
+
+        {% for i in all %}
+            <div class="col">
+                <div class="card mycard m-2" style="box-shadow: rgba(0, 0, 0, 0.15) 2.4px 2.4px 3.2px;
+width: 248px;height: 292px">
+                    <div class="card-body">
+                        <p>
+                            <strong class="card-title">{{ i.name.0 }}</strong>
+                        <hr>
+                        </p>
+                        <p style="margin-bottom: 10px">
+                            <small class="card-text">I'm teaching</small>
+                        </p>
+                        <div class="myoverflow">
+
+                            {% if i.internal|isempty %}
+                                <small>None</small>
+                            {% else %}
+                                <p class="m-0">
+                                    {% for j in i.internal %}
+                                        <small class="card-text">{{ j }}</small>
+                                    {% endfor %}
+                                </p>
+                            {% endif %}
+                        </div>
+                        <hr>
+                        <p style="margin-bottom: 7px">
+                            <small class="card-text">Examiner of</small>
+                        </p>
+                        <div class="myoverflow">
+                            {% if  i.external|isempty %}
+                                <small>None</small>
+                            {% else %}
+
+                                <p class="m-0">
+                                    {% for j in i.external %}
+                                        <small class="card-text">{{ j }}</small>
+                                    {% endfor %}
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}

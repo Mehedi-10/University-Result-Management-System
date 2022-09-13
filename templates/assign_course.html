@@ -1,26 +1,16 @@
 {% extends 'admin_base.html' %}
 {% block title %}{{ 'Add New Course' }}{% endblock %}
 {% block style_content %}
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/signup.css' %}">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"
-            integrity="sha256-+C0A5Ilqmu4QcSPxrlGpaZxJ04VjsRjKu+G82kl5UJk=" crossorigin="anonymous"></script>
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/css/selectize.bootstrap3.min.css"
-          integrity="sha256-ze/OEYGcFbPRmvCnrSeKbRTtjG4vGLHXgOqsyLFTRjg=" crossorigin="anonymous"/>
-    <style>
-        .selectize-input {
-            height: 60px;
-            text-align: center;
-            padding-top: 15px !important;
-        }
-
-    </style>
+    .selectize-input {
+    min-height: 60px !important;
+    text-align: center;
+    padding-top: 15px !important;
+    }
 {% endblock %}
 
 {% block content %}
-    <h4 class="form-title" style="padding-top:15px; margin-bottom: 30px; text-align: center; color: white">Assign Course to Teacher</h4>
+    <h4 class="form-title" style="padding-top:15px; margin-bottom: 30px; text-align: center; ">Assign Course to
+        Teacher</h4>
     <div style="font-family: 'Inria Sans'; width: 500px; margin: auto;">
         <form id="form" method="POST" autocomplete="off">
             {% csrf_token %}
@@ -65,42 +55,23 @@
     const arr = ["Assign as", "Select Course", "Select Teacher","Select Session"];
     function mysubmit() {
          for (let i = 1; i < 5; i++) {
-            if(document.getElementById('select'+i.toString()).value.length==0)
-            {
-                document.getElementById('select'+i.toString()).focus();
-                alert(arr[i-1]+' is a Required Field.');
+            if(document.getElementById('select'+i.toString()).value.length==0) {
+                document.getElementById('select' + i.toString()).focus();
+                alert(arr[i - 1] + ' is a Required Field.');
                 return;
             }
-        }
-         document.getElementById("form").submit();
+         }
+        document.getElementById("form").submit();
     }
 
 
-
-        $
+    $(document).ready(function () {
+        $('select').selectize
         (
-            document
-        )
-            .ready
-
-            (
-                function
-
-                    () {
-                    $
-                    (
-                        'select'
-                    )
-                        .selectize
-
-                        (
-                            {
-                                sortField: 'text'
-                            }
-                        )
-                    ;
-                }
-            )
-        ;
+            {
+                sortField: 'text'
+            }
+        );
+    });
     </script>
 {% endblock %}

@@ -9,26 +9,38 @@
     <style>
 
     </style>
+    <script src="https://kit.fontawesome.com/fdc525308a.js" crossorigin="anonymous"></script>
 </head>
 <body>
-<div id="hi" style="height: 100px;width: 20px;background-color: red;margin-left: 400px"></div>
+<div id="hi" style="height: 100px;width: 20px;background-color: red;margin-left: 400px">
+    <i class="fa-solid fa-hourglass tiktik"></i>
+
+</div>
+<i class="fa-solid  fa-hourglass-start tiktik"></i>
+<i class="fa-solid fa-hourglass-half tiktik"></i>
+<i class="fa-solid fa-hourglass-end tiktik"></i>
+
 <button id="myP" onmousedown="mousedown()" onmouseup="mouseup()">
     rotate
 </button>
 <script>
+    const tiktik = document.getElementsByClassName('tiktik');
 
-    var st
+
     var interval_;
-    var ang = 0;
+
     function mousedown(event) {
-        st = new Date();
-        console.log(st);
+        var st = new Date();
+        var ang = 1;
         interval_ = setInterval(function () {
+            console.log(new Date() - st);
+            console.log(ang);
             x = "rotate(" + (ang + 1).toString() + "deg)";
             document.getElementById("hi").style.transform = x;
             ang++;
         }, 11);
     }
+
     function mouseup(event) {
         clearInterval(interval_);
         var lt = new Date();

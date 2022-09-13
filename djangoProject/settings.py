@@ -13,11 +13,11 @@ import os
 from django.contrib.messages import constants as messages
 
 MESSAGE_TAGS = {
-    messages.DEBUG: 'alert alert-secondary position-absolute text-center w-100 ',
-    messages.INFO: 'alert alert-info position-absolute text-center w-100',
-    messages.SUCCESS: 'alert alert-success position-absolute text-center w-100',
-    messages.WARNING: 'alert alert-warning position-absolute text-center w-100',
-    messages.ERROR: 'alert alert-danger position-absolute text-center w-100',
+    messages.DEBUG: 'alert alert-secondary position-fixed text-center w-100 ',
+    messages.INFO: 'alert alert-info position-fixed text-center w-100',
+    messages.SUCCESS: 'alert alert-success position-fixed text-center w-100',
+    messages.WARNING: 'alert alert-warning position-fixed text-center w-100',
+    messages.ERROR: 'alert alert-danger position-fixed text-center w-100',
 }
 from pathlib import Path
 
@@ -136,3 +136,10 @@ MEDIA_ROOT = BASE_DIR
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'mehedihasanarafat@stud.cou.ac.bd'
+EMAIL_HOST_PASSWORD = 'sixqejgyfihcoitm'
