@@ -92,12 +92,10 @@
                                    readonly value="{{ val.s_id }}"></td>
 
                         <td><input id="{{ i }}{{ 'B' }}" name="{{ i }}{{ 'B' }}" class="spreadsheets" type="text"
-                                   value="
-                                           {% if val.total1 == 'Total' %}{{ 'Teacher-1' }}{% else %}{{ val.total1|ec_is_empty }}{% endif %}">
+                                   value="{% if val.total1 == 'Total' %}{{ 'Teacher-1' }}{% else %}{{ val.total1|ec_is_empty }}{% endif %}">
                         </td>
                         <td><input id="{{ i }}{{ 'C' }}" name="{{ i }}{{ 'C' }}" class="spreadsheets" type="text"
-                                   value="
-                                           {% if val.total2 == 'Total' %}{{ 'Teacher-2' }}{% else %}{{ val.total2|ec_is_empty }}{% endif %}">
+                                   value="{% if val.total2 == 'Total' %}{{ 'Teacher-2' }}{% else %}{{ val.total2|ec_is_empty }}{% endif %}">
                         </td>
                         {#                        <td>#}
                         {#                            <input disabled id="{{ i }}{{ 'D' }}" name="{{ i }}{{ 'D' }}" class="spreadsheets"#}
@@ -107,8 +105,7 @@
                         <td>
                             <input disabled id="{{ i }}{{ 'D' }}" name="{{ i }}{{ 'D' }}" class="spreadsheets"
                                    type="text"
-                                   value="
-                                           {% if val.total1 == 'Total' %}{{ 'FINAL MARKS' }}{% else %}{% if val.total1|perdiff:val.total2 < cons.head.marks|multiply:20 %}{{ val.total1|ec_is_empty }}{% else %}{{ val.total1|myavg:val.total2 }}{% endif %}{% endif %}">
+                                   value="{% if val.total1 == 'Total' %}{{ 'FINAL MARKS' }}{% else %}{% if val.total1|perdiff:val.total2 < cons.head.marks|multiply:20 %}{{ val.total1|ec_is_empty }}{% else %}{{ val.total1|myavg:val.total2 }}{% endif %}{% endif %}">
                         </td>
                     </tr>
                 {% endfor %}
