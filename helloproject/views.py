@@ -44,7 +44,7 @@ from .models.Notifications import notifications
 def index(request):
     return render(request, 'index.html')
 
-
+@csrf_protect
 def signin_teacher(request):
     if request.method == 'GET':
         return render(request, 'teacherlogin.html')
@@ -60,7 +60,7 @@ def signin_teacher(request):
         messages.error(request, "The password you entered is incorrect. Did you forget your password?")
         return HttpResponseRedirect('teacherlogin.html')
 
-
+@csrf_protect
 def signin_ecteacher(request):
     if request.method == 'GET':
         return render(request, 'ec_teacher_login.html')
@@ -184,7 +184,7 @@ def ec_teacher_select_with_ajax(request):
         before.append('Semestar Final')
         return JsonResponse(before, safe=False)
 
-
+@csrf_protect
 def signin_student(request):
     if request.method == 'GET':
         return render(request, 'student_login.html')
@@ -204,7 +204,7 @@ def signin_student(request):
     else:
         messages.error(request, "The password you entered is incorrect. Did you forget your password?")
         return HttpResponseRedirect('student_login')
-
+@csrf_protect
 def teacher_signup(request):
     if request.method == 'GET':
         return render(request, 'register_teacher.html')
@@ -228,7 +228,7 @@ def teacher_signup(request):
     messages.success(request, 'Registration Successful')
     return HttpResponseRedirect('register_teacher')
 
-
+@csrf_protect
 def student_signup(request):
     if request.method == 'GET':
         return render(request, 'register_student.html')
@@ -438,6 +438,7 @@ def sselect(request):
 
 
 @is_allowed
+@csrf_protect
 def process_before_final(request):
     try:
         course_code = request.session['all_info']['course_code']
@@ -535,6 +536,7 @@ def process_before_final(request):
 
 
 @is_allowed
+@csrf_protect
 def ec_process_before_final(request):
     try:
         course_code = request.session['all_info']['course_code']
