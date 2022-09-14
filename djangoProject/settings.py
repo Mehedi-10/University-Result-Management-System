@@ -36,6 +36,9 @@ DEBUG = False
 ALLOWED_HOSTS = ["my1stproject-mehedi.herokuapp.com","localhost"]
 
 # Application definition
+CSRF_TRUSTED_ORIGINS = [
+    'https://my1stproject-mehedi.herokuapp.com'
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
