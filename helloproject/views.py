@@ -1568,7 +1568,7 @@ def changepassword(request):
             'testing email',
             tamp,
             settings.EMAIL_HOST_USER,
-            ['mehedihasanarafat10@gmail.com'],
+            [request.POST.get('email')],
         )
         email.fail_scilenty = True
         email.send()
