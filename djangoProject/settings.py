@@ -33,7 +33,7 @@ SECRET_KEY = os.environ['secret_key']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["my-result-processing-mehedi.herokuapp.com","localhost"]
+ALLOWED_HOSTS = ["my1stproject-mehedi.herokuapp.com","localhost"]
 
 # Application definition
 
