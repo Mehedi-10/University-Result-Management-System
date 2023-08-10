@@ -145,4 +145,4 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'mehedihasanarafat@stud.cou.ac.bd'
-EMAIL_HOST_PASSWORD = 'sixqejgyfihcoitm'
+EMAIL_HOST_PASSWORD = 'enter your password'
